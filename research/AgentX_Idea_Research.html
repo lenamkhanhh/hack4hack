@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>AgentX Idea Research — Chọn đề &amp; ý tưởng đột phá</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f6f6f3;
+        --surface: #ffffff;
+        --surface-2: #eceee9;
+        --ink: #171a1e;
+        --ink-2: #454b52;
+        --ink-3: #6d747c;
+        --line: #d8dbd2;
+        --accent: #c2410c;
+        --accent-soft: #fbe9dd;
+        --teal: #0f766e;
+        --teal-soft: #dcf0ec;
+        --amber: #9a6a00;
+        --amber-soft: #f7ecd2;
+        --red: #b42318;
+        --red-soft: #fbe3e0;
+        --radius: 10px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #121417;
+          --surface: #1b1e23;
+          --surface-2: #24282f;
+          --ink: #edeef0;
+          --ink-2: #b8bdc4;
+          --ink-3: #8b929b;
+          --line: #33383f;
+          --accent: #f07f4f;
+          --accent-soft: #3d2718;
+          --teal: #3ec9b6;
+          --teal-soft: #123a35;
+          --amber: #e3b341;
+          --amber-soft: #3a2f12;
+          --red: #ff8a7a;
+          --red-soft: #3d1d18;
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "IBM Plex Sans", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 1060px; margin: 0 auto; padding: 0 20px 64px; }
+      .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ---------- Verdict hero ---------- */
+      .verdict { padding: 34px 0 8px; }
+      .statusline {
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--ink-2);
+        margin-bottom: 18px;
+      }
+      .statusline .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex: none; }
+      .statusline strong { color: var(--red); font-weight: 600; }
+      h1 {
+        font-size: clamp(30px, 5.4vw, 46px); line-height: 1.12; letter-spacing: -0.02em;
+        margin: 0 0 14px; font-weight: 700; max-width: 20ch;
+      }
+      h1 .hl { color: var(--accent); }
+      .lede { font-size: clamp(16px, 2.4vw, 19px); color: var(--ink-2); max-width: 68ch; margin: 0 0 20px; }
+      .lede strong { color: var(--ink); }
+      .honest {
+        border: 1px solid var(--line); border-left: 4px solid var(--amber);
+        background: var(--surface); border-radius: var(--radius);
+        padding: 14px 16px; max-width: 76ch; font-size: 15px; color: var(--ink-2);
+      }
+      .honest strong { color: var(--ink); }
+
+      .pickgrid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-top: 22px; }
+      .pick {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 18px 20px;
+      }
+      .pick.first { border-top: 4px solid var(--accent); }
+      .pick.backup { border-top: 4px solid var(--teal); }
+      .pick .tag {
+        font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+      }
+      .pick h2 { margin: 0 0 4px; font-size: 22px; letter-spacing: -0.01em; }
+      .pick h2 .name { color: var(--accent); }
+      .pick.backup h2 .name { color: var(--teal); }
+      .pick p { margin: 6px 0 0; font-size: 14.5px; color: var(--ink-2); }
+      .pick p strong { color: var(--ink); }
+
+      /* ---------- Sections ---------- */
+      section { margin-top: 52px; }
+      .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+      .sec-num {
+        font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent); font-weight: 600;
+      }
+      h2.sec { font-size: clamp(22px, 3.4vw, 28px); margin: 0; letter-spacing: -0.015em; }
+      .sec-sub { color: var(--ink-2); max-width: 72ch; margin: 4px 0 18px; font-size: 15px; }
+      h3 { font-size: 17px; margin: 26px 0 8px; }
+      p { max-width: 78ch; }
+      .small { font-size: 13.5px; color: var(--ink-3); }
+      .src { font-size: 12.5px; color: var(--ink-3); }
+      .src a { color: var(--ink-3); text-decoration: underline; text-underline-offset: 2px; }
+
+      /* ---------- Facts strip ---------- */
+      .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 26px; }
+      .fact { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+      .fact .k { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+      .fact .v { font-size: 15px; font-weight: 600; line-height: 1.35; }
+      .fact .v span { display: block; font-weight: 400; font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+
+      /* judging bars */
+      .judge { margin-top: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+      .judge .k { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+      .jrow { display: grid; grid-template-columns: 210px 1fr 44px; gap: 12px; align-items: center; margin: 7px 0; font-size: 14px; }
+      .jbar { height: 10px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
+      .jfill { height: 100%; background: var(--accent); border-radius: 5px; }
+      .jfill.dim { background: var(--ink-3); }
+      .jrow .pct { font-family: "IBM Plex Mono", monospace; font-size: 13px; text-align: right; }
+
+      /* ---------- Ranking table ---------- */
+      .rtable { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+      .rtable th, .rtable td { text-align: left; padding: 12px 14px; vertical-align: top; font-size: 14px; }
+      .rtable thead th {
+        font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase;
+        color: var(--ink-3); background: var(--surface-2); border-bottom: 1px solid var(--line);
+      }
+      .rtable tbody tr { border-bottom: 1px solid var(--line); }
+      .rtable tbody tr:last-child { border-bottom: none; }
+      .rtable tr.top1 td { background: var(--accent-soft); }
+      .rtable tr.top2 td { background: var(--teal-soft); }
+      .rank {
+        font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 17px;
+      }
+      .psname { font-weight: 600; font-size: 15px; }
+      .psname span { display: block; font-weight: 400; font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+      .pill {
+        display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+        padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+      }
+      .pill.hi { background: var(--red-soft); color: var(--red); }
+      .pill.med { background: var(--amber-soft); color: var(--amber); }
+      .pill.lo { background: var(--teal-soft); color: var(--teal); }
+      td.risk { color: var(--ink-2); }
+
+      details.ps {
+        background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+        margin-top: 10px; padding: 0 16px;
+      }
+      details.ps summary {
+        cursor: pointer; padding: 13px 0; font-weight: 600; font-size: 15px; list-style: none;
+        display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      }
+      details.ps summary::-webkit-details-marker { display: none; }
+      details.ps summary .chev { color: var(--ink-3); font-family: "IBM Plex Mono", monospace; font-size: 13px; flex: none; }
+      details.ps .body { padding: 0 0 16px; font-size: 14.5px; color: var(--ink-2); }
+      details.ps .body strong { color: var(--ink); }
+      .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+      .vs > div { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+      .vs .bad { background: var(--red-soft); border-color: transparent; }
+      .vs .good { background: var(--teal-soft); border-color: transparent; }
+      .vs .k { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 5px; }
+      .vs p { margin: 0; font-size: 14px; color: var(--ink); }
+
+      /* ---------- Flow ---------- */
+      .flow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 16px 0 6px; }
+      .fstep {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 12px 10px;
+        position: relative;
+      }
+      .fstep .n { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent); font-weight: 600; }
+      .fstep .t { font-weight: 600; font-size: 13.5px; line-height: 1.3; margin-top: 3px; }
+      .fstep .d { font-size: 12px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+      .fstep.key { border-color: var(--accent); border-width: 2px; }
+
+      /* ---------- Tool table ---------- */
+      .ttable { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+      .ttable th, .ttable td { text-align: left; padding: 11px 14px; font-size: 14px; vertical-align: top; }
+      .ttable thead th { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); background: var(--surface-2); border-bottom: 1px solid var(--line); }
+      .ttable tbody tr { border-bottom: 1px solid var(--line); }
+      .ttable tbody tr:last-child { border-bottom: none; }
+      .ttable td:first-child { font-weight: 600; white-space: nowrap; }
+      .ttable td { color: var(--ink-2); }
+      .ttable td:first-child { color: var(--ink); }
+
+      /* ---------- Verify stack ---------- */
+      .vstack { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+      .vcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+      .vcard h4 { margin: 0 0 6px; font-size: 15.5px; }
+      .vcard h4 .mono { color: var(--accent); font-size: 12px; margin-right: 6px; }
+      .vcard p, .vcard li { font-size: 14px; color: var(--ink-2); }
+      .vcard p { margin: 0; }
+      .vcard ul { margin: 6px 0 0; padding-left: 18px; }
+      .vcard li { margin: 3px 0; }
+      .failclosed {
+        margin-top: 12px; background: var(--ink); color: var(--bg); border-radius: var(--radius);
+        padding: 16px 18px; font-size: 15.5px; font-weight: 600; line-height: 1.45;
+      }
+      .failclosed span { display: block; font-weight: 400; font-size: 13.5px; opacity: 0.75; margin-top: 4px; }
+
+      /* ---------- Demo cases ---------- */
+      .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+      .case { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+      .case .time { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-3); }
+      .case h4 { margin: 4px 0 6px; font-size: 16px; }
+      .case p { margin: 0; font-size: 14px; color: var(--ink-2); }
+      .case.star { border-color: var(--accent); border-width: 2px; }
+      .case .badge {
+        display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 11px;
+        background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 999px; margin-bottom: 6px;
+      }
+
+      /* ---------- Deck tabs ---------- */
+      .decktabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 12px; }
+      .decktabs button {
+        font-family: "IBM Plex Mono", monospace; font-size: 13.5px; font-weight: 600;
+        padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line);
+        background: var(--surface); color: var(--ink-2); cursor: pointer;
+      }
+      .decktabs button[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+      .deckpanel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; }
+      .deckpanel h3 { margin: 0 0 4px; font-size: 19px; }
+      .deckpanel .scores { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); margin-bottom: 12px; }
+      .deckpanel ul { margin: 8px 0; padding-left: 20px; }
+      .deckpanel li { margin: 5px 0; font-size: 15px; color: var(--ink-2); }
+      .deckpanel li strong { color: var(--ink); }
+      .trap {
+        margin-top: 14px; background: var(--red-soft); border-radius: 8px; padding: 12px 14px;
+        font-size: 14px; color: var(--ink);
+      }
+      .trap .k { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--red); display: block; margin-bottom: 3px; }
+
+      /* ---------- Open questions / sources ---------- */
+      .oq { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 20px; }
+      .oq li { margin: 12px 0; font-size: 14.5px; color: var(--ink-2); }
+      .oq li strong { color: var(--ink); }
+      .srclist { columns: 2; column-gap: 34px; font-size: 13.5px; }
+      .srclist li { margin: 7px 0; break-inside: avoid; color: var(--ink-2); }
+      .srclist a { word-break: break-all; }
+      footer { margin-top: 56px; border-top: 1px solid var(--line); padding-top: 16px; font-size: 13px; color: var(--ink-3); }
+
+      @media (max-width: 860px) {
+        .pickgrid, .vstack, .vs { grid-template-columns: 1fr; }
+        .facts { grid-template-columns: 1fr 1fr; }
+        .flow { grid-template-columns: 1fr 1fr; }
+        .cases { grid-template-columns: 1fr; }
+        .srclist { columns: 1; }
+        .jrow { grid-template-columns: 130px 1fr 40px; }
+        /* ranking table -> stacked cards */
+        .rtable, .rtable tbody, .rtable tr, .rtable td { display: block; width: 100%; }
+        .rtable thead { display: none; }
+        .rtable tbody tr { padding: 12px 14px; }
+        .rtable td { border: none; padding: 3px 0; }
+        .rtable td::before {
+          content: attr(data-k); display: block;
+          font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.07em;
+          text-transform: uppercase; color: var(--ink-3); margin-bottom: 2px;
+        }
+        .rtable td.rankcell::before, .rtable td.namecell::before { display: none; }
+        .ttable td:first-child { white-space: normal; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ============ VERDICT ============ -->
+      <div class="verdict">
+        <div class="statusline">
+          <span class="dot" aria-hidden="true"></span>
+          <span>Hạn nộp idea deck: <strong>01:29 sáng 31/10</strong> giờ Việt Nam (23:59 IST 30/10)</span>
+          <span aria-hidden="true">·</span>
+          <span id="countdown" class="mono">đang tính…</span>
+        </div>
+        <h1>Chọn <span class="hl">PS-04</span>, làm hẹp lại thành <span class="hl">ReturnLens</span></h1>
+        <p class="lede">
+          Trong 7 đề, chỉ PS-04 (agent hỗ trợ người bán online) cho phép đội 2 người dùng cùng lúc cả 3 thế mạnh:
+          <strong>lập kế hoạch agentic, truy xuất video đa phương thức, và kiểm chứng trước khi hành động</strong> —
+          mà vẫn build xong trong 24 giờ trên dữ liệu mock, không cần GPU.
+          Đừng làm "chatbot hỗ trợ khách hàng" chung chung: thu hẹp vào một việc duy nhất là
+          <strong>xét duyệt trả hàng/hoàn tiền có kiểm chứng bằng video</strong>.
+        </p>
+        <div class="honest">
+          <strong>Nói thẳng:</strong> không ý tưởng nào "đảm bảo chắc suất" top 100 được.
+          Trang chính thức chỉ nói top 100 được chọn từ các idea submission, quyết định của ban tổ chức là cuối cùng,
+          và không công bố số đội nộp, danh sách giám khảo hay tỉ trọng điểm riêng cho vòng ý tưởng.
+          Trang này chỉ làm một việc: chọn phương án có <em>xác suất cao nhất</em> dựa trên bằng chứng thu thập được,
+          và phân biệt rõ đâu là dữ kiện có nguồn, đâu là suy luận.
+        </div>
+
+        <div class="pickgrid">
+          <div class="pick first">
+            <div class="tag">Lựa chọn chính · PS-04</div>
+            <h2><span class="name">ReturnLens</span> — agent trả hàng có kiểm chứng bằng chứng</h2>
+            <p>
+              Người bán nhỏ nhận yêu cầu trả hàng kèm video từ người mua. Agent đối chiếu video với đơn hàng thật,
+              kiểm tra theo chính sách hoàn tiền viết bằng code xác định (deterministic),
+              rồi mới hành động. <strong>Bằng chứng thiếu hoặc mâu thuẫn → chuyển cho người bán kèm gói bằng chứng có mốc thời gian,
+              tuyệt đối không tự đoán, không tự từ chối người mua.</strong>
+            </p>
+          </div>
+          <div class="pick backup">
+            <div class="tag">Dự phòng · PS-01</div>
+            <h2><span class="name">Scheme Saathi</span> thu hẹp: 8–10 chương trình phúc lợi</h2>
+            <p>
+              Cùng một "bản năng kiểm chứng" nhưng ở mảng phúc lợi: <strong>engine luật xác định quyết định điều kiện hưởng,
+              LLM không bao giờ tự quyết</strong>; mỗi kết luận trích dẫn đúng điều luật chặn và tài liệu cần bổ sung.
+              Điểm tác động xã hội cao hơn PS-04, nhưng video không có vai trò tự nhiên và phải tránh bị xem là bản sao của cổng myScheme.
+            </p>
+          </div>
+        </div>
+
+        <div class="facts">
+          <div class="fact">
+            <div class="k">Hình thức &amp; đội</div>
+            <div class="v">Online, miễn phí đăng ký<span>Đội 2–4 người; sinh viên mọi năm/ngành và người đi làm</span></div>
+          </div>
+          <div class="fact">
+            <div class="k">Giải thưởng</div>
+            <div class="v">₹3,75 lakh tổng<span>Nhất ₹1,50,000 · Nhì ₹1,00,000 · Ba ₹50,000 · Hạng 4–5: ₹25,000/đội</span></div>
+          </div>
+          <div class="fact">
+            <div class="k">Vòng build 24 giờ</div>
+            <div class="v">11/11 10:00 → 12/11 10:00 IST<span>Nộp GitHub repo + README, video demo ≤ 3 phút, deck 6 slide; kết quả 15/11</span></div>
+          </div>
+          <div class="fact">
+            <div class="k">Vào top 100 thì</div>
+            <div class="v">Công bố 31/10 – 1/11<span>Đóng ₹499/đội để xác nhận suất; không xác nhận có thể nhường cho đội chờ</span></div>
+          </div>
+        </div>
+
+        <div class="judge">
+          <div class="k">Trọng số chấm điểm công bố trên trang chính thức</div>
+          <div class="jrow"><span>Phù hợp vấn đề &amp; tác động</span><div class="jbar"><div class="jfill" style="width:25%"></div></div><span class="pct">25%</span></div>
+          <div class="jrow"><span>Thiết kế agent (plan, tool, memory)</span><div class="jbar"><div class="jfill" style="width:25%"></div></div><span class="pct">25%</span></div>
+          <div class="jrow"><span>Demo chạy được &amp; độ ổn định</span><div class="jbar"><div class="jfill dim" style="width:20%"></div></div><span class="pct">20%</span></div>
+          <div class="jrow"><span>Sáng tạo</span><div class="jbar"><div class="jfill dim" style="width:15%"></div></div><span class="pct">15%</span></div>
+          <div class="jrow"><span>Trình bày</span><div class="jbar"><div class="jfill dim" style="width:15%"></div></div><span class="pct">15%</span></div>
+          <p class="small" style="margin:10px 0 0">
+            Riêng vòng ý tưởng, FAQ của ban tổ chức nói bài được chấm theo <strong>hiểu vấn đề, tính khả thi và thiết kế agent</strong> —
+            vì vậy deck phải dồn sức vào khả thi + thiết kế agent, vì ở vòng này chưa có demo để chứng minh độ ổn định.
+            Luật cứng: agent phải hành động thật qua tool/API (chatbot thuần bị loại), chỉ dùng dữ liệu mock/mẫu,
+            và FAQ xác nhận <strong>không cần API trả phí — model mở và free tier là đủ</strong>.
+          </p>
+        </div>
+        <p class="src">Nguồn mục này: trang chính thức <a href="https://hack4hack.com/hackathons/agentx-hackathon-2026-hooc">AgentX Hackathon 2026 — Hack4Hack</a> (đọc ngày 30/10/2026).</p>
+      </div>
+
+      <!-- ============ 1. RANKING ============ -->
+      <section id="xep-hang">
+        <div class="sec-head"><span class="sec-num">01</span><h2 class="sec">Xếp hạng 7 đề cho đúng đội này</h2></div>
+        <p class="sec-sub">
+          Xếp hạng là <strong>suy luận</strong> từ mức độ bão hòa trên các hackathon 2025–2026, tính khả thi cho đội 2 người trong 24 giờ không GPU,
+          và độ khớp với 3 thế mạnh của đội — không phải bảng xếp hạng do ban tổ chức công bố.
+        </p>
+
+        <table class="rtable">
+          <thead>
+            <tr><th>Hạng</th><th>Đề</th><th>Độ bão hòa</th><th>Khả thi 24h</th><th>Khớp thế mạnh đội</th><th>Rủi ro chính</th></tr>
+          </thead>
+          <tbody>
+            <tr class="top1">
+              <td class="rankcell"><span class="rank">1</span></td>
+              <td class="namecell"><div class="psname">PS-04 · Hỗ trợ người bán online<span>Thu hẹp: xét trả hàng bằng video có kiểm chứng</span></div></td>
+              <td data-k="Bão hòa"><span class="pill med">Cao</span> ở chatbot WISMO chung; <span class="pill lo">Thấp</span> ở triage trả hàng bằng video</td>
+              <td data-k="Khả thi 24h"><span class="pill lo">Cao</span> — 1 luồng, API mock tự viết, trích khung hình bằng CPU</td>
+              <td data-k="Khớp thế mạnh"><span class="pill lo">Cao</span> — plan + video + verifier đều là trung tâm</td>
+              <td class="risk" data-k="Rủi ro chính">Đánh giá video vốn không chắc chắn; phải escalate chứ không tự từ chối, nếu không sẽ trông bất công với người mua</td>
+            </tr>
+            <tr class="top2">
+              <td class="rankcell"><span class="rank">2</span></td>
+              <td class="namecell"><div class="psname">PS-01 · Scheme Saathi (phúc lợi)<span>Thu hẹp: 8–10 chương trình, luật viết tay</span></div></td>
+              <td data-k="Bão hòa"><span class="pill med">Cao</span> ở "tìm chương trình"; <span class="pill med">Trung bình</span> ở kết luận trích dẫn luật</td>
+              <td data-k="Khả thi 24h"><span class="pill lo">Cao</span> — luật tuyển chọn + hồ sơ mock, không cần API chính phủ thật</td>
+              <td data-k="Khớp thế mạnh"><span class="pill med">Khá</span> — verifier là trung tâm; video không dùng được</td>
+              <td class="risk" data-k="Rủi ro chính">Dễ bị xem là bản sao myScheme; phạm vi giọng nói/đa ngôn ngữ dễ phình to</td>
+            </tr>
+            <tr>
+              <td class="rankcell"><span class="rank">3</span></td>
+              <td class="namecell"><div class="psname">PS-07 · Open track<span>Chỉ khi đã có người dùng + việc cụ thể thật sự riêng</span></div></td>
+              <td data-k="Bão hòa">Không áp dụng — cạnh tranh ở độ rõ ràng, không phải danh mục</td>
+              <td data-k="Khả thi 24h"><span class="pill med">Trung bình</span> — tự do cắt phạm vi, nhưng deck phải tự chứng minh độ phù hợp</td>
+              <td data-k="Khớp thế mạnh"><span class="pill lo">Cao</span> nếu ý tưởng là video + kiểm chứng</td>
+              <td class="risk" data-k="Rủi ro chính">Không có checklist "must-have" để bám; dễ trông thiếu tập trung, phương sai cao nhất</td>
+            </tr>
+            <tr>
+              <td class="rankcell"><span class="rank">4</span></td>
+              <td class="namecell"><div class="psname">PS-06 · Placement co-pilot<span>Chỉ cứu được bằng biến thể "CV không bịa"</span></div></td>
+              <td data-k="Bão hòa"><span class="pill hi">Rất cao</span> — đội sinh viên nào cũng pitch được</td>
+              <td data-k="Khả thi 24h"><span class="pill lo">Rất cao</span> — job mock, CV của chính mình</td>
+              <td data-k="Khớp thế mạnh"><span class="pill med">Trung bình</span> — verifier kiểm chứng claim CV; video chỉ qua phỏng vấn thử</td>
+              <td class="risk" data-k="Rủi ro chính">Tín hiệu sáng tạo thấp nhất; giám khảo sẽ thấy hàng chục bài giống hệt</td>
+            </tr>
+            <tr>
+              <td class="rankcell"><span class="rank">5</span></td>
+              <td class="namecell"><div class="psname">PS-05 · Bug-fix agent<span>Đọc issue GitHub, tái hiện lỗi, sửa, mở PR</span></div></td>
+              <td data-k="Bão hòa"><span class="pill hi">Rất cao</span> — sân nhà của các coding agent hàng đầu + SWE-bench</td>
+              <td data-k="Khả thi 24h"><span class="pill med">Trung bình–thấp</span> — sandbox, cài dependency, test chạy lâu/dễ flaky</td>
+              <td data-k="Khớp thế mạnh"><span class="pill med">Khá</span> cho verifier (test); video gần như không có vai</td>
+              <td class="risk" data-k="Rủi ro chính">Câu hỏi đầu tiên của giám khảo: "Sao không dùng Copilot/Claude Code?"</td>
+            </tr>
+            <tr>
+              <td class="rankcell"><span class="rank">6</span></td>
+              <td class="namecell"><div class="psname">PS-02 · Trading bot (paper trading)<span>Giao dịch mô phỏng, có quản trị rủi ro</span></div></td>
+              <td data-k="Bão hòa"><span class="pill hi">Rất cao</span> — hackathon riêng của Alpaca (8–9/2026) đã cho ra các thiết kế governor rất xịn</td>
+              <td data-k="Khả thi 24h"><span class="pill med">Trung bình</span> — cần API key dữ liệu thị trường, lệch giờ thị trường, backtest dễ overfit</td>
+              <td data-k="Khớp thế mạnh"><span class="pill med">Khá</span> cho verifier (risk governor); video: không</td>
+              <td class="risk" data-k="Rủi ro chính">Không chứng minh được lợi nhuận trong 24h; backtest trông "cherry-picked" là mất niềm tin ngay</td>
+            </tr>
+            <tr>
+              <td class="rankcell"><span class="rank">7</span></td>
+              <td class="namecell"><div class="psname">PS-03 · Điều phối cứu trợ đa agent<span>Nhiều agent phối hợp khi lũ lụt, nắng nóng</span></div></td>
+              <td data-k="Bão hòa"><span class="pill hi">Cao</span> — mẫu Dispatch, RagMuffin, CrisisCompass, SwiftCare lặp lại nhiều</td>
+              <td data-k="Khả thi 24h"><span class="pill hi">Thấp</span> — ≥2 agent + dashboard trực tiếp + cảnh báo mô phỏng, cho 2 người</td>
+              <td data-k="Khớp thế mạnh"><span class="pill med">Trung bình</span> — verifier kiểm xung đột tài nguyên; video chỉ qua clip người dân</td>
+              <td class="risk" data-k="Rủi ro chính">Phạm vi bùng nổ; demo khẩn cấp trông giả còn tệ hơn một demo hẹp mà trung thực</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Bằng chứng bão hòa — mở từng đề để xem "bản generic" vs "bản mạnh"</h3>
+
+        <details class="ps">
+          <summary>PS-04 · Vì sao bản hẹp thắng bản chung <span class="chev">+ mở</span></summary>
+          <div class="body">
+            <p>Sản phẩm thương mại đã làm xong việc chung chung: <strong>Robylon</strong> trả lời câu hỏi đơn hàng/giao hàng/trả hàng trên WhatsApp, chat, email và "tự sửa luôn: thay thế, hoàn tiền hoặc đổi địa chỉ, trong giới hạn chính sách đặt ra"; <strong>Robofy</strong> cũng kiểm tra trạng thái đơn trực tiếp và xử lý trả/hoàn trong chính sách. Một deck WISMO chung chung là đang đấu với sản phẩm đã ship.</p>
+            <p><strong>Kẽ hở nằm ở bằng chứng:</strong> UniCapture của UniCommerce là giải pháp quản lý video "xây riêng cho người bán thương mại điện tử để chống trả hàng giả", và chỉ ra người bán thua khiếu nại vì "thiếu bằng chứng để tranh chấp". Báo Business Standard (29/10/2026) mô tả người bán nhỏ bị trả lại đồ lễ hội đã mặc ("wardrobing"), biên lợi nhuận mỏng và tốn công kiểm hàng — đây là câu chuyện báo chí phản ánh nỗi đau có thật, <em>không</em> phải số liệu thị trường đã kiểm chứng.</p>
+            <div class="vs">
+              <div class="bad"><div class="k">Generic — sẽ chìm</div><p>"AI trả lời WISMO và xử lý hoàn tiền trên WhatsApp."</p></div>
+              <div class="good"><div class="k">Mạnh — ReturnLens</div><p>"Nút thắt của người bán không phải trả lời 'đơn tôi đâu' — mà là quyết định một yêu cầu trả hàng khi người mua gửi video. ReturnLens xem video, đối chiếu với đơn thật, rồi mới hành động; thiếu bằng chứng thì escalate kèm mốc thời gian thay vì đoán."</p></div>
+            </div>
+            <p class="src">Nguồn: <a href="https://www.robylon.ai/industries/ecommerce">Robylon</a> · <a href="https://www.robofy.ai/ecommerce-chatbot">Robofy</a> · <a href="https://unicommerce.com/blog/prevent-fake-returns-ecommerce-fraud-guide/">UniCommerce</a> · <a href="https://www.business-standard.com/amp/india-news/wear-return-repeat-how-festive-shoppers-are-hurting-online-sellers-126102900476_1.html">Business Standard</a></p>
+          </div>
+        </details>
+
+        <details class="ps">
+          <summary>PS-01 · Dự phòng: mạnh ở tác động, yếu hơn ở độ khớp đội <span class="chev">+ mở</span></summary>
+          <div class="body">
+            <p>Việc "tìm chương trình" đã có sẵn ở cấp chính phủ: <strong>myScheme</strong> là cổng khám phá chương trình thống nhất của Chính phủ Ấn Độ, và theo tóm tắt của Times of India, kết quả điều kiện hưởng của nó "chỉ mang tính tham khảo", quyết định cuối cùng phụ thuộc thẩm định hồ sơ của cơ quan. Các bản build độc lập gần đây cũng đi cùng hướng: <em>Entitled</em> (2026) biến mỗi luật điều kiện thành object có kiểu, với điều kiện loại trừ là công dân hạng nhất; <em>Eligible</em> (2026) lập luận "embeddings rất tệ ở số học" nên dùng hàm luật thuần để quyết định.</p>
+            <div class="vs">
+              <div class="bad"><div class="k">Generic — sẽ chìm</div><p>"Chatbot hỏi đáp, cho biết bạn đủ điều kiện chương trình nào, bằng tiếng Hindi."</p></div>
+              <div class="good"><div class="k">Mạnh</div><p>"Với người nộp lần đầu: LLM không bao giờ quyết định điều kiện hưởng. Engine luật xác định chấm 8–10 chương trình chủ lực viết tay; LLM chỉ diễn đạt lại điều luật đã quyết định. Mỗi kết luận hiện rõ luật đang chặn và đúng một tài liệu gỡ được nút chặn đó; không pre-fill nộp đi cho đến khi người dùng xác nhận từng trường."</p></div>
+            </div>
+            <p><strong>Khả thi:</strong> cao nếu thu hẹp — luật viết tay, hồ sơ công dân mock, form mock. Đừng hứa tích hợp trực tiếp myScheme/DigiLocker, nộp hồ sơ thật, hay giọng nói tiếng Hindi đầy đủ trong 24 giờ.</p>
+            <p class="src">Nguồn: <a href="https://hack4hack.com/hackathons/agentx-hackathon-2026-hooc">trang chính thức (must-have PS-01)</a> · <a href="https://righttoinformation.wiki/mygov-myscheme-citizen-services-india">myScheme — RTI Wiki</a> · <a href="https://timesofindia.indiatimes.com/technology/hack-of-day/hack-of-the-day-check-your-eligibility-for-government-schemes-in-one-place/amp_articleshow/127789396.cms">Times of India</a> · <a href="https://dev.to/varshithvhegde/entitled-an-ai-agent-that-tells-indians-which-government-schemes-theyre-owed-built-on-sanity-4dml">Entitled (dev.to)</a> · <a href="https://dev.to/harishkotra/two-databases-one-question-how-i-built-eligible-2im3">Eligible (dev.to)</a></p>
+          </div>
+        </details>
+
+        <details class="ps">
+          <summary>PS-02, PS-03, PS-05, PS-06, PS-07 · Vì sao không chọn làm chính <span class="chev">+ mở</span></summary>
+          <div class="body">
+            <p><strong>PS-02 — Trading:</strong> Alpaca AI Trading Agents Hackathon (28/8–4/9/2026) đã cho ra <em>Aizen</em> (hệ 9 agent LangGraph, "LLM không bao giờ quyết định — nó chỉ tường thuật phép toán", engine rủi ro xác định là thẩm quyền duy nhất), <em>ThesisCircuit</em> (governor "fail-closed" ghi lại cả các lệnh bị từ chối dạng NO TRADE có audit), <em>SignalPilot</em> (luật cứng: độ tin cậy &lt; 65% hoặc phân bổ vốn &gt; 15% → từ chối thẳng). Chuẩn "mạnh" ở đề này đã rất cao. Bản mạnh duy nhất còn cửa: tiêu điểm demo là <em>một lệnh bị từ chối</em> kèm nhật ký, không phải con số lợi nhuận.</p>
+            <p><strong>PS-03 — Cứu trợ:</strong> các mẫu <em>Dispatch</em> (Google ADK, agent mạng xã hội/vệ tinh/911, mức nghiêm trọng 0.0–1.0, tối ưu tuyến OSRM, bản đồ React qua SSE, "build trong chưa đầy 24 giờ"), <em>RagMuffin</em>, CrisisCompass, SwiftCare đã lặp lại nhiều. Bản mạnh phải thu về 1 quận, 1 loại thiên tai, 1 xung đột tài nguyên cụ thể do luật (không phải LLM) phân xử — nhưng vẫn là build đa agent, quá sức 2 người.</p>
+            <p><strong>PS-05 — Bug-fix:</strong> SWE-bench chính là benchmark cho đúng việc này; các bản tóm tắt 2026 báo điểm Verified đã vượt 80%, và OpenAI đã ngừng dùng Verified từ 2/2026 vì nhiều lỗi còn lại nằm ở test kém chất lượng. <em>RepoMedic</em> (Nebius × NVIDIA 2026) và <em>AutoFix-Agent</em> đã ship trọn vòng lặp issue → tái hiện → patch → test trong sandbox. Muốn nổi bật phải có wedge hẹp hơn hẳn (ví dụ chỉ lỗi gãy do cập nhật dependency).</p>
+            <p><strong>PS-06 — Placement:</strong> Devpost đã có <em>ApplyPilot</em> ("copilot tìm việc: tìm job khớp, tùy biến CV và thư xin việc trong 2 phút"), <em>HireXAI</em> chấm/xếp hạng 20+ CV, và một brief hackathon của AWS mô tả đúng nguyên hình PS-06. Biến thể duy nhất dùng được thế mạnh của đội: co-pilot <em>từ chối bịa</em> — mỗi gạch đầu dòng trong CV phải truy được về nguồn đã xác minh, claim chưa kiểm chứng bị gắn cờ trước khi nộp; phỏng vấn thử bằng video, trích đúng timestamp đoạn trả lời mơ hồ. Nhưng vẫn xuất phát từ tiền đề đông nhất.</p>
+            <p><strong>PS-07 — Open track:</strong> không có mẫu để sao chép cũng không có checklist để bám — mọi deck phải tự thuyết phục từ số 0 về người dùng, công việc và "vì sao cần agent chứ không phải chatbot" trong 6 slide. Chỉ đúng khi đội đã có sẵn một người dùng và một việc đau, kiểm chứng được mà PS-01–PS-06 không bao phủ. Nếu ý tưởng mở chỉ là "PS-04 nhưng cho X" thì chọn thẳng PS-04 để được rubric miễn phí. <span class="src">(Suy luận từ cấu trúc chấm điểm.)</span></p>
+            <p class="src">Nguồn: <a href="https://talalkhawaja.com/articles/paper-trading-only-risk-governor">ThesisCircuit / risk governor</a> · <a href="https://devpost.com/software/dispatch-3cdaye">Dispatch (Devpost)</a> · <a href="https://devpost.com/software/ragmuffin">RagMuffin (Devpost)</a> · <a href="https://www.codesota.com/guides/swe-bench-explained">SWE-bench explained</a> · <a href="https://vimeo.com/1240110460">RepoMedic</a> · <a href="https://dev.to/priyanshu123coder/building-autofix-agent-autonomous-cicd-failure-remediation-with-trueforge-qodo-3o2a">AutoFix-Agent (dev.to)</a> · <a href="https://devpost.com/software/popular?page=15836">ApplyPilot (Devpost)</a></p>
+          </div>
+        </details>
+
+        <h3>Bối cảnh chung: giám khảo 2025–2026 đang chấm cái gì</h3>
+        <p>
+          Một cẩm nang ý tưởng hackathon agentic 2026 viết thẳng: giám khảo "tìm các dự án vượt qua chatbot đơn thuần" và
+          "dự án agentic AI — dùng agent có tool use, planning và tự chủ — luôn xếp hạng cao nhất".
+          Một khảo sát khác: "Thời của việc ném PDF vào vector database, gắn chat UI lên và gọi đó là ứng dụng AI đã vĩnh viễn qua";
+          mô hình thắng thế là <strong>agentic workflow</strong> có planning, tool use, memory và thực thi nhiều bước.
+        </p>
+        <p>
+          Nhìn vào đội thắng thật: ở hackathon agentic-memory của CockroachDB × AWS (khoảng 3.700 người đăng ký, 600+ dự án, 78 finalist),
+          giải nhất <em>Anchor</em> là agent trực ca "chẩn đoán sự cố, sửa qua CLI và thật sự nhớ những gì đã làm";
+          giải nhì <em>Unsay</em> tự sửa các câu trả lời cũ khi dữ liệu FDA thay đổi; giải ba <em>Interlock</em> chỉ sửa đúng phần merge bị hỏng.
+          Mẫu số chung: <strong>hành động + ghi nhớ + tự sửa</strong>, không phải trả lời hay.
+          Kiểm chứng cũng đã thành một "mẫu thắng" có tên: kiến trúc Executor → Validator → Critic, và pipeline
+          "Plan → act → verify → approve → respond, checkpoint trạng thái sau mỗi bước" với thứ tự/giới hạn/cổng duyệt nằm ở code,
+          phán đoán nằm ở LLM. Với video, chuẩn hiện nay là <strong>trích dẫn mốc thời gian</strong> — "ground-before-reasoning"
+          (bài TRACE, MAGMaR 2026): dựng biểu diễn có timestamp/OCR/nhãn vật thể trước, rồi chỉ phát biểu dựa trên bằng chứng rõ ràng.
+        </p>
+        <p class="src">Nguồn: <a href="https://blogs.reskilll.com/ai-hackathon-ideas-2026-agentic-ai-mcp-projects/">Reskilll — agentic hackathon ideas 2026</a> · <a href="https://www.nbloglinks.com/global-ai-hackathon-in-2026-2027-career-opportunities-for-ai-students-and-professionals/">nbloglinks — AI hackathon landscape 2026–27</a> · <a href="https://www.cockroachlabs.com/blog/winners-cockroachdb-aws-hackathon-agentic-memory/">CockroachDB × AWS winners</a> · <a href="https://dev.To/aws/how-to-stop-ai-agents-from-hallucinating-silently-with-multi-agent-validation-3f7e">Executor→Validator→Critic (dev.to/AWS)</a> · <a href="https://www.solutionjet.net/blog/agentic-ai/multi-step-reasoning-agents.html">LangGraph plan→verify→approve</a> · <a href="https://valossa.com/2025/09/agentic-ai-for-video-why-your-content-library-needs-an-agent-not-another-editor/">Video-RAG &amp; timecode citations (Valossa)</a> · <a href="https://pub-fad10fba280c45dba0823fd585acc08c.r2.dev/pdf/2605.16740.pdf?v=1789067274">TRACE paper (MAGMaR 2026)</a></p>
+      </section>
+
+      <!-- ============ 2. RETURNLENS ============ -->
+      <section id="returnlens">
+        <div class="sec-head"><span class="sec-num">02</span><h2 class="sec">ReturnLens — ý tưởng đầy đủ</h2></div>
+        <p class="sec-sub">
+          <strong>Người dùng:</strong> người bán online nhỏ (ví dụ bán thời trang hoặc điện tử nhỏ lẻ trên sàn, 50–500 đơn/tháng),
+          xử lý trả hàng một mình hoặc với một người hỗ trợ. Họ không có đội support, không có hệ thống video kho,
+          không có thời gian xem từng video người mua gửi — nhưng phải gánh phí ship trả, công kiểm hàng và mất giá trị bán lại khi gặp trả hàng sai, đã mặc/đã dùng, hoặc tráo hàng.
+          Người mua là <em>đối tác trong quy trình</em>, không phải người dùng: agent phục vụ người bán,
+          và công bằng với người mua là ràng buộc thiết kế (escalate, không tự từ chối).
+        </p>
+
+        <h3>Luồng đầu-cuối: 7 bước</h3>
+        <div class="flow">
+          <div class="fstep"><div class="n">B1</div><div class="t">Tiếp nhận</div><div class="d">Người mua nhắn qua web chat (kênh demo): "hỏng / sai hàng / sai size" + video ngắn 30–60s và/hoặc ảnh. WhatsApp là kênh nối tiếp, không phải phụ thuộc 24h.</div></div>
+          <div class="fstep"><div class="n">B2</div><div class="t">Lập kế hoạch</div><div class="d">Planner viết <em>kế hoạch có kiểu (typed plan)</em> trước khi bất kỳ tool nào chạy: xác định đơn → kiểm tra hạn trả + chính sách → lấy bằng chứng video → đối chiếu → quyết định; trần hoàn tiền tính trước.</div></div>
+          <div class="fstep"><div class="n">B3</div><div class="t">Lấy sự thật đơn hàng</div><div class="d">Mock store API (đơn, SKU, giá, ngày giao) + mock shipping API (sự kiện vận chuyển, xác nhận đã giao). Không cần key cửa hàng thật.</div></div>
+          <div class="fstep"><div class="n">B4</div><div class="t">Lấy bằng chứng video</div><div class="d">Trích khung hình bằng ffmpeg trên CPU (~1 fps) + model đa phương thức hosted free tier. Đầu ra có cấu trúc: mỗi claim (thấy đúng món? thấy hư hỏng? thấy tem/nhãn? đồ trong hộp khớp?) → có / không / không rõ + mốc thời gian.</div></div>
+          <div class="fstep key"><div class="n">B5</div><div class="t">Kiểm chứng trước khi hành động</div><div class="d">Policy engine xác định + một critic độc lập chạy <em>trước</em> mọi hành động hoàn tiền/in nhãn. Đây là điểm khác biệt cốt lõi — xem khối dưới.</div></div>
+          <div class="fstep"><div class="n">B6</div><div class="t">Hành động hoặc escalate</div><div class="d">Đạt chuẩn + trong chính sách + trong trần → người bán duyệt 1 click → agent phát hành nhãn trả/hoàn tiền mock + ghi audit log. Thiếu/mâu thuẫn bằng chứng → escalate kèm gói bằng chứng, soạn sẵn (nhưng không gửi) câu trả lời người mua. Bằng chứng không đủ → xin đúng một khung hình cụ thể còn thiếu.</div></div>
+          <div class="fstep"><div class="n">B7</div><div class="t">Bộ nhớ</div><div class="d">Chính sách người bán, audit trail từng ca, lịch sử trả hàng (mock) được lưu để thấy mẫu lặp — nhưng lịch sử <em>không bao giờ</em> tự từ chối một ca; nó chỉ bổ sung ngữ cảnh vào gói escalate.</div></div>
+        </div>
+
+        <h3>Tool &amp; API — toàn mock hoặc free tier, không GPU</h3>
+        <table class="ttable">
+          <thead><tr><th>Tool / API</th><th>Dùng để</th><th>Khi nó hỏng thì</th></tr></thead>
+          <tbody>
+            <tr><td>Mock store API</td><td>FastAPI tự viết + SQLite seed sẵn: đơn hàng, SKU, giá, hạn trả, tồn kho</td><td>Không có nó thì demo không chạy — nên dữ liệu seed nằm sẵn trong repo, không phụ thuộc bên ngoài</td></tr>
+            <tr><td>Mock shipping API</td><td>Cùng service FastAPI: xác nhận giao hàng, sự kiện tracking</td><td>Hiện "chưa xác nhận giao → escalate", không bịa ngày giao</td></tr>
+            <tr><td>Video indexer</td><td>ffmpeg (CPU) + LLM đa phương thức hosted free tier (Gemini / Groq / OpenRouter — 1 chính + 1 dự phòng): trích khung hình + transcript, kiểm tra claim theo timestamp</td><td>Model lỗi/timeout → chỉ dùng khung hình + transcript, hạ độ tin cậy xuống thấp và <strong>escalate</strong> — không bao giờ tự duyệt trên một lần kiểm tra đã hỏng</td></tr>
+            <tr><td>Policy engine xác định</td><td>Code thuần, không LLM: hạn trả, trần hoàn tiền, luật theo danh mục, "mỗi đơn một lần trả"</td><td>Không áp dụng — đây là code; nếu không đánh giá được thì ca đó escalate</td></tr>
+            <tr><td>Audit log</td><td>JSONL append-only trong SQLite/file: mọi tool call, plan, verdict, phê duyệt, hành động — đúng must-have "log mọi hành động" của PS-04</td><td>—</td></tr>
+            <tr><td>Web chat + dashboard</td><td>Kênh tiếp nhận người mua, hàng đợi duyệt của người bán, màn hình gói bằng chứng</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <p class="small">FAQ chính thức xác nhận free tier là đủ, không cần API trả phí — nhưng quota free tier "có thể thay đổi", phải kiểm tra trực tiếp trong console của nhà cung cấp vào ngày build (11/11) và luôn giữ phương án dự phòng. <span class="src">Nguồn: <a href="https://hack4hack.com/hackathons/agentx-hackathon-2026-hooc">trang chính thức</a> · <a href="https://www.kdnuggets.com/5-free-llm-api-providers-you-can-use-in-2026">KDnuggets — free LLM APIs 2026</a></span></p>
+
+        <h3>Cơ chế kiểm chứng — slide ăn điểm "thiết kế agent" (25%)</h3>
+        <div class="vstack">
+          <div class="vcard">
+            <h4><span class="mono">A</span>Planner — LLM, chỉ xuất cấu trúc</h4>
+            <p>Trả về một <em>typed plan object</em> (các bước, tool, đầu ra kỳ vọng, trần tiền). Code không bao giờ phân tích văn xuôi tự do để quyết định hành động. Đúng mẫu LangGraph: "thứ tự, rẽ nhánh, giới hạn và phê duyệt là code; diễn giải yêu cầu và viết câu trả lời là việc của model".</p>
+          </div>
+          <div class="vcard">
+            <h4><span class="mono">B</span>Executor — chạy và checkpoint</h4>
+            <p>Chạy các tool call theo plan, checkpoint trạng thái sau mỗi bước (state graph kiểu LangGraph; nếu thời gian gấp, state machine Python thuần cũng được — deck nên nêu <em>đồ thị trạng thái</em> mới là điểm chính, không phải thư viện).</p>
+          </div>
+          <div class="vcard">
+            <h4><span class="mono">C</span>Verifier xác định — code, LLM không override được</h4>
+            <ul>
+              <li>(a) Đơn tồn tại và khớp với người mua</li>
+              <li>(b) Còn trong hạn trả hàng</li>
+              <li>(c) Số tiền hoàn ≤ trần và ≤ giá trị đơn</li>
+              <li>(d) Hành động đề xuất thuộc nhóm chính sách cho phép với danh mục này</li>
+              <li>(e) Mọi claim thực tế trong bản nháp trả lời phải khớp một đầu ra tool (mã đơn, số tiền, sự kiện tracking, timestamp khung hình)</li>
+            </ul>
+            <p style="margin-top:8px">Bất kỳ kiểm tra nào trượt → chặn + escalate kèm lý do.</p>
+          </div>
+          <div class="vcard">
+            <h4><span class="mono">D</span>Critic độc lập + cổng người duyệt</h4>
+            <p>Một lượt LLM thứ hai (temperature 0, prompt khác) đọc lại plan + đầu ra tool + hành động đề xuất, bắt buộc xuất <strong>APPROVE / REJECT kèm lý do</strong>, chuyên săn: claim không có bằng chứng, lệch số tiền, lệch SKU, xác nhận giao hàng cũ/thiếu. Sau đó là <strong>cổng người</strong>: người bán duyệt (tạm dừng kiểu <span class="mono">interrupt()</span>) trước khi bất kỳ hoàn tiền/nhãn nào được phát hành — việc của agent là biến quyết định đó thành 10 giây (gói bằng chứng + 1 click), không phải loại bỏ con người.</p>
+          </div>
+        </div>
+        <div class="failclosed">
+          Quy tắc fail-closed, viết nguyên văn lên slide: "Nếu bằng chứng, chính sách hoặc checker không đồng thuận — chúng tôi escalate. Không bao giờ tự từ chối người mua, không bao giờ tự hoàn tiền trên bằng chứng yếu."
+          <span>Câu này trả lời cùng lúc cả hai phản đối lớn nhất: thiên vị bất công với người mua, và LLM bịa.</span>
+        </div>
+
+        <h3>Chứng minh bằng bằng chứng — mọi đầu ra đều có trích dẫn bấm được</h3>
+        <p>
+          <strong>Sự thật đơn hàng:</strong> mã đơn, SKU đã đặt vs SKU xuất hiện, giá, ngày giao — từ API mock store/shipping (đầu ra tool, không phải trí nhớ của model).
+          <strong>Sự thật video:</strong> "Hư hỏng thấy rõ ở 0:12–0:18 (bộ khung hình A); tem/nhãn không xuất hiện trong bất kỳ khung hình nào đã lấy mẫu" — có mốc thời gian để người bán xem 6 giây thay vì 60 giây.
+          <strong>Sự thật chính sách:</strong> "Hạn trả: 7 ngày, đang ở ngày 3 — trong chính sách. Trần hoàn danh mục này: ₹X — đề xuất ₹Y, trong trần" — điều khoản + con số từ policy engine.
+          <strong>Sự thật audit:</strong> toàn bộ vết plan → tool output → verdict của verifier → verdict của critic → quyết định của người bán nằm trong log và hiện trong gói bằng chứng.
+          Một claim không có trích dẫn được coi là bug, không phải tính năng.
+        </p>
+
+        <h3>Demo 3 phút — 3 ca (storyboard cho video chung kết, và là nội dung Slide 5)</h3>
+        <div class="cases">
+          <div class="case">
+            <div class="time">45 giây</div>
+            <h4>Ca 1 · Được duyệt</h4>
+            <p>Người mua báo rách đường may + gửi video → đơn và giao hàng được xác nhận → hư hỏng thấy rõ tại các timestamp → trong hạn và trong trần → người bán duyệt → nhãn trả mock được phát hành, log hiện lên.</p>
+          </div>
+          <div class="case star">
+            <span class="badge">Ca quan trọng nhất</span>
+            <div class="time">60 giây</div>
+            <h4>Ca 2 · Bị escalate</h4>
+            <p>Người mua kêu "sai hàng" nhưng video cho thấy SKU khác / không có nhãn → checker gắn cờ lệch SKU → agent <strong>không</strong> hoàn tiền; người bán nhận gói bằng chứng + bản nháp xin ảnh chụp nhãn. Ca này chứng minh verifier thật sự làm việc.</p>
+          </div>
+          <div class="case">
+            <div class="time">45 giây</div>
+            <h4>Ca 3 · Xin thêm bằng chứng</h4>
+            <p>Video quá tối/ngắn để phán đoán → agent xin đúng một khung hình cụ thể thay vì đoán, ca vẫn mở kèm checklist bằng chứng còn thiếu. Đóng demo (30 giây): dashboard 3 ca, audit log của từng ca, và thời gian tiết kiệm được so với xem full video thủ công — <em>đo ngay trong demo</em>, không tuyên bố như số liệu thị trường.</p>
+          </div>
+        </div>
+
+        <h3>Vì sao thắng phương án dự phòng — đối với đúng đội này</h3>
+        <p>
+          Câu chuyện verifier của PS-01 cũng mạnh ngang, nhưng PS-04 là đề duy nhất mà truy xuất video là <em>nguồn bằng chứng cho quyết định</em> chứ không phải tính năng gắn thêm;
+          nơi hành động không thể đảo ngược (tiền/nhãn) khiến cổng người duyệt là bắt buộc thật sự chứ không phải trang trí;
+          và nơi dữ liệu mock hoàn toàn đáng tin (đội tự bịa ra một cửa hàng, nên không ai hỏi vì sao thiếu dữ liệu chính phủ trực tiếp).
+          <span class="src">(Suy luận: với cách chấm vòng ý tưởng thiên về khả thi + thiết kế agent, tổ hợp này là gói có xác suất cao nhất.)</span>
+        </p>
+        <p>
+          <strong>Rủi ro phải nêu trước trong deck:</strong> phán đoán video có thể sai (nhầm SKU, ánh sáng kém, "đã mặc" vs "hư hỏng" mơ hồ)
+          → thiết kế bắt buộc escalate khi độ tin cậy thấp; luật trần hoàn/hạn trả phải là code chứ không phải prompt, nếu không một tin nhắn khéo léo có thể "nói khéo" cho agent vượt rào;
+          video người mua là dữ liệu nhạy cảm kể cả khi mock → demo dùng clip dàn dựng mẫu, đúng luật "chỉ dữ liệu mock/mẫu" của ban tổ chức.
+        </p>
+      </section>
+
+      <!-- ============ 3. DECK OUTLINE ============ -->
+      <section id="deck">
+        <div class="sec-head"><span class="sec-num">03</span><h2 class="sec">Đề cương deck 6 slide — làm ngay trong hôm nay</h2></div>
+        <p class="sec-sub">
+          Giới hạn chính thức: <strong>tối đa 6 slide, nộp dạng link</strong>. Đừng nộp 7+ slide mong thêm nội dung sẽ có lợi —
+          điều đó chỉ cho thấy đội không đọc kỹ brief. Mỗi slide dưới đây ghi rõ thứ <em>bắt buộc phải có</em> để ăn điểm
+          phù hợp vấn đề (25%) và thiết kế agent (25%), kèm cái bẫy phải tránh.
+          Nguyên tắc trình bày: một ý tưởng mỗi slide, chữ lớn, không đoạn văn dài; mọi con số hoặc có nguồn hoặc ghi nhãn "mock/demo";
+          các từ "mock", "mẫu dàn dựng", "escalate khi không chắc" nên xuất hiện — chúng chứng tỏ đội đã đọc luật.
+        </p>
+
+        <div class="decktabs" role="tablist" aria-label="6 slide của idea deck">
+          <button role="tab" aria-selected="true" data-slide="1">Slide 1</button>
+          <button role="tab" aria-selected="false" data-slide="2">Slide 2</button>
+          <button role="tab" aria-selected="false" data-slide="3">Slide 3</button>
+          <button role="tab" aria-selected="false" data-slide="4">Slide 4</button>
+          <button role="tab" aria-selected="false" data-slide="5">Slide 5</button>
+          <button role="tab" aria-selected="false" data-slide="6">Slide 6</button>
+        </div>
+
+        <div class="deckpanel" id="panel-1" role="tabpanel">
+          <h3>Slide 1 — Tiêu đề + ý tưởng trong một câu</h3>
+          <div class="scores">Ăn điểm: Trình bày · ấn tượng đầu về độ phù hợp vấn đề</div>
+          <ul>
+            <li><strong>Nhãn đội/đề:</strong> "PS-04 · ReturnLens"</li>
+            <li><strong>Một câu duy nhất:</strong> "Agent xét trả hàng có kiểm chứng bằng chứng cho người bán online nhỏ: nó kiểm chứng video trả hàng của người mua đối chiếu với đơn hàng thật trước khi bất kỳ hoàn tiền hay nhãn trả nào được phát hành."</li>
+            <li><strong>Người dùng trong một dòng:</strong> người bán solo/nhỏ đang tự xử lý trả hàng một mình</li>
+            <li><strong>Dòng phạm vi 24h:</strong> "một luồng duy nhất: phân loại trả hàng; dữ liệu cửa hàng mock"</li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>Tiêu đề mơ hồ ("AI Support Agent") hoặc danh sách tính năng không có người dùng. Giám khảo phải hiểu người dùng + công việc + điểm khác biệt trong 10 giây.</div>
+        </div>
+
+        <div class="deckpanel" id="panel-2" role="tabpanel" hidden>
+          <h3>Slide 2 — Vấn đề: ai đau, đau thế nào, hôm nay họ làm gì</h3>
+          <div class="scores">Ăn điểm: Phù hợp vấn đề &amp; tác động — 25%</div>
+          <ul>
+            <li><strong>Quy trình hiện tại của người bán:</strong> xem video → kiểm tra đơn ở một tab → kiểm tra chính sách ở tab khác → tự quyết định một mình</li>
+            <li><strong>Chi phí sai cả hai chiều:</strong> hoàn tiền oan, hoặc từ chối oan + tranh chấp</li>
+            <li><strong>Một tín hiệu có nguồn, ghi nhãn trung thực:</strong> UniCommerce chỉ ra người bán thua khiếu nại trả hàng giả vì "thiếu bằng chứng để tranh chấp"; bài báo tháng 10/2026 về "wardrobing" phản ánh thiệt hại của người bán nhỏ — ghi rõ đây là <em>báo chí phản ánh</em>, không phải quy mô thị trường đã kiểm chứng</li>
+            <li><strong>Nói rõ cái KHÔNG phải vấn đề:</strong> "Không phải thêm một chatbot WISMO nữa — Robylon/Robofy đã trả lời câu hỏi trạng thái đơn rồi"</li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>Bịa TAM ("thị trường ₹X crore") không nguồn, hoặc mô tả vấn đề chung chung đến mức áp cho chatbot hỗ trợ nào cũng được.</div>
+        </div>
+
+        <div class="deckpanel" id="panel-3" role="tabpanel" hidden>
+          <h3>Slide 3 — Giải pháp: công việc đầu-cuối trong 5 bước</h3>
+          <div class="scores">Ăn điểm: Phù hợp vấn đề · Sáng tạo — 15%</div>
+          <ul>
+            <li><strong>Nén luồng 7 bước thành 5 bước trực quan:</strong> Tiếp nhận → Lập kế hoạch → Bằng chứng đơn hàng + video → Kiểm chứng → Duyệt / Escalate</li>
+            <li><strong>Kể tên 3 ca demo:</strong> được duyệt / bị escalate / xin thêm bằng chứng</li>
+            <li><strong>Nêu wedge thật rõ:</strong> "24h chỉ làm trả hàng; tra cứu WISMO là một route mỏng, bộ hỗ trợ đầy đủ nằm ngoài phạm vi"</li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>Ảnh chụp giao diện chatbot không có hành động. Mỗi bước phải kết thúc bằng một tool call, một quyết định, hoặc một sản phẩm cụ thể (nhãn, log, gói escalate).</div>
+        </div>
+
+        <div class="deckpanel" id="panel-4" role="tabpanel" hidden>
+          <h3>Slide 4 — Thiết kế agent: plan → tool → verify → cổng người</h3>
+          <div class="scores">Ăn điểm: Thiết kế agent — 25% · SLIDE QUAN TRỌNG NHẤT</div>
+          <ul>
+            <li><strong>Sơ đồ 4 hộp:</strong> Planner (typed plan) → Tools (mock store, mock shipping, video indexer) → Verifier xác định + Critic (code + kiểm tra temperature 0; LLM không override được trần/hạn/khớp SKU) → Người bán duyệt → Hành động + Audit log</li>
+            <li><strong>Quy tắc fail-closed trong một dòng</strong> (nguyên văn ở mục 02)</li>
+            <li><strong>Bộ nhớ:</strong> chính sách người bán + lịch sử ca, không bao giờ tự từ chối dựa trên lịch sử</li>
+            <li><strong>Stack khai trung thực:</strong> Python/FastAPI, state graph kiểu LangGraph (hoặc state machine), log SQLite/JSONL, ffmpeg + model đa phương thức hosted free tier, <strong>không cần GPU</strong></li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>"Chúng tôi dùng LangChain + GPT + RAG" mà không có kiểm chứng, không có cổng người, không giải thích LLM <em>không được phép</em> quyết định cái gì. Đó chính là deck generic.</div>
+        </div>
+
+        <div class="deckpanel" id="panel-5" role="tabpanel" hidden>
+          <h3>Slide 5 — Bằng chứng &amp; demo: câu trả lời được chứng minh thế nào</h3>
+          <div class="scores">Ăn điểm: Demo &amp; độ ổn định — 20% (xem trước ở vòng ý tưởng)</div>
+          <ul>
+            <li><strong>Một gói bằng chứng mock của ca bị escalate:</strong> sự thật đơn hàng + timestamp video + điều khoản chính sách + verdict của verifier/critic — slide này chứng minh chữ "verifiable" là thật, không phải buzzword</li>
+            <li><strong>Storyboard demo 3 ca</strong> (ở mục 02)</li>
+            <li><strong>Tuyên bố dữ liệu mock:</strong> "video mẫu dàn dựng, cửa hàng mock — không có dữ liệu khách hàng thật, đúng luật thi"</li>
+            <li><strong>Bảng fallback:</strong> model hỏng → escalate; chưa xác nhận giao hàng → escalate</li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>Hứa tích hợp trực tiếp WhatsApp/Shopify/hãng vận chuyển trong 24h, hoặc trưng con số "tiết kiệm được ₹X" mà demo không đo được.</div>
+        </div>
+
+        <div class="deckpanel" id="panel-6" role="tabpanel" hidden>
+          <h3>Slide 6 — Khả thi, rủi ro, và vì sao là đội này</h3>
+          <div class="scores">Ăn điểm: Tính khả thi (tiêu chí vòng ý tưởng) · Trình bày</div>
+          <ul>
+            <li><strong>Kế hoạch 24h chia cho 2 người:</strong> Người A — đồ thị agent + verifier + API; Người B — video indexer + UI/dashboard + kịch bản demo; chừa 2 giờ đệm tích hợp</li>
+            <li><strong>Danh sách cắt giảm khi trễ:</strong> nếu video indexing trượt tiến độ, cắt route WISMO trước — không bao giờ cắt verifier</li>
+            <li><strong>Top 3 rủi ro + cách giảm thiểu:</strong> video mơ hồ → escalate; rate limit free tier → nhà cung cấp chính + dự phòng + khung hình cache sẵn; test flaky → dữ liệu mock seed sẵn, không key bên ngoài</li>
+            <li><strong>"Vì sao là chúng tôi" trong một dòng:</strong> gắn 3 thế mạnh với 3 phần khó nhất (planning, truy xuất video, kiểm chứng)</li>
+            <li><strong>Đóng bằng checklist must-have của PS-04 đã tick:</strong> tool call trên mock store ✓ · guardrail trần hoàn tiền ✓ · log mọi hành động ✓ · xác nhận của người trước khi hoàn tiền ✓</li>
+          </ul>
+          <div class="trap"><span class="k">Bẫy phải tránh</span>Tuyên bố "không có rủi ro", tuyên bố có GPU mà đội không có, hoặc kết thúc bằng roadmap ("Giai đoạn 2: AI cho mọi thứ") thay vì một kế hoạch 24h build được.</div>
+        </div>
+      </section>
+
+      <!-- ============ 4. OPEN QUESTIONS ============ -->
+      <section id="chua-ro">
+        <div class="sec-head"><span class="sec-num">04</span><h2 class="sec">Những gì chưa kiểm chứng được — đừng đoán thay</h2></div>
+        <ul class="oq">
+          <li><strong>Số đội nộp bài và "tỉ lệ chọi" top 100:</strong> trang chính thức không công bố số đội đã nộp idea, nên không tính được xác suất "top 100 trên N". Bất kỳ con số nào kiểu đó đều là bịa.</li>
+          <li><strong>Tỉ trọng điểm riêng của vòng ý tưởng:</strong> trang công bố trọng số tổng (25/25/20/15/15) và nói vòng ý tưởng chấm theo hiểu vấn đề, khả thi, thiết kế agent — nhưng không công bố % riêng cho vòng này.</li>
+          <li><strong>Danh tính giám khảo và rubric nội bộ:</strong> không công bố trên trang chính thức đã đọc.</li>
+          <li><strong>Quota free tier vào ngày build (11/11):</strong> các hướng dẫn 2026 có liệt kê Gemini/Groq/OpenRouter free tier nhưng ghi rõ quota "có thể thay đổi" — phải tự kiểm tra trong console nhà cung cấp khi build, luôn giữ fallback.</li>
+          <li><strong>Số liệu quy mô thị trường về trả hàng/phúc lợi:</strong> các con số từ vendor/blog (ví dụ "73% người bán lỗ ₹1L+/tháng" của eVanik, bảng thiệt hại của UniCommerce) là tài liệu marketing, không phải thống kê đã kiểm chứng — báo cáo này cố ý <em>không</em> dùng chúng làm số liệu trong deck. Bài Business Standard về wardrobing chỉ được dùng như báo chí phản ánh nỗi đau của người bán.</li>
+          <li><strong>Truy cập API thật trong 24h:</strong> WhatsApp Business, hãng vận chuyển thật, API chính phủ — chưa kiểm chứng được và không được giả định; deck khuyến nghị tránh phụ thuộc vào chúng.</li>
+          <li><strong>Trạng thái đăng ký/nộp bài của đội:</strong> nếu hạn 30/10 23:59 IST đã qua, bước tiếp theo là kiểm tra workspace/email Hack4Hack để xem kết quả shortlist (công bố 31/10–1/11) thay vì làm lại deck.</li>
+        </ul>
+      </section>
+
+      <!-- ============ 5. SOURCES ============ -->
+      <section id="nguon">
+        <div class="sec-head"><span class="sec-num">05</span><h2 class="sec">Nguồn</h2></div>
+        <p class="sec-sub">Nghiên cứu đa nền tảng ngày 30/10/2026: trang chính thức Hack4Hack, Devpost, dev.to, blog ngành, bài báo và tài liệu hackathon 2025–2026. Mọi khẳng định lớn trong trang đều truy được về một nguồn dưới đây.</p>
+        <ul class="srclist">
+          <li>Trang chính thức AgentX (sự kiện, 7 đề, chấm điểm, timeline, luật, FAQ): <a href="https://hack4hack.com/hackathons/agentx-hackathon-2026-hooc">hack4hack.com/hackathons/agentx-hackathon-2026-hooc</a></li>
+          <li>Xu hướng agentic / vượt qua chatbot: <a href="https://blogs.reskilll.com/ai-hackathon-ideas-2026-agentic-ai-mcp-projects/">blogs.reskilll.com</a> · <a href="https://www.nbloglinks.com/global-ai-hackathon-in-2026-2027-career-opportunities-for-ai-students-and-professionals/">nbloglinks.com</a></li>
+          <li>Mẫu đội thắng (hành động + bộ nhớ + tự sửa): <a href="https://www.cockroachlabs.com/blog/winners-cockroachdb-aws-hackathon-agentic-memory/">cockroachlabs.com</a></li>
+          <li>Mẫu kiểm chứng Executor→Validator→Critic và plan→verify→approve: <a href="https://dev.To/aws/how-to-stop-ai-agents-from-hallucinating-silently-with-multi-agent-validation-3f7e">dev.to/aws</a> · <a href="https://www.solutionjet.net/blog/agentic-ai/multi-step-reasoning-agents.html">solutionjet.net</a> · <a href="https://www.braintrust.dev/articles/how-to-build-ai-agent-best-tools-2026">braintrust.dev</a></li>
+          <li>Video-RAG &amp; trích dẫn timecode; ground-before-reasoning: <a href="https://valossa.com/2025/09/agentic-ai-for-video-why-your-content-library-needs-an-agent-not-another-editor/">valossa.com</a> · <a href="https://pub-fad10fba280c45dba0823fd585acc08c.r2.dev/pdf/2605.16740.pdf?v=1789067274">TRACE paper (MAGMaR 2026)</a></li>
+          <li>Free tier không cần GPU: <a href="https://www.kdnuggets.com/5-free-llm-api-providers-you-can-use-in-2026">kdnuggets.com</a> · <a href="https://github.com/au-nlp/2026/blob/HEAD/COMPUTE_RESOURCES.md">github.com/au-nlp/2026</a></li>
+          <li>Bão hòa trading (Alpaca 2026): <a href="https://talalkhawaja.com/articles/paper-trading-only-risk-governor">talalkhawaja.com</a></li>
+          <li>Bão hòa bug-fix: <a href="https://www.codesota.com/guides/swe-bench-explained">codesota.com</a> · <a href="https://en.wikipedia.org/wiki/AI_agent_benchmark">Wikipedia — AI agent benchmark</a> · <a href="https://vimeo.com/1240110460">RepoMedic (Vimeo)</a> · <a href="https://dev.to/priyanshu123coder/building-autofix-agent-autonomous-cicd-failure-remediation-with-trueforge-qodo-3o2a">AutoFix-Agent (dev.to)</a></li>
+          <li>Bão hòa cứu trợ: <a href="https://devpost.com/software/dispatch-3cdaye">Dispatch (Devpost)</a> · <a href="https://devpost.com/software/ragmuffin">RagMuffin (Devpost)</a></li>
+          <li>Phúc lợi / myScheme / rule engine: <a href="https://righttoinformation.wiki/mygov-myscheme-citizen-services-india">righttoinformation.wiki</a> · <a href="https://timesofindia.indiatimes.com/technology/hack-of-day/hack-of-the-day-check-your-eligibility-for-government-schemes-in-one-place/amp_articleshow/127789396.cms">timesofindia.indiatimes.com</a> · <a href="https://dev.to/varshithvhegde/entitled-an-ai-agent-that-tells-indians-which-government-schemes-theyre-owed-built-on-sanity-4dml">Entitled (dev.to)</a> · <a href="https://dev.to/harishkotra/two-databases-one-question-how-i-built-eligible-2im3">Eligible (dev.to)</a></li>
+          <li>Hỗ trợ người bán / bằng chứng trả hàng: <a href="https://www.robylon.ai/industries/ecommerce">robylon.ai</a> · <a href="https://www.robofy.ai/ecommerce-chatbot">robofy.ai</a> · <a href="https://unicommerce.com/blog/prevent-fake-returns-ecommerce-fraud-guide/">unicommerce.com</a> · <a href="https://www.business-standard.com/amp/india-news/wear-return-repeat-how-festive-shoppers-are-hurting-online-sellers-126102900476_1.html">business-standard.com</a></li>
+          <li>Bão hòa placement: <a href="https://devpost.com/software/popular?page=15836">ApplyPilot (Devpost)</a></li>
+        </ul>
+      </section>
+
+      <footer>
+        Research tổng hợp ngày 30/10/2026 từ trang chính thức AgentX Hackathon 2026 (Hack4Hack) và các nguồn công khai liệt kê ở mục 05.
+        Các xếp hạng và khuyến nghị là suy luận phục vụ quyết định của đội, không phải cam kết kết quả từ ban tổ chức.
+      </footer>
+    </div>
+
+    <script>
+      // Countdown to the idea-deck deadline: 30 Oct 23:59 IST = 31 Oct 01:29 Asia/Saigon.
+      (function () {
+        var el = document.getElementById('countdown');
+        var target = new Date('2026-10-31T01:29:00+07:00').getTime();
+        function pad(n) { return (n < 10 ? '0' : '') + n; }
+        function tick() {
+          var diff = target - Date.now();
+          if (diff <= 0) {
+            el.textContent = 'đã qua hạn nộp — kết quả top 100 công bố 31/10–1/11, kiểm tra workspace/email Hack4Hack';
+            return;
+          }
+          var s = Math.floor(diff / 1000);
+          var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+          el.textContent = 'còn ' + h + ':' + pad(m) + ':' + pad(sec) + ' để nộp';
+          setTimeout(tick, 1000);
+        }
+        tick();
+      })();
+
+      // Deck outline tabs.
+      (function () {
+        var tabs = document.querySelectorAll('.decktabs button');
+        function select(n) {
+          tabs.forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-slide') === n ? 'true' : 'false'); });
+          for (var i = 1; i <= 6; i++) {
+            var p = document.getElementById('panel-' + i);
+            if (p) p.hidden = String(i) !== n;
+          }
+        }
+        tabs.forEach(function (b) {
+          b.addEventListener('click', function () { select(b.getAttribute('data-slide')); });
+        });
+      })();
+    </script>
+  </body>
+</html>

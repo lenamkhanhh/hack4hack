@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReturnLens — AgentX Hackathon 2026 (PS-04)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-light: #F5F3EF;
+      --bg-white: #FFFFFF;
+      --bg-dark: #0D1814;
+      --bg-dark-card: #14221D;
+      --bg-dark-line: #1F342C;
+      --text-dark: #172621;
+      --text-muted: #5A6661;
+      --text-light: #EDEBE6;
+      --text-light-muted: #95A39D;
+      --accent-teal: #006B55;
+      --accent-teal-soft: #E6F3EE;
+      --accent-amber: #D88C31;
+      --accent-amber-soft: #FBF2E6;
+      --accent-red: #C53929;
+      --border-line: #E2DFD8;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    body {
+      background-color: #242726;
+      font-family: var(--font-sans);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 16:9 Presentation Canvas: 1280px x 720px */
+    .slide {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      background-color: var(--bg-light);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 50px 64px 38px 64px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+      border-radius: 0px; /* Sharp corners */
+    }
+
+    .slide.dark-theme {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    /* Header & Tag Typography */
+    .slide-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .label-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide.dark-theme .label-tag {
+      color: #3EC9B6;
+    }
+
+    h1.slide-title {
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text-dark);
+    }
+
+    .slide.dark-theme h1.slide-title {
+      color: #FFFFFF;
+    }
+
+    p.slide-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .slide.dark-theme p.slide-sub {
+      color: var(--text-light-muted);
+    }
+
+    /* Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-line);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .slide.dark-theme .slide-footer {
+      border-top-color: var(--bg-dark-line);
+      color: var(--text-light-muted);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Print Styles for Perfect 16:9 PDF Export */
+    @page {
+      size: 1280px 720px;
+      margin: 0;
+    }
+    @media print {
+      body {
+        background: transparent !important;
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+      .slide {
+        box-shadow: none !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .nav-controls {
+        display: none !important;
+      }
+    }
+
+    .nav-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(17, 17, 17, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 4px;
+      color: #FFF;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      gap: 12px;
+      z-index: 9999;
+    }
+    .nav-controls button {
+      background: var(--accent-teal);
+      border: none;
+      color: #FFF;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* =========================================
+       SLIDE 1: PRODUCT INTRODUCTION
+    ========================================= */
+    .s1-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 48px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .s1-left {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand-title {
+      font-size: 64px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--text-dark);
+      line-height: 1;
+    }
+
+    .brand-lead {
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--accent-teal);
+      letter-spacing: -0.015em;
+    }
+
+    .brand-desc {
+      font-size: 15.5px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 500px;
+    }
+
+    .meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 5px 12px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .hero-evidence-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 12px;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--accent-amber-soft);
+      color: var(--accent-amber);
+      padding: 4px 10px;
+    }
+
+    .card-item-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .item-thumbnail {
+      width: 80px;
+      height: 80px;
+      background: #F0ECE1;
+      border: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .item-specs h4 {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .item-specs p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .video-proof-box {
+      background: #171A1E;
+      color: #FFF;
+      padding: 14px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .video-proof-box .time-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      width: fit-content;
+    }
+
+    .action-gate-bar {
+      border-top: 1px solid var(--border-line);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-approve {
+      background: var(--accent-teal);
+      color: #FFF;
+      border: none;
+      padding: 8px 18px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* =========================================
+       SLIDE 2: THE SELLER'S PROBLEM
+    ========================================= */
+    .s2-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .tabs-visual-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .tab-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tab-card .t-head {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-teal);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 6px;
+    }
+
+    .tab-card .t-body {
+      font-size: 13.5px;
+      color: var(--text-dark);
+      line-height: 1.45;
+    }
+
+    .s2-bottom-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .cost-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      border-left: 4px solid var(--accent-amber);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cost-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .cost-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .stat-callout {
+      background: var(--accent-teal-soft);
+      border: 1px solid #C4E2D7;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .stat-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-teal);
+    }
+
+    .stat-note {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    /* =========================================
+       SLIDE 3: PRODUCT DEMONSTRATION (STAR SLIDE)
+    ========================================= */
+    .s3-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .s3-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.15fr;
+      gap: 20px;
+    }
+
+    .evidence-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .evidence-box.highlight-mismatch {
+      border: 2px solid var(--accent-amber);
+    }
+
+    .ev-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 8px;
+    }
+
+    .ev-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .ev-img-wrap {
+      height: 150px;
+      background: #ECEEE9;
+      border: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ev-img-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+
+    .verdict-action-panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      border-left: 4px solid var(--accent-amber);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .verdict-status-pill {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--accent-amber);
+      color: #FFF;
+      padding: 5px 12px;
+      width: fit-content;
+    }
+
+    .seller-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12.5px;
+      color: var(--text-dark);
+      padding-left: 18px;
+    }
+
+    /* =========================================
+       SLIDE 4: WORKFLOW & DECISION AUTHORITY (DARK)
+    ========================================= */
+    .s4-diagram-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .node-flow-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      position: relative;
+    }
+
+    .flow-node {
+      background: var(--bg-dark-card);
+      border: 1px solid var(--bg-dark-line);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .flow-node.key-node {
+      border: 2px solid #3EC9B6;
+    }
+
+    .n-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: #3EC9B6;
+    }
+
+    .n-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFF;
+    }
+
+    .n-desc {
+      font-size: 12px;
+      color: var(--text-light-muted);
+      line-height: 1.4;
+    }
+
+    .branches-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .branch-card {
+      background: var(--bg-dark-card);
+      border: 1px solid var(--bg-dark-line);
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .b-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .b-text {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    .authority-summary-strip {
+      background: var(--bg-dark-card);
+      border: 1px solid var(--bg-dark-line);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-light);
+    }
+
+    /* =========================================
+       SLIDE 5: DEMO SCENARIOS TABLE
+    ========================================= */
+    .s5-table-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .scenario-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+    }
+
+    .scenario-table th, .scenario-table td {
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 13.5px;
+      border-bottom: 1px solid var(--border-line);
+      vertical-align: middle;
+    }
+
+    .scenario-table th {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      background: #ECEEE9;
+    }
+
+    .scenario-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-scenario {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+    }
+
+    .badge-scenario.ready { background: var(--accent-teal-soft); color: var(--accent-teal); }
+    .badge-scenario.mismatch { background: var(--accent-amber-soft); color: var(--accent-amber); }
+    .badge-scenario.unclear { background: #ECEEE9; color: var(--text-dark); }
+    .badge-scenario.context { background: #E9ECEF; color: var(--text-dark); }
+
+    /* =========================================
+       SLIDE 6: 24-HOUR DELIVERY PLAN
+    ========================================= */
+    .s6-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 36px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .timeline-phases {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .phase-row {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .phase-time {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .phase-details h4 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .phase-details p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .team-cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .person-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .person-card .p-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .person-card .p-roles {
+      font-size: 12px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .scope-guard-box {
+      background: var(--accent-teal-soft);
+      border: 1px solid #C4E2D7;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--accent-teal);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav-controls">
+    <span id="slide-num-indicator">Slide 1 / 6</span>
+    <button onclick="prevSlide()">◀ Prev</button>
+    <button onclick="nextSlide()">Next ▶</button>
+    <button onclick="window.print()">Print / PDF</button>
+  </div>
+
+  <!-- SLIDE 1 -->
+  <section class="slide" id="slide-1">
+    <div class="label-tag">
+      <span>AgentX Hackathon 2026</span>
+      <span>·</span>
+      <span>PS-04 Track</span>
+    </div>
+
+    <div class="s1-grid">
+      <div class="s1-left">
+        <h1 class="brand-title">ReturnLens</h1>
+        <h2 class="brand-lead">Review returns with cited video evidence.</h2>
+        <p class="brand-desc">
+          A focused return triage agent for solo direct-to-consumer sellers. It links buyer unboxing clips to store records and policy rules for 1-click decision making.
+        </p>
+
+        <div class="meta-badges">
+          <span class="badge">Team Rookie</span>
+          <span class="badge">3 Members</span>
+          <span class="badge">24-Hour Prototype</span>
+          <span class="badge">Mock Data & Staged Evidence</span>
+        </div>
+      </div>
+
+      <div class="hero-evidence-card">
+        <div class="card-header-row">
+          <div>
+            <span class="mono" style="font-size: 13px; font-weight: 700; color: var(--text-dark);">CASE #RET-2026-084</span>
+            <div class="mono" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Order #ORD-1042 · Customer: Anita S.</div>
+          </div>
+          <span class="card-tag">PENDING REVIEW</span>
+        </div>
+
+        <div class="card-item-row">
+          <div class="item-thumbnail">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGkCAYAAADt3lsjAAAYS0lEQVR4nO3de5BkVX3A8bOzyyM8XEh4aWRZHvIQQUURUQNuASKJxgfGUiyNWmoZE1PRpFKpVExSyT9J/gqSmMgiagBBRDEpiTFgNkREQF4CC8sj4amILKzruspr2dRtnGF2nj3Tv9t9zj2fT9XW7vb0dN/p6Xv62+ee7l6yedOGrQkAgDBjcRcFAIDAAgBogRksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwOqYtbffnrZs2TL0622u89Y77hj69QJANYH1wA9+kD712bPTGWedlT519tnpxxs39k7/k7/+q4nzNKf93T+ckX6yadM2p08931QzfW3yaX/0l3+Rzjhr9cSfNd++YuJr37n2u+njf/6JtOmnP53h/Gelv//0P6err79+2uWf9+WL0o233Dzx/78945Pp4ksumfj/Vy75Wrrxllvm3b6bbl07sV0f+8SfTfx7/HsbP3/ssXTWueem08/8dO/v5v/jrrruunT6mWf2brd1d9457Xqan+u6792Yli5dOvA2N374o4fSFVdfPfH/yy6/PM2muc5rb7xhm9sWAGq1rI0L/cJXvpw+9O73pN2WL0/fW3tL+urX/z299x3vnPj6k089lT7/xQvS29/05vScXXcNve5lS5emj37ggzN+7ZZ169Lxr3pVuvX229MxL3vZtPM/8cQTafU556Qdtt8uveRFR0x83/4rVqT7Hnigd9rjjz+exsbG0j0P3D/x9Xvvvz+ddPxr5922I194eO/PeNTMtJ2X/veadOD+K9OqV78mrbniil7UvPHkk9NPN29O11x/ffr9D34w/Wj9+vSZ885Nf/oHH9vme6+69tp0+CGHhm3zPnvt3fsz7rL/uTydePzxs57/hYcckq667tq+bgsA6LJWZrCaWYynnnqq9+8XHXpY+rVXHrvN1y/816+mVxx1VFq5775zXs4/fe6zYdv0xJNP9gLq2Jcfndbevm7G82y//fbpN1//+nT5lVduc/r+K/ZL933/+71/33P//enwQw5JTz75ZO9nbA6NNZe96y67hGzn2tvvSEcdcWTv30cdeeTEtm7+2c/S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" alt="White Headphones" style="width: 100%; height: 100%; object-fit: contain;">
+          </div>
+          <div class="item-specs">
+            <h4>Wireless Over-Ear Headphones (White)</h4>
+            <p>SKU: HEAD-WHT-02 · Paid: ₹1,499</p>
+            <p style="color: var(--accent-teal);">Delivered 4 days ago (Within 7d window)</p>
+          </div>
+        </div>
+
+        <div class="video-proof-box">
+          <div class="time-badge">CITED FRAME: 00:14 / 00:45</div>
+          <div style="font-family: var(--font-mono); font-size: 11.5px; opacity: 0.9;">
+            "Seam tear on left casing verified. Brand tag matches store SKU."
+          </div>
+        </div>
+
+        <div class="action-gate-bar">
+          <span class="mono" style="font-size: 11px; color: var(--text-muted);">Seller approval mandatory</span>
+          <button class="btn-approve">Approve Return (1-Click)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · Evidence-Backed Return Triage</span>
+      <span>Slide 1 / 6</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide" id="slide-2">
+    <div class="slide-header">
+      <div class="label-tag">
+        <span>The Problem</span>
+        <span>·</span>
+        <span>Solo Seller Bottleneck</span>
+      </div>
+      <h1 class="slide-title">Return evidence is scattered across four sources</h1>
+      <p class="slide-sub">Sellers make high-stakes return decisions from memory while toggling between fragmented tabs.</p>
+    </div>
+
+    <div class="s2-body">
+      <div class="tabs-visual-grid">
+        <div class="tab-card">
+          <div class="t-head">1. Buyer Chat / Video</div>
+          <div class="t-body">
+            "Received damaged unit. Need full refund."<br>
+            <span class="mono" style="font-size: 11.5px; color: var(--accent-teal);">📎 unboxing_clip_32s.mp4</span>
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">2. Order Record</div>
+          <div class="t-body">
+            <span class="mono">ORD-8492 · ₹1,499</span><br>
+            SKU: HEAD-WHT-02<br>
+            Customer: Rohit K.
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">3. Delivery Status</div>
+          <div class="t-body">
+            Delivered: 26 Oct (4d ago)<br>
+            Tracking: TRK-98214-DEL<br>
+            Carrier: MockPost
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">4. Return Policy</div>
+          <div class="t-body">
+            7-day limit from delivery.<br>
+            Tags intact. Original packaging.<br>
+            Refund cap: ₹4,999.
+          </div>
+        </div>
+      </div>
+
+      <div class="s2-bottom-row">
+        <div class="cost-box">
+          <div class="cost-title">The Cost of Guesswork</div>
+          <div class="cost-desc">
+            • <strong>Wrong Approval:</strong> Unrecoverable cash, shipping fees, and inventory lost to fraud or abuse.<br>
+            • <strong>Unfair Denial:</strong> Permanent loss of customer goodwill, chargebacks, and marketplace penalties.
+          </div>
+        </div>
+
+        <div class="stat-callout">
+          <div class="stat-title">Sourced Industry Benchmark</div>
+          <div style="font-size: 12.5px; color: var(--text-dark); line-height: 1.4;">
+            Fraud estimates differ by definition: <strong>9%</strong> (NRF 2025, fraud only) vs <strong>15.14%</strong> (Appriss/Deloitte 2024, fraud & abuse).
+          </div>
+          <div class="stat-note">*U.S. retail estimates; not measured on our target sellers.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · Problem Context</span>
+      <span>Slide 2 / 6</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 (STAR SLIDE) -->
+  <section class="slide" id="slide-3">
+    <div class="slide-header">
+      <div class="label-tag">
+        <span>Product Demonstration</span>
+        <span>·</span>
+        <span>Visual Evidence Benchmark</span>
+      </div>
+      <h1 class="slide-title">A color mismatch needs seller review</h1>
+      <p class="slide-sub">When video evidence contradicts store truth, ReturnLens surfaces the discrepancy without auto-denying.</p>
+    </div>
+
+    <div class="s3-container">
+      <div class="s3-compare-grid">
+        <!-- Store Truth -->
+        <div class="evidence-box">
+          <div class="ev-header">
+            <span class="ev-title">Store API Record</span>
+            <span class="mono" style="font-size: 11px; color: var(--accent-teal); font-weight: 700;">ORDER TRUTH</span>
+          </div>
+          <div class="ev-img-wrap">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGkCAYAAADt3lsjAAAYS0lEQVR4nO3de5BkVX3A8bOzyyM8XEh4aWRZHvIQQUURUQNuASKJxgfGUiyNWmoZE1PRpFKpVExSyT9J/gqSmMgiagBBRDEpiTFgNkREQF4CC8sj4amILKzruspr2dRtnGF2nj3Tv9t9zj2fT9XW7vb0dN/p6Xv62+ee7l6yedOGrQkAgDBjcRcFAIDAAgBogRksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwAIACCawAACCCSwAgGACCwAgmMACAAgmsAAAggksAIBgAgsAIJjAAgAIJrAAAIIJLACAYAILACCYwOqYtbffnrZs2TL0622u89Y77hj69QJANYH1wA9+kD712bPTGWedlT519tnpxxs39k7/k7/+q4nzNKf93T+ckX6yadM2p08931QzfW3yaX/0l3+Rzjhr9cSfNd++YuJr37n2u+njf/6JtOmnP53h/Gelv//0P6err79+2uWf9+WL0o233Dzx/78945Pp4ksumfj/Vy75Wrrxllvm3b6bbl07sV0f+8SfTfx7/HsbP3/ssXTWueem08/8dO/v5v/jrrruunT6mWf2brd1d9457Xqan+u6792Yli5dOvA2N374o4fSFVdfPfH/yy6/PM2muc5rb7xhm9sWAGq1rI0L/cJXvpw+9O73pN2WL0/fW3tL+urX/z299x3vnPj6k089lT7/xQvS29/05vScXXcNve5lS5emj37ggzN+7ZZ169Lxr3pVuvX229MxL3vZtPM/8cQTafU556Qdtt8uveRFR0x83/4rVqT7Hnigd9rjjz+exsbG0j0P3D/x9Xvvvz+ddPxr5922I194eO/PeNTMtJ2X/veadOD+K9OqV78mrbniil7UvPHkk9NPN29O11x/ffr9D34w/Wj9+vSZ885Nf/oHH9vme6+69tp0+CGHhm3zPnvt3fsz7rL/uTydePzxs57/hYcckq667tq+bgsA6LJWZrCaWYynnnqq9+8XHXpY+rVXHrvN1y/816+mVxx1VFq5775zXs4/fe6zYdv0xJNP9gLq2Jcfndbevm7G82y//fbpN1//+nT5lVduc/r+K/ZL933/+71/33P//enwQw5JTz75ZO9nbA6NNZe96y67hGzn2tvvSEcdcWTv30cdeeTEtm7+2c/S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" alt="Ordered White Headphones">
+          </div>
+          <div class="mono" style="font-size: 12.5px; line-height: 1.45;">
+            <strong>SKU: HEAD-WHT-02</strong><br>
+            Product: Wireless Headset<br>
+            Ordered Color: <span style="background: #E5E5E5; padding: 1px 5px;">White</span><br>
+            Price: ₹1,499 · Delivered 4d ago
+          </div>
+        </div>
+
+        <!-- Video Evidence -->
+        <div class="evidence-box highlight-mismatch">
+          <div class="ev-header">
+            <span class="ev-title">Video Evidence</span>
+            <span class="mono" style="font-size: 11px; color: var(--accent-amber); font-weight: 700;">STAGED FRAME [00:07]</span>
+          </div>
+          <div class="ev-img-wrap">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAGkCAYAAADt3lsjAAAdDklEQVR4nO3dC5RcZYHg8X6l0503SbqTkJCEvEgYcVwh4qrMiK4ka1hclREExDkwIrMDZnWjZ3U9nNGdBZegh5UooKiH1Zl1VoH1xYDOwCjCDK8gKCSQhITO+wV5dJImnXTvuQmVVDrd1dVdX1Xdx+93Tk7S1d1V9950ff2v7359u3b8xNbuGgAAgqkLd1cAAAgsAIAyMIMFABCYwAIACExgAQAEJrAAAAITWAAAgQksAIDABBYAQGACCwAgMIEFABCYwAIACExgAQAEJrAAAAITWAAAgTWUegc7tmx7PMymwMCNn9h6ruMGQNyYwQIACExgAQAEJrAAAAITWAAAgQksAIDABBYAQGCJDawnn3zyj3/xi1/Mq6+vr63JgGg/o/2N9rva2wIAlPk6WMXYsmXL/Keffrq9tra2dsSIEXWf//zn2x599NE9udtzH3f//ffv+sY3vrH54x//eOvVV1/d2t7e3tXe3n7405/+9NqNGzcezL/PCRMmDJk/f/6zo0aNqr/jjjtmjh07tuHVV189dO21167Zs2fP4b5uz31+X+//7ne/Oyu67+hjhgwZUjdr1qymGTNmPN1zn5YtWzbjU5/61MtdXV01g92G5ubmum9+85szWltbh4wYMaL+xhtv3PDggw/uit53xRVXtER/ottvuOGGtoceemj3okWLVrS1tZ1Tzv8rACAhM1gHDx7sjuLg/e9//wvXXnvty0uXLp2Wf3vuTxRX559//uiLL7543AUXXPBC9PHf/va3t95+++0z+7rvJUuWTH700Uf3Lly48IXHHnts72c+85lTC93e3+ddddVVq3Pb84Mf/GD7XXfdtbXnYw4dOrQu2vYorkrZhmuuuWbC8uXL90WPdckll7x4yy23TI9uHz9+/JDLLrusJdr/aHu+8pWvHDleAEAyVPwU4YoVK/ZPmjSpsa/3X3/99ZO+/OUvr+/o6DhSL7/61a92rV27tmPIkCG9ngq84IILxtxzzz07o39Hfy9YsOCUQrffe++9cwu9P6e2trbmE5/4xIQo8Ho+5nnnnTfqkUce2VPqNtx9993b77zzzi3Rv+fOnTuss7OzO/p3NOP1rW99a0sUcBs2bHg9enswxxoAqI6Kf+N+z3veM/o3v/nNsTjpad68ec3PPffc/vzbFi9evLavj29paRmybdu2I6cPt27derClpaWh0O1XXnnlqkLvz1m4cOEpy5cvb9++fXtnz8d873vfO/qmm27aUOo27Nq161D095133jnzoosuGnvppZe+GL390ksvHYj+RP/+wAc+MPaBBx44ctoQAEiGigRWY2PjkQXaDQ0NtXPmzGl++9vf/lz+7bmP+9KXvrS+rq6urIvWozVdxXxcNJO2ePHil3t738iRI+vz11KVug2f/OQn1/zkJz959aMf/WjLr3/962PxefrppzctXrz41AsvvHDFYB8LAEj5GqwFCxa8cOutt26K1hfl357788QTT7SvWbOm46yzzhqWf6ouWije131HM0ytra1HTjlOmDChcfv27YcK3d7f50XOOeecEbt37z60atWqjp6PN3fu3OaVK1ceCLENN9988/QoOqN/R4vbFyxYMCb3vuHDh9d/73vfm3Xddde9vGPHjpNm0QCA+Kr4GqyHH354z9lnnz2ir/dHi8q/+MUvTokWkkdvf/jDHx4XzXT19fG//OUvd0Ufk/vY6O1Ct0fhUuj9kcWLF0+67bbbNvf2eFEEPfjgg6+F2IbopwwXLVp0ZF3W2972thG5oHsjKmcsW7Zs81NPPXXspywBgGSoHT+x9cjC6sHasWXb4/19THRpgalTpz6VuzTBY489dtbZZ5/97KZNm064TEM0gxWdJvzsZz87OQqSaOYmmgVasmTJup07dx7q7T4HeomE++67b+4HP/jBlX29f8aMGU3Rmqj3ve99z/e2L7fddtuM66+//oRTh4PdhilTpjRG749Oix48eLDrc5/73CvR2qvLL7+8ZenSpdOfeeaZI8cmulxF9FOGPY8lNTXjJ7ae6zgAkMnAKofogpvRAvKLLrpo5eHDh0vah4FYuHDhmGosOo8uNPrTn/50bnTKMbr+V6UfP64EFgBxlNjAgojAAiCOEvurcgAA4kpgAQAEJrAAAAITWAAAgQksAIDABBYAQGACCwAgMIEFABCYwAIACExgAQAEJrAAAOL2uwgBADiRGSwAgMAEFgBAYAILACAwgQUAEJjAAgAITGABAAQmsAAAAhNYAACBCSwAgMAEFgBAYAILACAwgQUAEJjAAgAITGABAAQmsAAAAhNYAACBCSwAgMAEFgBAYAILACAwgQUAEJjAAgAITGABAAQmsAAAAhNY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" alt="Observed Black Headphones">
+          </div>
+          <div class="mono" style="font-size: 12.5px; line-height: 1.45;">
+            <strong>Observed color: Black</strong><br>
+            SKU: Not verified (unreadable)<br>
+            Tag: Tag not visible in this frame<br>
+            Discrepancy: Color divergence detected
+          </div>
+        </div>
+
+        <!-- Verdict & Resolution Options -->
+        <div class="verdict-action-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="mono" style="font-size: 12px; font-weight: 700; color: var(--text-dark);">Policy P-03 Check:</span>
+            <span class="mono" style="font-weight: 700; color: var(--accent-red);">FAIL (MISMATCH)</span>
+          </div>
+          <span class="verdict-status-pill">STATUS: NEEDS SELLER REVIEW</span>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+            No automatic denial. No return label or refund draft issued at this stage.
+          </p>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-dark); margin-top: 2px;">
+            Seller Resolution Options:
+          </div>
+          <ul class="seller-options-list">
+            <li>Review possible warehouse mis-shipment</li>
+            <li>Request outside-box shipping label photo</li>
+            <li>Hold for physical inspection upon return</li>
+          </ul>
+
+          <div class="mono" style="font-size: 10px; color: var(--text-muted); margin-top: auto; border-top: 1px solid var(--border-line); padding-top: 6px;">
+            Illustrative prototype · Staged mock evidence
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Illustrative Prototype · Staged Mock Evidence · No Real Customer PII</span>
+      <span>Slide 3 / 6</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 (DARK THEME) -->
+  <section class="slide dark-theme" id="slide-4">
+    <div class="slide-header">
+      <div class="label-tag">
+        <span>Workflow & Decision Authority</span>
+        <span>·</span>
+        <span>Deterministic Architecture</span>
+      </div>
+      <h1 class="slide-title">Evidence checks and seller approval</h1>
+      <p class="slide-sub">A deterministic pipeline where models observe, code verifies, and the seller authorizes.</p>
+    </div>
+
+    <div class="s4-diagram-wrap">
+      <div class="node-flow-row">
+        <div class="flow-node">
+          <span class="n-tag">01 · INGEST</span>
+          <span class="n-title">Receive & Retrieve</span>
+          <span class="n-desc">Buyer video & message via mock chat; queries order and courier APIs.</span>
+        </div>
+        <div class="flow-node">
+          <span class="n-tag">02 · OBSERVE</span>
+          <span class="n-title">Model Observation</span>
+          <span class="n-desc">Models inspect frames and generate structured observations with timestamps.</span>
+        </div>
+        <div class="flow-node key-node">
+          <span class="n-tag">03 · CHECK</span>
+          <span class="n-title">Policy Engine (Code)</span>
+          <span class="n-desc">Pure code evaluates 7-day window, delivery date, SKU match, and refund cap.</span>
+        </div>
+        <div class="flow-node">
+          <span class="n-tag">04 · VERIFY</span>
+          <span class="n-title">Independent Critic</span>
+          <span class="n-desc">Audits cited frames to confirm observations are supported by actual visual data.</span>
+        </div>
+        <div class="flow-node">
+          <span class="n-tag">05 · AUTHORIZE</span>
+          <span class="n-title">Seller Gate</span>
+          <span class="n-desc">Seller 1-click approval permits mock return label & refund draft.</span>
+        </div>
+      </div>
+
+      <div class="branches-grid">
+        <div class="branch-card" style="border-left: 3px solid var(--accent-amber);">
+          <span class="b-tag" style="color: var(--accent-amber);">UNCLEAR EVIDENCE</span>
+          <span class="b-text">Asks for specific photo (e.g. tag/serial) and resumes the exact same case.</span>
+        </div>
+        <div class="branch-card" style="border-left: 3px solid #FF8A7A;">
+          <span class="b-tag" style="color: #FF8A7A;">MISMATCH / CONTRADICTION</span>
+          <span class="b-text">Escalates directly to seller review with proof pack; never auto-denies.</span>
+        </div>
+        <div class="branch-card" style="border-left: 3px solid #3EC9B6;">
+          <span class="b-tag" style="color: #3EC9B6;">ALL POLICY CHECKS PASS</span>
+          <span class="b-text">Prepares 1-click approval package for seller; draft in <span class="mono">pending_return_receipt</span>.</span>
+        </div>
+      </div>
+
+      <div class="authority-summary-strip">
+        <span style="color: #3EC9B6; font-weight: 700;">AUTHORITY MODEL:</span>
+        <span>Server-enforced limits</span>
+        <span>·</span>
+        <span>Models observe; pure code evaluates policy</span>
+        <span>·</span>
+        <span>Seller approval required for all actions</span>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · System Architecture & Decision Flow</span>
+      <span>Slide 4 / 6</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 -->
+  <section class="slide" id="slide-5">
+    <div class="slide-header">
+      <div class="label-tag">
+        <span>Demo Scenarios</span>
+        <span>·</span>
+        <span>Benchmark Matrix</span>
+      </div>
+      <h1 class="slide-title">Four return scenarios</h1>
+      <p class="slide-sub">Expected prototype behavior across diverse real-world return situations.</p>
+    </div>
+
+    <div class="s5-table-wrap">
+      <table class="scenario-table">
+        <thead>
+          <tr>
+            <th style="width: 140px;">Scenario</th>
+            <th style="width: 170px;">Case Identifier</th>
+            <th>Evidence Situation</th>
+            <th>Expected Prototype Behavior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge-scenario ready">Ready</span></td>
+            <td class="mono">Case A · ORD-1042<br><span style="color: var(--text-muted); font-size: 11.5px;">₹1,499</span></td>
+            <td>Seam tear verified at 00:14; inside 7-day window; brand tag matches.</td>
+            <td><strong>Prepare for seller approval</strong> → Generates mock label & refund draft in <span class="mono">pending_return_receipt</span>.</td>
+          </tr>
+          <tr>
+            <td><span class="badge-scenario mismatch">Mismatch</span></td>
+            <td class="mono">Case B · ORD-8492<br><span style="color: var(--text-muted); font-size: 11.5px;">₹1,499</span></td>
+            <td>White ordered vs Black observed in frame 00:07; tag missing.</td>
+            <td><strong>Needs seller review</strong> → Flagged with proof pack for manual decision; no auto-denial, no label created.</td>
+          </tr>
+          <tr>
+            <td><span class="badge-scenario unclear">Unclear</span></td>
+            <td class="mono">Case C · ORD-5120<br><span style="color: var(--text-muted); font-size: 11.5px;">₹850</span></td>
+            <td>4-second dark video (brightness 28); only 2 usable frames.</td>
+            <td><strong>Request specific evidence</strong> → Prompts buyer for well-lit tag photo; preserves active case session.</td>
+          </tr>
+          <tr>
+            <td><span class="badge-scenario context">Context</span></td>
+            <td class="mono">Case D · ORD-3391<br><span style="color: var(--text-muted); font-size: 11.5px;">₹2,199</span></td>
+            <td>Continuous take tracking parcel from sealed label to unboxing.</td>
+            <td><strong>Check sequence continuity</strong> → Verifies chronological context; asks for missing angles if needed.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="mono" style="font-size: 11px; color: var(--text-muted);">
+        *Expected prototype behavior on staged benchmark cases; not a measurement of live production metrics.
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Consistent Demo Benchmark Suite · 4 Scenarios</span>
+      <span>Slide 5 / 6</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 -->
+  <section class="slide" id="slide-6">
+    <div class="slide-header">
+      <div class="label-tag">
+        <span>Delivery Plan</span>
+        <span>·</span>
+        <span>Team Rookie</span>
+      </div>
+      <h1 class="slide-title">A focused 24-hour prototype</h1>
+      <p class="slide-sub">Realistic scope and role allocation for a 3-person sprint during the hackathon.</p>
+    </div>
+
+    <div class="s6-grid">
+      <!-- 4 Phases -->
+      <div class="timeline-phases">
+        <div class="phase-row">
+          <div class="phase-time">00h – 06h</div>
+          <div class="phase-details">
+            <h4>Mock APIs & Core Flow</h4>
+            <p>FastAPI mock store and shipping services, SQLite seed data, core StateGraph.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">06h – 12h</div>
+          <div class="phase-details">
+            <h4>Evidence Pipeline & Policy Checks</h4>
+            <p>ffmpeg CPU frame extraction (~1 fps), multimodal prompt grounding, deterministic code policy rules.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">12h – 18h</div>
+          <div class="phase-details">
+            <h4>Integration & 4 Demo Scenarios</h4>
+            <p>End-to-end testing across Cases A, B, C, D; critic checks; fallback error handling.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">18h – 24h</div>
+          <div class="phase-details">
+            <h4>Demo Polish & Packaging</h4>
+            <p>Seller review console polish, 3-minute video walk-through, GitHub README, submission package.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team Allocation -->
+      <div class="team-cards-stack">
+        <div class="person-card">
+          <div class="p-name">Person A (Backend & Logic)</div>
+          <div class="p-roles">Agent flow, state graph, deterministic policy engine, critic, audit log.</div>
+        </div>
+        <div class="person-card">
+          <div class="p-name">Person B (Multimodal & UI)</div>
+          <div class="p-roles">Video pipeline, frame indexer, seller console, evidence pack view.</div>
+        </div>
+        <div class="person-card">
+          <div class="p-name">Person C (QA & Integration)</div>
+          <div class="p-roles">Integration, mock store data, 4 demo cases, fallback testing, demo video.</div>
+        </div>
+
+        <div class="scope-guard-box">
+          <strong>Strict 24-Hour Scope Guardrails:</strong><br>
+          Mock services · Staged evidence · Single seller return workflow · No production payments.
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Project-specific logic written inside the 24 hours · Checkable, buildable agent prototype</span>
+      <span>Slide 6 / 6</span>
+    </div>
+  </section>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    function updateNav() {
+      document.getElementById('slide-num-indicator').innerText = `Slide ${currentSlide} / ${totalSlides}`;
+      const target = document.getElementById(`slide-${currentSlide}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateNav();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateNav();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>

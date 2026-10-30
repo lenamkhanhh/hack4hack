@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReturnLens — AgentX Hackathon 2026 (PS-04)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base Variables */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --bg-light: #F5F3EF;
+      --bg-white: #FFFFFF;
+      --bg-dark: #0D1814;
+      --bg-dark-card: #14221D;
+      --bg-dark-line: #1F342C;
+      --text-dark: #172621;
+      --text-muted: #5A6661;
+      --text-light: #EDEBE6;
+      --text-light-muted: #95A39D;
+      --accent-teal: #006B55;
+      --accent-teal-soft: #E6F3EE;
+      --accent-amber: #D88C31;
+      --accent-amber-soft: #FBF2E6;
+      --accent-red: #C53929;
+      --border-line: #E2DFD8;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+    }
+
+    body {
+      background-color: #2B2E2D;
+      font-family: var(--font-sans);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 16:9 Presentation Slide Canvas: 1280px x 720px */
+    .slide {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      background-color: var(--bg-light);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 64px 44px 64px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+      border-radius: 0px; /* Sharp corners */
+    }
+
+    .slide.dark-theme {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    /* Common Typography */
+    .label-tag {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide.dark-theme .label-tag {
+      color: #3EC9B6;
+    }
+
+    h1.slide-title {
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text-dark);
+      max-width: 900px;
+    }
+
+    .slide.dark-theme h1.slide-title {
+      color: #FFFFFF;
+    }
+
+    /* Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-line);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .slide.dark-theme .slide-footer {
+      border-top-color: var(--bg-dark-line);
+      color: var(--text-light-muted);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Print Styles for Perfect 16:9 PDF Export */
+    @page {
+      size: 1280px 720px;
+      margin: 0;
+    }
+    @media print {
+      body {
+        background: transparent !important;
+        padding: 0 !important;
+        gap: 0 !important;
+      }
+      .slide {
+        box-shadow: none !important;
+        page-break-after: always;
+        break-after: page;
+      }
+      .nav-controls {
+        display: none !important;
+      }
+    }
+
+    /* Nav Overlay (Browser View only) */
+    .nav-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(17, 17, 17, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 4px;
+      color: #FFF;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      gap: 12px;
+      z-index: 9999;
+    }
+    .nav-controls button {
+      background: var(--accent-teal);
+      border: none;
+      color: #FFF;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* SLIDE 1: HERO & EVIDENCE PACK */
+    .s1-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 48px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .s1-left {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .brand-title {
+      font-size: 64px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--text-dark);
+      line-height: 1;
+    }
+
+    .brand-lead {
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1.3;
+      color: var(--accent-teal);
+      letter-spacing: -0.015em;
+    }
+
+    .brand-desc {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 480px;
+    }
+
+    .meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    /* Hero Evidence Card Mockup */
+    .hero-evidence-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 12px;
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--accent-amber-soft);
+      color: var(--accent-amber);
+      padding: 3px 8px;
+    }
+
+    .card-item-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .item-thumbnail {
+      width: 80px;
+      height: 80px;
+      background: #F0ECE1;
+      border: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .item-specs h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .item-specs p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 2px;
+    }
+
+    .video-proof-box {
+      background: #171A1E;
+      color: #FFF;
+      padding: 12px 14px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .video-proof-box .time-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      width: fit-content;
+    }
+
+    .check-list-micro {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11.5px;
+      color: var(--text-dark);
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .check-item .pass {
+      color: var(--accent-teal);
+      font-weight: 700;
+    }
+
+    .action-gate-bar {
+      border-top: 1px solid var(--border-line);
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-approve {
+      background: var(--accent-teal);
+      color: #FFF;
+      border: none;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* SLIDE 2: THE PROBLEM (MULTI-TAB CHAOS) */
+    .s2-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .tabs-visual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .tab-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tab-card .t-head {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 6px;
+    }
+
+    .tab-card .t-body {
+      font-size: 13px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .cost-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      border-left: 4px solid var(--accent-amber);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cost-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .cost-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .stat-callout {
+      background: var(--accent-teal-soft);
+      border: 1px solid #C4E2D7;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--accent-teal);
+    }
+
+    .stat-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* SLIDE 3: 5-STEP WORKFLOW & LABEL MOCKUP */
+    .s3-content {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .flow-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .flow-step-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .flow-step-box.key-step {
+      border: 2px solid var(--accent-teal);
+    }
+
+    .f-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .f-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .f-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .f-example {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-teal);
+      background: var(--accent-teal-soft);
+      padding: 3px 6px;
+      margin-top: auto;
+    }
+
+    .s3-bottom-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .fallback-branch-card {
+      background: var(--bg-white);
+      border: 1px dashed var(--accent-amber);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .fallback-icon {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      color: var(--accent-amber);
+      font-weight: 700;
+    }
+
+    .shipping-label-mock {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: grid;
+      grid-template-columns: 1fr 60px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* SLIDE 4: ARCHITECTURE (DARK THEME) */
+    .s4-pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0 16px;
+      flex: 1;
+    }
+
+    .pillar-card {
+      background: var(--bg-dark-card);
+      border: 1px solid var(--bg-dark-line);
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pillar-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: #3EC9B6;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pillar-card h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #FFF;
+    }
+
+    .pillar-card p {
+      font-size: 13.5px;
+      color: var(--text-light-muted);
+      line-height: 1.5;
+    }
+
+    .pillar-card ul {
+      margin-top: 4px;
+      padding-left: 18px;
+      font-size: 12.5px;
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .arch-bottom-strip {
+      background: var(--bg-dark-card);
+      border: 1px solid var(--bg-dark-line);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-light);
+    }
+
+    /* SLIDE 5: CASE B MISMATCH VISUAL */
+    .s5-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .s5-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.1fr;
+      gap: 20px;
+    }
+
+    .evidence-box {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .evidence-box.highlight-mismatch {
+      border: 2px solid var(--accent-amber);
+    }
+
+    .ev-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-line);
+      padding-bottom: 8px;
+    }
+
+    .ev-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .ev-img-wrap {
+      height: 140px;
+      background: #ECEEE9;
+      border: 1px solid var(--border-line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ev-img-wrap.video-frame {
+      background: #171A1E;
+      color: #FFF;
+    }
+
+    .frame-time-overlay {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #FFF;
+      padding: 2px 6px;
+    }
+
+    .verdict-action-panel {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      border-left: 4px solid var(--accent-amber);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .verdict-status-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--accent-amber);
+      color: #FFF;
+      padding: 4px 8px;
+      width: fit-content;
+    }
+
+    .seller-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-dark);
+    }
+
+    .seller-options-list li {
+      margin-left: 16px;
+    }
+
+    .cases-summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 10px 14px;
+    }
+
+    .c-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .c-badge strong {
+      color: var(--accent-teal);
+    }
+
+    /* SLIDE 6: 24-HOUR PLAN & TEAM */
+    .s6-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 36px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .timeline-phases {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .phase-row {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .phase-time {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .phase-details h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .phase-details p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .team-cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .person-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-line);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .person-card .p-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+
+    .person-card .p-roles {
+      font-size: 12px;
+      color: var(--text-dark);
+      line-height: 1.4;
+    }
+
+    .scope-guard-box {
+      background: var(--accent-teal-soft);
+      border: 1px solid #C4E2D7;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: var(--accent-teal);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation helper for browser presentation -->
+  <div class="nav-controls">
+    <span id="slide-num-indicator">Slide 1 / 6</span>
+    <button onclick="prevSlide()">◀ Prev</button>
+    <button onclick="nextSlide()">Next ▶</button>
+    <button onclick="window.print()">Print / PDF</button>
+  </div>
+
+  <!-- ============================================================
+       SLIDE 1 — TITLE & PRODUCT PROPOSITION
+  ============================================================ -->
+  <section class="slide" id="slide-1">
+    <div class="label-tag">
+      <span>AgentX Hackathon 2026</span>
+      <span>·</span>
+      <span>PS-04 Track</span>
+    </div>
+
+    <div class="s1-grid">
+      <div class="s1-left">
+        <h1 class="brand-title">ReturnLens</h1>
+        <h2 class="brand-lead">Evidence-backed return triage for small online sellers.</h2>
+        <p class="brand-desc">
+          Verifying buyer unboxing videos against mock store truth before any return label or refund draft is prepared for one-click seller sign-off.
+        </p>
+
+        <div class="meta-badges">
+          <span class="badge">Team Rookie</span>
+          <span class="badge">3 Members</span>
+          <span class="badge">24-Hour Prototype</span>
+          <span class="badge">Mock Data & Staged Evidence</span>
+        </div>
+      </div>
+
+      <!-- Right: Product Evidence Pack Hero Mockup -->
+      <div class="hero-evidence-card">
+        <div class="card-header-row">
+          <div>
+            <span class="mono" style="font-size: 13px; font-weight: 700; color: var(--text-dark);">CASE #RET-2026-084</span>
+            <div class="mono" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Order #ORD-1042 · Customer: Anita S.</div>
+          </div>
+          <span class="card-tag">PENDING REVIEW</span>
+        </div>
+
+        <div class="card-item-row">
+          <div class="item-thumbnail">
+            <!-- SVG Headset / Garment icon -->
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#006B55" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            </svg>
+          </div>
+          <div class="item-specs">
+            <h4>Wireless Over-Ear Headphones (White)</h4>
+            <p>SKU: HEAD-WHT-02 · Paid: ₹1,499</p>
+            <p style="color: var(--accent-teal);">Delivered 4 days ago (Within 7d window)</p>
+          </div>
+        </div>
+
+        <div class="video-proof-box">
+          <div class="time-badge">FRAME CITED: 00:14 / 00:45</div>
+          <div style="font-family: var(--font-mono); font-size: 11.5px; opacity: 0.9;">
+            "Seam tear clearly visible on left casing; brand tag matches."
+          </div>
+        </div>
+
+        <div class="check-list-micro">
+          <div class="check-item"><span class="pass">✔</span> <span>Policy P-01: Confirmed delivery via Mock Courier API</span></div>
+          <div class="check-item"><span class="pass">✔</span> <span>Policy P-02: Inside 7-day return window (Day 4)</span></div>
+          <div class="check-item"><span class="pass">✔</span> <span>Policy P-03: Exact SKU and color confirmed</span></div>
+        </div>
+
+        <div class="action-gate-bar">
+          <span class="mono" style="font-size: 11px; color: var(--text-muted);">Seller approval required</span>
+          <button class="btn-approve">Approve Return (1-Click)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · Evidence-Backed Return Triage</span>
+      <span>Slide 1 / 6</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 2 — MANUAL RETURN REVIEW (THE PROBLEM)
+  ============================================================ -->
+  <section class="slide" id="slide-2">
+    <div class="label-tag">
+      <span>The Problem</span>
+      <span>·</span>
+      <span>Solo Seller Bottleneck</span>
+    </div>
+
+    <div>
+      <h1 class="slide-title">The return decision is made from memory, before the evidence is checked.</h1>
+    </div>
+
+    <div class="s2-body">
+      <!-- Left: The Multi-tab Fragmentation Visual -->
+      <div class="tabs-visual-grid">
+        <div class="tab-card">
+          <div class="t-head">Tab 1: Buyer Chat</div>
+          <div class="t-body">
+            "Received damaged item. Need urgent refund."<br>
+            <span class="mono" style="font-size: 11.5px; color: var(--accent-teal);">📎 unboxing_clip_34s.mp4</span>
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">Tab 2: Store Admin</div>
+          <div class="t-body">
+            <span class="mono">ORD-8492 · ₹1,499</span><br>
+            SKU: HEAD-WHT-02<br>
+            Customer: Rohit K.
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">Tab 3: Shipping Portal</div>
+          <div class="t-body">
+            Delivered: 26 Oct (4d ago)<br>
+            Tracking: TRK-98214-DEL<br>
+            Carrier: MockPost
+          </div>
+        </div>
+        <div class="tab-card">
+          <div class="t-head">Tab 4: Policy PDF</div>
+          <div class="t-body">
+            "7-day limit from delivery.<br>
+            Tags intact. Original box.<br>
+            Refund cap: ₹4,999."
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: The Costs & Sourced Stat -->
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="cost-box">
+          <div class="cost-title">A Wrong Decision Costs Both Ways</div>
+          <div class="cost-desc">
+            • <strong>Unjust Approval:</strong> Loses money, shipping costs, and inventory to wardrobing or swapped items.<br>
+            • <strong>Unfair Denial:</strong> Destroys customer goodwill, loses repeat buyers, and invites harsh marketplace disputes.
+          </div>
+        </div>
+
+        <div class="stat-callout">
+          <div class="stat-title">Sourced Industry Benchmark</div>
+          <div style="font-size: 13px; color: var(--text-dark); line-height: 1.45;">
+            Fraud estimates differ by definition: <strong>9%</strong> (NRF / Happy Returns 2025, fraud only) vs <strong>15.14%</strong> (Appriss / Deloitte 2024, fraudulent & abusive claims rate).
+          </div>
+          <div class="stat-note">*U.S. retail estimates; not measured on our target sellers.</div>
+        </div>
+
+        <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.45;">
+          The gap is not a missing returns portal. It is that no single record ties order data, video frame, policy clause, and decision together.
+        </p>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · Problem Context</span>
+      <span>Slide 2 / 6</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 3 — RETURN REQUEST WORKFLOW (THE SOLUTION)
+  ============================================================ -->
+  <section class="slide" id="slide-3">
+    <div class="label-tag">
+      <span>Solution Architecture</span>
+      <span>·</span>
+      <span>End-to-End Workflow</span>
+    </div>
+
+    <div>
+      <h1 class="slide-title">Verify the video first. Act only after the seller approves.</h1>
+    </div>
+
+    <div class="s3-content">
+      <!-- 5 Horizontal Steps -->
+      <div class="flow-strip">
+        <div class="flow-step-box">
+          <div class="f-num">01</div>
+          <div class="f-title">Receive Request</div>
+          <div class="f-desc">Buyer submits claim via mock web chat with 30–60s video proof.</div>
+          <div class="f-example">video + order_id + claim</div>
+        </div>
+        <div class="flow-step-box">
+          <div class="f-num">02</div>
+          <div class="f-title">Retrieve Data</div>
+          <div class="f-desc">Calls mock store & shipping APIs for SKU, price, and delivery date.</div>
+          <div class="f-example">mock order & tracking APIs</div>
+        </div>
+        <div class="flow-step-box">
+          <div class="f-num">03</div>
+          <div class="f-title">Build Evidence</div>
+          <div class="f-desc">Extracts video frames via CPU ffmpeg (~1 fps) and anchors claims.</div>
+          <div class="f-example">server frame manifest</div>
+        </div>
+        <div class="flow-step-box key-step">
+          <div class="f-num">04</div>
+          <div class="f-title">Check Policy</div>
+          <div class="f-desc">Code evaluates policy clauses; critic checks cited frames.</div>
+          <div class="f-example">P-01 to P-08 code checks</div>
+        </div>
+        <div class="flow-step-box">
+          <div class="f-num">05</div>
+          <div class="f-title">Seller Approval</div>
+          <div class="f-desc">Seller clicks once to issue mock return label and refund draft.</div>
+          <div class="f-example">label + draft pending</div>
+        </div>
+      </div>
+
+      <!-- Bottom: Fallback Branch + Mock Label -->
+      <div class="s3-bottom-row">
+        <div class="fallback-branch-card">
+          <div class="fallback-icon">↳</div>
+          <div>
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--text-dark);">
+              Fallback Branch: Request specific evidence → resume same case
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 3px;">
+              If video is blurry or missing tag, agent prompts for a specific photo. Never auto-denies; state is preserved in the same case session.
+            </div>
+          </div>
+        </div>
+
+        <div class="shipping-label-mock">
+          <div>
+            <div style="font-weight: 700; color: var(--accent-teal);">MOCK RETURN LABEL</div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">CARRIER: MOCK-EXPRESS · #RL-9021</div>
+            <div style="font-size: 10px; color: var(--text-dark); margin-top: 4px;">Status: pending_return_receipt</div>
+          </div>
+          <!-- Barcode dummy -->
+          <div style="display: flex; gap: 2px; height: 36px; align-items: stretch; justify-content: flex-end;">
+            <div style="width: 2px; background: #000;"></div>
+            <div style="width: 4px; background: #000;"></div>
+            <div style="width: 1px; background: #000;"></div>
+            <div style="width: 3px; background: #000;"></div>
+            <div style="width: 2px; background: #000;"></div>
+            <div style="width: 5px; background: #000;"></div>
+            <div style="width: 2px; background: #000;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Returns only in 24h prototype · Shared order-status route on same mock APIs</span>
+      <span>Slide 3 / 6</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 4 — POLICY CHECKS AND SELLER APPROVAL (ARCHITECTURE)
+  ============================================================ -->
+  <section class="slide dark-theme" id="slide-4">
+    <div class="label-tag">
+      <span>Architecture & Safety</span>
+      <span>·</span>
+      <span>Deterministic Control</span>
+    </div>
+
+    <div>
+      <h1 class="slide-title">Policy checks and seller approval control actions</h1>
+    </div>
+
+    <div class="s4-pillars">
+      <!-- Pillar 1: OBSERVE -->
+      <div class="pillar-card">
+        <div class="pillar-tag">01 · Observe</div>
+        <h3>Models Inspect Evidence</h3>
+        <p>Models process buyer messages and server-extracted video frames.</p>
+        <ul>
+          <li>Outputs structured visual observations</li>
+          <li>Identifies damage timestamps and tags</li>
+          <li><em>Constraint:</em> Models observe, but observations can be imperfect and are never final verdicts</li>
+        </ul>
+      </div>
+
+      <!-- Pillar 2: CHECK -->
+      <div class="pillar-card" style="border-color: #3EC9B6;">
+        <div class="pillar-tag">02 · Check</div>
+        <h3>Deterministic Policy & Critic</h3>
+        <p>Pure code evaluates server-enforced rules; LLMs cannot override.</p>
+        <ul>
+          <li><strong>Code Policy Engine:</strong> Delivery date, 7-day window, exact SKU match, refund cap calculation</li>
+          <li><strong>Independent Critic:</strong> Reviews cited frames and flags unsupported observations</li>
+          <li>Fail-closed rule: Discrepancy triggers escalation</li>
+        </ul>
+      </div>
+
+      <!-- Pillar 3: AUTHORIZE -->
+      <div class="pillar-card">
+        <div class="pillar-tag">03 · Authorize</div>
+        <h3>Mandatory Seller Gate</h3>
+        <p>Human-in-the-loop sign-off required for all irreversible steps.</p>
+        <ul>
+          <li>No automated refunds or label generation</li>
+          <li>Presents 10-second proof package</li>
+          <li>Draft created in <span class="mono">pending_return_receipt</span></li>
+          <li>Immutable JSONL audit trail of all steps</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Decision Strip -->
+    <div class="arch-bottom-strip">
+      <span style="color: #3EC9B6; font-weight: 700;">DECISION FUNCTION:</span>
+      <span>Contradiction → Escalate</span>
+      <span>|</span>
+      <span>Hard Fail → Escalate</span>
+      <span>|</span>
+      <span>Unclear Evidence → Ask for Photo</span>
+      <span>|</span>
+      <span style="color: #3EC9B6;">All Pass → Seller Review</span>
+    </div>
+
+    <div class="slide-footer">
+      <span>ReturnLens · System Architecture & Policy Enforcement</span>
+      <span>Slide 4 / 6</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 5 — CASE B: MISMATCH THAT NEEDS REVIEW (THE STAR SLIDE)
+  ============================================================ -->
+  <section class="slide" id="slide-5">
+    <div class="label-tag">
+      <span>Evidence Benchmark</span>
+      <span>·</span>
+      <span>Visual Audit Proof</span>
+    </div>
+
+    <div>
+      <h1 class="slide-title">Case B: A mismatch that needs review</h1>
+    </div>
+
+    <div class="s5-container">
+      <!-- 3-Column Comparison: Order Truth vs Video Frame vs Verdict -->
+      <div class="s5-compare-grid">
+        <!-- Order Truth -->
+        <div class="evidence-box">
+          <div class="ev-header">
+            <span class="ev-title">Store API Record</span>
+            <span class="mono" style="font-size: 11px; color: var(--accent-teal);">ORDER TRUTH</span>
+          </div>
+          <div class="ev-img-wrap">
+            <!-- White Headphone illustration -->
+            <svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+              <circle cx="12" cy="12" r="3" fill="#FFF" stroke="#666"></circle>
+            </svg>
+          </div>
+          <div class="mono" style="font-size: 12px; line-height: 1.45;">
+            <strong>SKU: HEAD-WHT-02</strong><br>
+            Product: Wireless Headset<br>
+            Color: <span style="background: #E5E5E5; padding: 1px 4px;">White</span> · ₹1,499
+          </div>
+        </div>
+
+        <!-- Video Frame Evidence -->
+        <div class="evidence-box highlight-mismatch">
+          <div class="ev-header">
+            <span class="ev-title">Video Frame [00:07]</span>
+            <span class="mono" style="font-size: 11px; color: var(--accent-amber); font-weight: 700;">CLAIM EVIDENCE</span>
+          </div>
+          <div class="ev-img-wrap video-frame">
+            <div class="frame-time-overlay">FRAME 00:07 / 00:32</div>
+            <!-- Black Headphone illustration -->
+            <svg width="68" height="68" viewBox="0 0 24 24" fill="#000" stroke="#FFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            </svg>
+          </div>
+          <div class="mono" style="font-size: 12px; line-height: 1.45;">
+            <strong>Observed: HEAD-BLK-09</strong><br>
+            Color: <span style="background: #000; color: #FFF; padding: 1px 4px;">Black</span><br>
+            Status: Brand tag missing
+          </div>
+        </div>
+
+        <!-- Verdict & Seller Action Options -->
+        <div class="verdict-action-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="mono" style="font-size: 12px; font-weight: 700; color: var(--text-dark);">Policy P-03 Check:</span>
+            <span class="mono" style="font-weight: 700; color: var(--accent-red);">FAIL (MISMATCH)</span>
+          </div>
+          <span class="verdict-status-pill">NEEDS SELLER REVIEW · ESCALATED</span>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+            No automatic denial. No return label or refund draft issued at this stage.
+          </p>
+
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-dark); margin-top: 4px;">
+            Seller Resolution Options:
+          </div>
+          <ul class="seller-options-list">
+            <li>Review possible warehouse mis-shipment</li>
+            <li>Request outside-box shipping label photo</li>
+            <li>Hold for physical inspection upon return</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 4 Demo Cases Consistency Strip -->
+      <div class="cases-summary-row">
+        <div class="c-badge">
+          <strong>Case A · Ready:</strong>
+          <span>ORD-1042 (₹1,499) match → 1-click label & draft</span>
+        </div>
+        <div class="c-badge" style="background: var(--accent-amber-soft); padding: 2px 6px;">
+          <strong style="color: var(--accent-amber);">Case B · Mismatch:</strong>
+          <span>Different color/SKU → Escalated for review</span>
+        </div>
+        <div class="c-badge">
+          <strong>Case C · Unclear:</strong>
+          <span>Dark video (br: 28) → Ask photo, resume case</span>
+        </div>
+        <div class="c-badge">
+          <strong>Case D · Context:</strong>
+          <span>Continuous take showing box label to item</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Illustrative Demo Case · Staged mock evidence · No real customer PII</span>
+      <span>Slide 5 / 6</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — 24-HOUR DELIVERY PLAN & TEAM FEASIBILITY
+  ============================================================ -->
+  <section class="slide" id="slide-6">
+    <div class="label-tag">
+      <span>Delivery Plan</span>
+      <span>·</span>
+      <span>Team Rookie</span>
+    </div>
+
+    <div>
+      <h1 class="slide-title">Buildable in 24 hours by 3 people, if the scope stays narrow.</h1>
+    </div>
+
+    <div class="s6-grid">
+      <!-- Left: 4-Phase Timeline -->
+      <div class="timeline-phases">
+        <div class="phase-row">
+          <div class="phase-time">00h – 06h</div>
+          <div class="phase-details">
+            <h4>Mock APIs & Core Return Flow</h4>
+            <p>FastAPI mock store & shipping services, SQLite seed data, core LangGraph state graph.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">06h – 12h</div>
+          <div class="phase-details">
+            <h4>Evidence Pipeline & Policy Checks</h4>
+            <p>ffmpeg CPU frame extraction (~1 fps), multimodal prompt grounding, deterministic code policy rules.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">12h – 18h</div>
+          <div class="phase-details">
+            <h4>Integration & 4 Demo Cases</h4>
+            <p>End-to-end testing of Cases A, B, C, and D, independent critic validation, fallback error handling.</p>
+          </div>
+        </div>
+        <div class="phase-row">
+          <div class="phase-time">18h – 24h</div>
+          <div class="phase-details">
+            <h4>Demo Recording & Submission</h4>
+            <p>Seller review console polish, 3-minute video walk-through, GitHub README, submission package.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: 3 Person Allocation & Scope Boundaries -->
+      <div class="team-cards-stack">
+        <div class="person-card">
+          <div class="p-name">Person A (Backend & Logic)</div>
+          <div class="p-roles">Backend, agent graph, deterministic policy engine, critic, audit log.</div>
+        </div>
+        <div class="person-card">
+          <div class="p-name">Person B (Multimodal & UI)</div>
+          <div class="p-roles">Video pipeline, frame indexer, seller console, evidence pack view.</div>
+        </div>
+        <div class="person-card">
+          <div class="p-name">Person C (QA & Integration)</div>
+          <div class="p-roles">Integration, mock store data, 4 demo cases, fallback testing, demo video.</div>
+        </div>
+
+        <div class="scope-guard-box">
+          <strong>Strict 24-Hour Scope Guardrails:</strong><br>
+          • Cut first: WhatsApp direct, multi-seller, audio, real payment gateway.<br>
+          • Never cut: Code policy engine, critic check, seller gate, 4 demo cases.<br>
+          • Cap: <span class="mono">0 < amount ≤ min(₹4,999, remaining, paid)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <span>Project-specific logic written inside the 24 hours · Checkable, buildable agent prototype</span>
+      <span>Slide 6 / 6</span>
+    </div>
+  </section>
+
+  <script>
+    // Keyboard navigation helper
+    let currentSlide = 1;
+    const totalSlides = 6;
+
+    function updateNav() {
+      document.getElementById('slide-num-indicator').innerText = `Slide ${currentSlide} / ${totalSlides}`;
+      const target = document.getElementById(`slide-${currentSlide}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateNav();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateNav();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      }
+    });
+  </script>
+</body>
+</html>
+
