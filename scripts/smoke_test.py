@@ -266,9 +266,78 @@ def run_tests():
     if geom_passed:
         print("PASSED: All V5 slides passed geometry, safe margins, and collision checks.")
 
+    # 10. Test V6 Deliverables, Geometry & Visual Grounding (New Visual Edition)
+    print("\n[TEST 10] Validating V6 (Visual Redesign Edition) Deliverables, Notes & Bounds...")
+    pairs_v6 = [
+        ("ReturnLens_v6.html", "deliverables/ReturnLens_v6.html"),
+        ("ReturnLens_v6.pdf", "deliverables/ReturnLens_v6.pdf"),
+        ("ReturnLens_v6.pptx", "deliverables/ReturnLens_v6.pptx"),
+        ("ReturnLens_v6_preview.png", "deliverables/ReturnLens_v6_preview.png"),
+    ]
+
+    for root_f, deliv_f in pairs_v6:
+        p_root = base_dir / root_f
+        p_deliv = base_dir / deliv_f
+        if not p_root.exists() or p_root.stat().st_size == 0:
+            print(f"FAILED: {root_f} missing or empty.")
+            all_passed = False
+        elif not p_deliv.exists() or p_deliv.stat().st_size == 0:
+            print(f"FAILED: {deliv_f} missing or empty.")
+            all_passed = False
+        elif file_hash(p_root) != file_hash(p_deliv):
+            print(f"FAILED: {root_f} and {deliv_f} are not synchronized.")
+            all_passed = False
+        else:
+            print(f"PASSED: {root_f} synced with {deliv_f} ({p_root.stat().st_size} bytes).")
+
+    # V6 PDF check
+    pdf_v6_path = base_dir / "deliverables" / "ReturnLens_v6.pdf"
+    doc_v6 = fitz.open(pdf_v6_path)
+    if len(doc_v6) != 6:
+        print(f"FAILED: V6 PDF page count is {len(doc_v6)}, expected 6.")
+        all_passed = False
+    else:
+        print("PASSED: V6 PDF has exactly 6 pages.")
+
+    # V6 PPTX notes and geometry check
+    pptx_v6_path = base_dir / "deliverables" / "ReturnLens_v6.pptx"
+    prs_v6 = Presentation(str(pptx_v6_path))
+    if len(prs_v6.slides) != 6:
+        print(f"FAILED: V6 PPTX slide count is {len(prs_v6.slides)}, expected 6.")
+        all_passed = False
+    else:
+        print("PASSED: V6 PPTX has exactly 6 slides.")
+
+    v6_geom_passed = True
+    for s_idx, slide in enumerate(prs_v6.slides):
+        notes_text = slide.notes_slide.notes_text_frame.text if slide.notes_slide else ""
+        if len(notes_text) < 200:
+            print(f"FAILED: V6 Slide {s_idx + 1} has insufficient speaker notes ({len(notes_text)} chars).")
+            all_passed = False
+        for shape in slide.shapes:
+            left = shape.left.inches if shape.left else 0
+            top = shape.top.inches if shape.top else 0
+            w = shape.width.inches if shape.width else 0
+            h = shape.height.inches if shape.height else 0
+            bottom = top + h
+            right = left + w
+
+            if right > 13.38 or bottom > 7.55:
+                print(f"FAILED: Shape '{shape.name}' on V6 Slide {s_idx + 1} exceeds slide boundary: right={right:.2f}, bottom={bottom:.2f}")
+                v6_geom_passed = False
+                all_passed = False
+
+            if top > 0.1 and top < 6.90 and bottom > 6.98:
+                print(f"FAILED: Content shape '{shape.name}' on V6 Slide {s_idx + 1} collides with footer line at y=7.0 (bottom={bottom:.2f})")
+                v6_geom_passed = False
+                all_passed = False
+
+    if v6_geom_passed:
+        print("PASSED: All V6 slides passed geometry, safe margins, and collision checks.")
+
     print("\n==========================================")
     if all_passed:
-        print("ALL RETURNLENS EXTENDED SMOKE & QA TESTS PASSED! V5 IS VERIFIED & READY FOR SUBMISSION.")
+        print("ALL RETURNLENS EXTENDED SMOKE & QA TESTS PASSED! V5 FLAGSHIP + V6 VISUAL EDITION ARE VERIFIED.")
     else:
         print("SOME SMOKE TESTS FAILED. PLEASE REVIEW LOGS ABOVE.")
     print("==========================================")
