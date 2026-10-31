@@ -1,14 +1,20 @@
 import os
+import sys
+import shutil
 import base64
 import subprocess
+from pathlib import Path
 import fitz
 from PIL import Image
 
-base_dir = r"D:\Code\Code\AIO\Code\hack4hack"
-assets_dir = os.path.join(base_dir, "src", "assets")
+# Robust path derivation (works anywhere, cross-platform)
+base_dir = Path(__file__).resolve().parent.parent
+assets_dir = base_dir / "src" / "assets"
 
 def get_b64(fname):
-    p = os.path.join(assets_dir, fname)
+    p = assets_dir / fname
+    if not p.exists():
+        raise FileNotFoundError(f"Required asset not found: {p}")
     with open(p, 'rb') as f:
         return 'data:image/jpeg;base64,' + base64.b64encode(f.read()).decode('utf-8')
 
@@ -72,7 +78,7 @@ html_content = f"""<!DOCTYPE html>
     height: 720px;
     background-color: var(--cream);
     position: relative;
-    padding: 56px 64px 44px 64px;
+    padding: 50px 64px 40px 64px;
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
     overflow: hidden;
     display: flex;
@@ -91,7 +97,7 @@ html_content = f"""<!DOCTYPE html>
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--primary-teal);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }}
 
   .slide.dark .tag-label {{
@@ -99,7 +105,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide-title {{
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 800;
     line-height: 1.15;
     letter-spacing: -0.5px;
@@ -112,11 +118,11 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide-sub {{
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 400;
     line-height: 1.35;
     color: var(--text-muted);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }}
 
   .slide.dark .slide-sub {{
@@ -125,7 +131,7 @@ html_content = f"""<!DOCTYPE html>
 
   .slide-footer {{
     position: absolute;
-    bottom: 20px;
+    bottom: 18px;
     left: 64px;
     right: 64px;
     display: flex;
@@ -134,7 +140,7 @@ html_content = f"""<!DOCTYPE html>
     font-size: 10px;
     color: var(--text-subtle);
     border-top: 1px solid var(--border-light);
-    padding-top: 12px;
+    padding-top: 10px;
   }}
 
   .slide.dark .slide-footer {{
@@ -146,7 +152,7 @@ html_content = f"""<!DOCTYPE html>
   .hero-layout {{
     display: grid;
     grid-template-columns: 1fr 1.35fr;
-    gap: 48px;
+    gap: 44px;
     height: 100%;
     align-items: stretch;
   }}
@@ -155,11 +161,11 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 28px;
+    padding-bottom: 24px;
   }}
 
   .hero-title {{
-    font-size: 64px;
+    font-size: 60px;
     font-weight: 900;
     letter-spacing: -2px;
     color: var(--dark-green);
@@ -168,7 +174,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .hero-statement {{
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 700;
     color: var(--primary-teal);
     line-height: 1.3;
@@ -185,11 +191,11 @@ html_content = f"""<!DOCTYPE html>
     background: #FFFFFF;
     border: 1px solid var(--border-light);
     border-left: 4px solid var(--primary-teal);
-    padding: 16px 20px;
+    padding: 14px 18px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     color: var(--dark-green);
-    line-height: 1.6;
+    line-height: 1.55;
   }}
 
   .console-window {{
@@ -246,7 +252,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .info-group {{
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }}
 
   .info-group .label {{
@@ -259,7 +265,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .info-group .val {{
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--dark-green);
   }}
@@ -271,14 +277,14 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .status-badge {{
-    background: var(--teal-light);
-    color: var(--primary-teal);
+    background: var(--amber-light);
+    color: #92400E;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 800;
-    padding: 8px 12px;
+    padding: 8px 10px;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     letter-spacing: 0.5px;
   }}
 
@@ -287,28 +293,34 @@ html_content = f"""<!DOCTYPE html>
     background: var(--primary-teal);
     color: #FFFFFF;
     border: none;
-    padding: 12px;
-    font-size: 13px;
+    padding: 11px;
+    font-size: 12px;
     font-weight: 700;
     cursor: default;
     text-align: center;
   }}
 
-  /* SLIDE 2 STYLES */
-  .problem-layout {{
-    position: relative;
-    height: 440px;
+  /* SLIDE 2 STYLES (RECOMPOSED 3-COLUMN LAYOUT: NO OVERLAP) */
+  .problem-layout-3col {{
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1.05fr 1fr;
     gap: 20px;
-    padding: 10px 0;
+    height: 450px;
+    align-items: stretch;
   }}
 
-  .source-node {{
+  .source-col {{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: space-between;
+  }}
+
+  .source-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 24px;
+    padding: 20px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -316,7 +328,7 @@ html_content = f"""<!DOCTYPE html>
 
   .s-label {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: var(--primary-teal);
     text-transform: uppercase;
@@ -324,30 +336,30 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .s-val {{
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--dark-green);
     margin-bottom: 4px;
+    line-height: 1.3;
   }}
 
   .s-sub {{
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
+    line-height: 1.4;
   }}
 
-  .gap-box {{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  .gap-pillar {{
     background: var(--dark-green);
     color: #F5F3EF;
     border: 2px solid var(--coral);
-    padding: 24px 32px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    width: 480px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
-    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   }}
 
   .gap-tag {{
@@ -356,28 +368,29 @@ html_content = f"""<!DOCTYPE html>
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--coral);
-    margin-bottom: 6px;
+    margin-bottom: 12px;
   }}
 
   .gap-title {{
     font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.3px;
-    margin-bottom: 8px;
+    margin-bottom: 14px;
     line-height: 1.25;
+    color: #FFFFFF;
   }}
 
-  .gap-question {{
+  .gap-text {{
     font-size: 12px;
     color: #D1D5DB;
-    line-height: 1.45;
+    line-height: 1.55;
   }}
 
   /* SLIDE 3 STYLES */
   .demo-layout {{
     display: grid;
     grid-template-columns: 2fr 1.05fr;
-    gap: 36px;
+    gap: 32px;
     height: 480px;
   }}
 
@@ -452,7 +465,7 @@ html_content = f"""<!DOCTYPE html>
     background: #FFFFFF;
     border: 1px solid var(--border-light);
     border-left: 4px solid var(--coral);
-    padding: 24px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -461,13 +474,13 @@ html_content = f"""<!DOCTYPE html>
   .decision-finding {{
     background: var(--coral-light);
     border: 1px solid #F87171;
-    padding: 12px 16px;
-    margin-top: 14px;
+    padding: 10px 14px;
+    margin-top: 10px;
   }}
 
   .decision-finding .status-txt {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: #991B1B;
   }}
@@ -475,54 +488,63 @@ html_content = f"""<!DOCTYPE html>
   .safety-box {{
     background: #FAF8F5;
     border: 1px solid var(--border-light);
-    padding: 12px 14px;
+    padding: 10px 12px;
     font-size: 11px;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.45;
   }}
 
   /* SLIDE 4 STYLES (DARK) */
   .arch-pipeline {{
     display: flex;
-    gap: 10px;
-    margin-top: 16px;
-    align-items: stretch;
+    gap: 8px;
+    margin-top: 12px;
+    align-items: center;
   }}
 
   .pipe-step {{
     flex: 1;
     background: #172621;
     border: 1px solid var(--border-dark);
-    padding: 14px 10px;
+    padding: 12px 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 98px;
   }}
 
   .pipe-step.model-step {{ border-top: 3px solid #00D1A7; }}
   .pipe-step.code-step {{ border-top: 3px solid #F5F3EF; }}
   .pipe-step.human-step {{ border-top: 3px solid #FBBF24; }}
 
+  .pipe-arrow {{
+    font-family: 'IBM Plex Mono', monospace;
+    color: #00D1A7;
+    font-size: 14px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }}
+
   .pipe-num {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     color: #6C8279;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }}
 
   .pipe-title {{
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: #F5F3EF;
-    line-height: 1.25;
-    margin-bottom: 6px;
+    line-height: 1.2;
+    margin-bottom: 4px;
   }}
 
   .pipe-role-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
-    padding: 3px 6px;
+    padding: 2px 5px;
     display: inline-block;
     text-align: center;
     letter-spacing: 0.5px;
@@ -532,17 +554,38 @@ html_content = f"""<!DOCTYPE html>
   .tag-model {{ background: rgba(0,209,167,0.18); color: #00D1A7; }}
   .tag-human {{ background: rgba(251,191,36,0.18); color: #FBBF24; }}
 
+  /* Order status sub-bar */
+  .ps04-route-strip {{
+    margin-top: 12px;
+    background: #14221D;
+    border: 1px solid var(--border-dark);
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+  }}
+
+  .ps04-pill {{
+    background: var(--primary-teal);
+    color: #FFFFFF;
+    padding: 3px 8px;
+    font-weight: 700;
+    font-size: 9px;
+  }}
+
   .arch-branches {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-top: 18px;
+    margin-top: 14px;
   }}
 
   .branch-card {{
     background: #121F1B;
     border: 1px solid var(--border-dark);
-    padding: 14px 14px;
+    padding: 12px 14px;
   }}
 
   .branch-head {{
@@ -550,7 +593,7 @@ html_content = f"""<!DOCTYPE html>
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }}
 
   .head-unclear {{ color: #60A5FA; }}
@@ -567,38 +610,38 @@ html_content = f"""<!DOCTYPE html>
   .arch-legend {{
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 18px;
-    padding: 12px 16px;
+    gap: 18px;
+    margin-top: 14px;
+    padding: 10px 14px;
     background: #121F1B;
     border: 1px solid var(--border-dark);
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     color: #A3B8B0;
-    line-height: 1.5;
+    line-height: 1.4;
   }}
 
   /* SLIDE 5 STYLES */
   .scenarios-grid {{
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 10px;
+    margin-top: 12px;
   }}
 
   .scenario-lane {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 14px 20px;
+    padding: 12px 18px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
   }}
 
   .sc-badge {{
     width: 140px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
     letter-spacing: 0.5px;
     padding: 6px 8px;
@@ -613,7 +656,7 @@ html_content = f"""<!DOCTYPE html>
 
   .sc-evidence {{
     flex: 1.1;
-    font-size: 13px;
+    font-size: 12.5px;
     color: var(--dark-green);
     line-height: 1.4;
   }}
@@ -642,27 +685,29 @@ html_content = f"""<!DOCTYPE html>
     color: var(--dark-green);
   }}
 
-  /* SLIDE 6 STYLES */
+  /* SLIDE 6 STYLES (TIMELINE TABLE + SCOPE DISCIPLINE) */
   .timeline-container {{
-    margin-top: 14px;
+    margin-top: 12px;
   }}
 
-  .timeline-bar {{
+  .timeline-table-grid {{
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
     border-bottom: 2px solid var(--primary-teal);
     padding-bottom: 14px;
-    margin-bottom: 18px;
-    gap: 20px;
+    margin-bottom: 16px;
   }}
 
-  .t-phase {{
-    padding-right: 12px;
+  .t-cell {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-light);
+    padding: 12px 14px;
   }}
 
   .t-time {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--primary-teal);
     margin-bottom: 4px;
@@ -670,29 +715,30 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .t-title {{
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--dark-green);
     margin-bottom: 4px;
+    line-height: 1.25;
   }}
 
   .t-owner {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
-    line-height: 1.4;
+    line-height: 1.35;
   }}
 
   .scope-split {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 18px;
   }}
 
   .scope-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 16px 20px;
+    padding: 14px 18px;
   }}
 
   .scope-in {{ border-left: 4px solid var(--primary-teal); }}
@@ -700,7 +746,7 @@ html_content = f"""<!DOCTYPE html>
 
   .scope-head {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 800;
     letter-spacing: 0.5px;
     margin-bottom: 6px;
@@ -710,17 +756,17 @@ html_content = f"""<!DOCTYPE html>
   .scope-out .scope-head {{ color: var(--coral); }}
 
   .scope-text {{
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.45;
   }}
 
   .closing-quote {{
-    margin-top: 16px;
+    margin-top: 14px;
     background: #FAF8F5;
     border: 1px solid var(--border-light);
-    padding: 12px 18px;
-    font-size: 12px;
+    padding: 10px 16px;
+    font-size: 11.5px;
     font-style: italic;
     color: var(--dark-green);
     text-align: center;
@@ -765,10 +811,10 @@ html_content = f"""<!DOCTYPE html>
           <p class="hero-desc">An evidence-backed return triage agent for small direct-to-consumer sellers.</p>
         </div>
         <div class="hero-meta-box">
-          <strong>Team Rookie · 3 members · PS-04 submission</strong><br>
-          User: Solo D2C merchant managing orders and returns alone.<br>
-          Scope in 24h: Return triage only, mock store data + 1 order-status route.<br>
-          Not another chatbot; not an autonomous refund gate.
+          <strong>Team Rookie · 3 members · PS-04 Track</strong><br>
+          Target User: Solo D2C merchant managing orders and returns alone.<br>
+          Scope in 24h: Return triage core + 1 zero-vision order-status route.<br>
+          Guardrails: Fail-closed architecture · No autonomous refunds.
         </div>
       </div>
 
@@ -790,19 +836,19 @@ html_content = f"""<!DOCTYPE html>
                   <div class="val-sub">₹1,499 · Delivered Day 4 (Within 7d window)</div>
                 </div>
                 <div class="info-group">
-                  <div class="label">Evidence Citation</div>
+                  <div class="label">Visual Observation</div>
                   <div class="val">Inspection Frame 00:14</div>
-                  <div class="val-sub">Casing crack verified at lower seam</div>
+                  <div class="val-sub">Potential casing damage flagged · Requires manual confirmation</div>
                 </div>
                 <div class="info-group">
                   <div class="label">Policy Verification</div>
-                  <div class="val">P-01 Physical Defect: PASS</div>
-                  <div class="val-sub">P-04 Return Window: PASS (4 of 7 days)</div>
+                  <div class="val" style="color: #92400E;">P-01 Defect Check: FLAGGED FOR REVIEW</div>
+                  <div class="val-sub">P-04 Return Window: PASS (Day 4 of 7)</div>
                 </div>
               </div>
               <div>
-                <div class="status-badge">READY FOR SELLER REVIEW</div>
-                <button class="btn-cta">Approve Return &amp; Draft Refund</button>
+                <div class="status-badge">READY FOR SELLER REVIEW (FLAGGED)</div>
+                <button class="btn-cta">Review Evidence &amp; Authorize Draft</button>
                 <div style="font-size: 10px; color: var(--text-subtle); text-align: center; margin-top: 6px; font-family: 'IBM Plex Mono', monospace;">
                   Illustrative staged evidence · Mock store data
                 </div>
@@ -818,44 +864,48 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 2: THE PROBLEM AS A VISUAL STORY -->
+  <!-- SLIDE 2: THE PROBLEM (RECOMPOSED 3-COLUMN NO-OVERLAP) -->
   <section class="slide" id="slide-2">
     <div class="tag-label">The Problem · Solo Seller Bottleneck</div>
     <h2 class="slide-title">One return decision. Four disconnected sources.</h2>
     <p class="slide-sub">The return decision is made from memory, before the evidence is checked.</p>
     
-    <div class="problem-layout">
-      <!-- Source Nodes -->
-      <div class="source-node">
-        <div class="s-label">01 Buyer Chat</div>
-        <div class="s-val">“Received damaged item”</div>
-        <div class="s-sub">Buyer upload: 30–60s unboxing video + reason</div>
+    <div class="problem-layout-3col">
+      <!-- Left Column: Sources 01 & 03 -->
+      <div class="source-col">
+        <div class="source-card">
+          <div class="s-label">01 Buyer Chat</div>
+          <div class="s-val">“Received damaged item”</div>
+          <div class="s-sub">Buyer upload: 30–60s unboxing video + reason in support message</div>
+        </div>
+        <div class="source-card">
+          <div class="s-label">03 Courier Tracking</div>
+          <div class="s-val">Delivered 4 days ago</div>
+          <div class="s-sub">Shippo mock tracking API scan timestamp verification</div>
+        </div>
       </div>
 
-      <div class="source-node">
-        <div class="s-label">02 Order Record</div>
-        <div class="s-val">White Headphones · ₹1,499</div>
-        <div class="s-sub">Shopify mock store API inventory database</div>
-      </div>
-
-      <div class="source-node">
-        <div class="s-label">03 Courier Tracking</div>
-        <div class="s-val">Delivered 4 days ago</div>
-        <div class="s-sub">Shippo mock tracking API timestamp verification</div>
-      </div>
-
-      <div class="source-node">
-        <div class="s-label">04 Return Policy</div>
-        <div class="s-val">7-Day Window · Sealed Tag</div>
-        <div class="s-sub">Deterministic code rules P-01 to P-08, never prompts</div>
-      </div>
-
-      <!-- Center Gap Box -->
-      <div class="gap-box">
+      <!-- Center Pillar: Critical Gap (Zero Overlap) -->
+      <div class="gap-pillar">
         <div class="gap-tag">CRITICAL INFORMATION GAP</div>
-        <div class="gap-title">NO SINGLE RECORD TIES ORDER, VIDEO &amp; POLICY TOGETHER</div>
-        <div class="gap-question">
-          Today the seller opens many tabs, then decides alone. A wrong refund loses money and stock; an unfair denial loses a repeat customer. The gap is not a missing returns portal, it is that no single record ties order, video frame, policy clause, and decision together.
+        <div class="gap-title">NO SHARED EVIDENCE RECORD</div>
+        <div class="gap-text">
+          Today the seller opens 4 tabs, then decides alone. A wrong refund loses inventory; an unfair denial loses a customer.<br><br>
+          The gap is that no single record ties order truth, video frames, policy clauses, and decisions together.
+        </div>
+      </div>
+
+      <!-- Right Column: Sources 02 & 04 -->
+      <div class="source-col">
+        <div class="source-card">
+          <div class="s-label">02 Order Record</div>
+          <div class="s-val">White Headphones · ₹1,499</div>
+          <div class="s-sub">Shopify mock store API product inventory catalog</div>
+        </div>
+        <div class="source-card">
+          <div class="s-label">04 Return Policy</div>
+          <div class="s-val">7-Day Window · Sealed Tag</div>
+          <div class="s-sub">Deterministic code rules P-01 to P-08, never prompts</div>
         </div>
       </div>
     </div>
@@ -866,7 +916,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 3: THE STAR DEMO SLIDE -->
+  <!-- SLIDE 3: THE STAR DEMO (EVIDENCE BENCHMARK) -->
   <section class="slide" id="slide-3">
     <div class="tag-label">Visual Evidence Benchmark · Core Demonstration</div>
     <h2 class="slide-title">The order says white. The video shows black.</h2>
@@ -893,8 +943,8 @@ html_content = f"""<!DOCTYPE html>
             <img src="{black_b64}" alt="Black Headphone Video Evidence">
           </div>
           <div class="ev-footer">
-            <strong>Observed: HEAD-BLK-09</strong> · Midnight Black<br>
-            Mock evidence pack · Frame 00:07
+            <strong>Observed Color: Midnight Black</strong><br>
+            Exact SKU: Not verified · Tag: Not visible in cited frame
           </div>
         </div>
 
@@ -904,25 +954,25 @@ html_content = f"""<!DOCTYPE html>
       <div class="demo-decision">
         <div>
           <div class="tag-label" style="color: var(--coral);">Deterministic Policy Gate</div>
-          <div style="font-size: 18px; font-weight: 800; color: var(--dark-green); margin-top: 4px;">Policy P-03 Check: FAIL</div>
-          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+          <div style="font-size: 17px; font-weight: 800; color: var(--dark-green); margin-top: 4px;">P-03 Check: COLOR MISMATCH</div>
+          <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px;">
             Specification contradiction flagged against Shopify order manifest.
           </p>
 
-          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: #FAF8F5; border: 1px solid var(--border-light); padding: 8px 10px; margin-top: 10px; color: var(--dark-green);">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; background: #FAF8F5; border: 1px solid var(--border-light); padding: 6px 10px; margin-top: 8px; color: var(--dark-green);">
             typed JSON, requires_seller_approval: true
           </div>
 
           <div class="decision-finding">
-            <div class="status-txt">STATUS: ESCALATE (NEEDS SELLER REVIEW)</div>
-            <div style="font-size: 11px; color: #991B1B; margin-top: 4px;">Model proposes; human authorizes. No label or refund auto-issued.</div>
+            <div class="status-txt">STATUS: ESCALATE (SELLER REVIEW REQUIRED)</div>
+            <div style="font-size: 10.5px; color: #991B1B; margin-top: 3px;">Color mismatch observed · Exact SKU unconfirmed · No auto-denial.</div>
           </div>
 
-          <div style="margin-top: 12px;">
+          <div style="margin-top: 10px;">
             <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">
               Seller Action Options
             </div>
-            <div style="font-size: 12px; color: var(--dark-green); margin-top: 4px; line-height: 1.45;">
+            <div style="font-size: 11.5px; color: var(--dark-green); margin-top: 3px; line-height: 1.4;">
               1. Accept as merchant mis-shipment (seller mistake)<br>
               2. Ask customer for outside-box shipping label (buyer mistake)<br>
               3. Hold return for physical inspection at warehouse (potential swap)
@@ -950,7 +1000,7 @@ html_content = f"""<!DOCTYPE html>
     <h2 class="slide-title">Models observe. Code verifies. Seller authorizes.</h2>
     <p class="slide-sub">Policy checks and seller approval control actions.</p>
 
-    <!-- 6-Step Horizontal Pipeline -->
+    <!-- 6-Step Horizontal Pipeline with Directional Arrows -->
     <div class="arch-pipeline">
       <div class="pipe-step model-step">
         <div>
@@ -959,6 +1009,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <span class="pipe-role-tag tag-model">MODEL</span>
       </div>
+      <span class="pipe-arrow">→</span>
 
       <div class="pipe-step code-step">
         <div>
@@ -967,6 +1018,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <span class="pipe-role-tag tag-code">CODE</span>
       </div>
+      <span class="pipe-arrow">→</span>
 
       <div class="pipe-step code-step">
         <div>
@@ -975,6 +1027,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <span class="pipe-role-tag tag-code">CODE</span>
       </div>
+      <span class="pipe-arrow">→</span>
 
       <div class="pipe-step model-step">
         <div>
@@ -983,6 +1036,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <span class="pipe-role-tag tag-model">MODEL</span>
       </div>
+      <span class="pipe-arrow">→</span>
 
       <div class="pipe-step human-step">
         <div>
@@ -991,6 +1045,7 @@ html_content = f"""<!DOCTYPE html>
         </div>
         <span class="pipe-role-tag tag-human">HUMAN</span>
       </div>
+      <span class="pipe-arrow">→</span>
 
       <div class="pipe-step code-step">
         <div>
@@ -1001,11 +1056,21 @@ html_content = f"""<!DOCTYPE html>
       </div>
     </div>
 
+    <!-- Secondary PS-04 Order Status Route -->
+    <div class="ps04-route-strip">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="ps04-pill">SECONDARY PS-04 ROUTE</span>
+        <span style="color: #F5F3EF; font-weight: 600;">Order Status Inquiry:</span>
+        <span style="color: #A3B8B0;">Customer: “Where is my order?” → Mock Store API → Courier Scan → Instant Delivery Timestamp</span>
+      </div>
+      <span style="color: #00D1A7;">Zero-Vision Fast Path</span>
+    </div>
+
     <!-- 4 Decision Function Outcomes (Strict Priority Order) -->
     <div class="arch-branches">
       <div class="branch-card">
         <div class="branch-head head-contradict">1. CONTRADICTION → ESCALATE</div>
-        <div class="branch-desc">Discrepancy flagged (e.g. Case B). Inhibits automated label and refund draft. Seller reviews 3 options.</div>
+        <div class="branch-desc">Discrepancy flagged (e.g. Case B). Inhibits automated label/refund. Seller reviews 3 options.</div>
       </div>
 
       <div class="branch-card">
@@ -1027,9 +1092,9 @@ html_content = f"""<!DOCTYPE html>
     <!-- Architecture Guarantees & Critic -->
     <div class="arch-legend">
       <span><strong style="color: #00D1A7;">■ Model Calls:</strong> Exactly 3 base calls per case: planner, vision, critic, plus retries</span>
-      <span><strong style="color: #F5F3EF;">■ Policy Clauses:</strong> Deterministic code rules P-01 to P-08, never prompts</span>
-      <span><strong style="color: #60A5FA;">■ Critic:</strong> The critic reviews cited frames and flags unsupported observations</span>
-      <span><strong style="color: #FBBF24;">■ Safety Limit:</strong> Injection cannot alter policy code or bypass human gate</span>
+      <span><strong style="color: #F5F3EF;">■ Policy Clauses:</strong> Deterministic Python code rules P-01 to P-08, never prompts</span>
+      <span><strong style="color: #60A5FA;">■ Critic Duty:</strong> The critic reviews cited frames and flags unsupported observations</span>
+      <span><strong style="color: #FBBF24;">■ Safety Boundary:</strong> Prompt injection cannot alter policy code or bypass human gate</span>
     </div>
 
     <div class="slide-footer">
@@ -1038,7 +1103,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 5: FOUR DEMO SCENARIOS -->
+  <!-- SLIDE 5: FOUR DEMO BENCHMARK SCENARIOS -->
   <section class="slide" id="slide-5">
     <div class="tag-label">Demo Scenarios · Grounded Verification</div>
     <h2 class="slide-title">Four scenarios. Four predictable behaviors.</h2>
@@ -1049,7 +1114,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="scenario-lane">
         <div class="sc-badge badge-ready">CASE A · READY</div>
         <div class="sc-evidence">
-          <strong>ORD-1042</strong> (₹1,499) · SKU matches manifest, tag present, visible defect within 7-day window.
+          <strong>ORD-1042</strong> (₹1,499) · SKU matches manifest, tag visible, defect confirmed within 7-day window.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
@@ -1059,9 +1124,9 @@ html_content = f"""<!DOCTYPE html>
 
       <!-- Case B -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-mismatch">CASE B · ESCALATE</div>
+        <div class="sc-badge badge-mismatch">CASE B · MISMATCH</div>
         <div class="sc-evidence">
-          <strong>HEAD-WHT-02</strong> vs <strong>HEAD-BLK-09</strong> at Frame 00:07 · Policy P-03 SKU mismatch <strong>FAIL</strong>.
+          <strong>HEAD-WHT-02</strong> (White) ordered vs Frame 00:07 showing Black item · SKU unverified.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
@@ -1071,7 +1136,7 @@ html_content = f"""<!DOCTYPE html>
 
       <!-- Case C -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-unclear">CASE C · ASK MORE</div>
+        <div class="sc-badge badge-unclear">CASE C · UNCLEAR</div>
         <div class="sc-evidence">
           <strong>4-second dark video</strong>, brightness 28, only 2 usable frames · Unclear evidence check.
         </div>
@@ -1083,47 +1148,53 @@ html_content = f"""<!DOCTYPE html>
 
       <!-- Case D -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-continuity">CASE D · CONTINUITY</div>
+        <div class="sc-badge badge-continuity">CASE D · CONTEXT</div>
         <div class="sc-evidence">
-          <strong>Unbroken take</strong>: opening sealed parcel to showing the label in one continuous sequence.
+          <strong>Parcel-to-product take</strong>: opening sealed parcel to product reveal in one continuous take.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
-          Continuity verified: prevents photo-swap fraud before mock return label generation. Proves why video beats photos.
+          Expected behavior: inspect sequence continuity and flag missing transitions for seller review.
         </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Staged sample videos, mock store data, no real customer PII · Cap: min(₹4,999, remaining refundable amount, order paid amount)</span>
+      <span>Staged benchmark scenarios · Expected prototype behaviors, not measured production metrics · Cap: min(₹4,999, remaining refundable amount, order paid amount)</span>
       <span>Slide 5 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 6: 24-HOUR EXECUTION -->
+  <!-- SLIDE 6: 24-HOUR EXECUTION (TIMELINE GRID) -->
   <section class="slide" id="slide-6">
     <div class="tag-label">Execution Plan · Team Rookie (3 Members)</div>
     <h2 class="slide-title">Built for a 24-hour sprint.</h2>
     <p class="slide-sub">Buildable in 24 hours by 3 people, if the scope stays narrow.</p>
 
     <div class="timeline-container">
-      <div class="timeline-bar">
-        <div class="t-phase">
-          <div class="t-time">Person A</div>
-          <div class="t-title">Backend &amp; Agent Core</div>
-          <div class="t-owner">Backend, agent graph, policy, critic, audit log.</div>
+      <div class="timeline-table-grid">
+        <div class="t-cell">
+          <div class="t-time">00h – 06h</div>
+          <div class="t-title">Mock APIs &amp; Agent Core</div>
+          <div class="t-owner">Person A (Backend)<br>LangGraph skeleton, mock store/courier fixtures, order status route</div>
         </div>
 
-        <div class="t-phase">
-          <div class="t-time">Person B</div>
-          <div class="t-title">Video Pipeline &amp; UI</div>
-          <div class="t-owner">Video pipeline, video indexer, seller console, evidence pack view.</div>
+        <div class="t-cell">
+          <div class="t-time">06h – 12h</div>
+          <div class="t-title">Evidence Pipeline &amp; Policy</div>
+          <div class="t-owner">Person B (Video &amp; UI)<br>FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt</div>
         </div>
 
-        <div class="t-phase">
-          <div class="t-time">Person C</div>
-          <div class="t-title">Integration &amp; Verification</div>
-          <div class="t-owner">Integration, mock data, 4 demo cases, fallback testing, demo video, README.</div>
+        <div class="t-cell">
+          <div class="t-time">12h – 18h</div>
+          <div class="t-title">Integration &amp; 4 Scenarios</div>
+          <div class="t-owner">Person C (Integration)<br>End-to-end wiring, 4 staged demo cases (A–D), seller console UI</div>
+        </div>
+
+        <div class="t-cell">
+          <div class="t-time">18h – 24h</div>
+          <div class="t-title">Testing, Polish &amp; Submission</div>
+          <div class="t-owner">All 3 Members<br>Fallback testing, edge cases, video walkthrough recording, README</div>
         </div>
       </div>
 
@@ -1178,84 +1249,112 @@ html_content = f"""<!DOCTYPE html>
 </html>
 """
 
-# 1. Write HTML files
-deliverable_html = os.path.join(base_dir, "deliverables", "ReturnLens_v4.html")
-root_html = os.path.join(base_dir, "ReturnLens_v4.html")
-index_html = os.path.join(base_dir, "index.html")
+def find_browser():
+    candidates = [
+        os.environ.get("CHROME_PATH"),
+        os.environ.get("EDGE_PATH"),
+        shutil.which("msedge"),
+        shutil.which("microsoft-edge"),
+        shutil.which("google-chrome"),
+        shutil.which("chrome"),
+        shutil.which("chromium"),
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        "/usr/bin/google-chrome",
+        "/usr/bin/chromium",
+        "/usr/bin/microsoft-edge"
+    ]
+    for c in candidates:
+        if c and os.path.exists(c):
+            return c
+    return None
 
-for path in [deliverable_html, root_html, index_html]:
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(html_content)
-    print(f"Wrote HTML: {path}")
+def build():
+    # 1. Write HTML outputs (NEVER write to src/generate_v4_html.py)
+    deliverable_html = base_dir / "deliverables" / "ReturnLens_v4.html"
+    root_html = base_dir / "ReturnLens_v4.html"
+    index_html = base_dir / "index.html"
 
-# Also update src/generate_v4_html.py
-src_gen = os.path.join(base_dir, "src", "generate_v4_html.py")
-with open(src_gen, "w", encoding="utf-8") as f:
-    f.write(html_content)
-print(f"Updated: {src_gen}")
+    deliverable_html.parent.mkdir(parents=True, exist_ok=True)
+    for p in [deliverable_html, root_html, index_html]:
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print(f"Wrote HTML: {p}")
 
-# 2. Render PDF using Edge Headless
-deliverable_pdf = os.path.join(base_dir, "deliverables", "ReturnLens_v4.pdf")
-root_pdf = os.path.join(base_dir, "ReturnLens_v4.pdf")
+    # 2. Render PDF via discovered browser
+    deliverable_pdf = base_dir / "deliverables" / "ReturnLens_v4.pdf"
+    root_pdf = base_dir / "ReturnLens_v4.pdf"
 
-edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-if not os.path.exists(edge_path):
-    edge_path = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+    browser_bin = find_browser()
+    if not browser_bin:
+        raise FileNotFoundError(
+            "No headless browser (Edge or Chrome) discovered on system. "
+            "Set CHROME_PATH or EDGE_PATH environment variable."
+        )
 
-file_uri = f"file:///{deliverable_html.replace(os.sep, '/')}"
+    file_uri = deliverable_html.resolve().as_uri()
+    cmd = [
+        str(browser_bin),
+        "--headless",
+        "--disable-gpu",
+        "--no-pdf-header-footer",
+        "--print-to-pdf-no-header",
+        f"--print-to-pdf={deliverable_pdf}",
+        file_uri
+    ]
 
-cmd = [
-    edge_path,
-    "--headless",
-    "--disable-gpu",
-    "--no-pdf-header-footer",
-    "--print-to-pdf-no-header",
-    f"--print-to-pdf={deliverable_pdf}",
-    file_uri
-]
+    print(f"Rendering PDF using: {browser_bin}")
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        raise RuntimeError(f"Browser PDF rendering failed with code {res.returncode}:\n{res.stderr}")
 
-print("Rendering PDF via headless Edge...")
-res = subprocess.run(cmd, capture_output=True, text=True)
-print(f"Edge PDF exit: {res.returncode}")
+    if not deliverable_pdf.exists() or deliverable_pdf.stat().st_size == 0:
+        raise RuntimeError(f"PDF was not generated or is empty: {deliverable_pdf}")
 
-with open(deliverable_pdf, "rb") as f_in, open(root_pdf, "wb") as f_out:
-    f_out.write(f_in.read())
-print(f"Synced PDF: {root_pdf}")
+    shutil.copy2(deliverable_pdf, root_pdf)
+    print(f"Generated & Synced PDF: {root_pdf} ({root_pdf.stat().st_size} bytes)")
 
-# 3. Render slide PNGs and preview contact sheet
-doc = fitz.open(deliverable_pdf)
-print(f"Rendered PDF page count: {len(doc)}")
+    # 3. Render slide PNGs and preview contact sheet
+    doc = fitz.open(deliverable_pdf)
+    print(f"Rendered PDF page count: {len(doc)}")
+    if len(doc) != 6:
+        raise ValueError(f"Expected exactly 6 pages, got {len(doc)}")
 
-slides_png_dir = os.path.join(assets_dir, "slides")
-os.makedirs(slides_png_dir, exist_ok=True)
+    slides_png_dir = assets_dir / "slides"
+    slides_png_dir.mkdir(parents=True, exist_ok=True)
 
-slide_imgs = []
-for i in range(len(doc)):
-    page = doc[i]
-    pix = page.get_pixmap(dpi=150)
-    png_path = os.path.join(slides_png_dir, f"slide_{i+1}.png")
-    pix.save(png_path)
-    slide_imgs.append(Image.open(png_path))
+    slide_imgs = []
+    for i in range(len(doc)):
+        page = doc[i]
+        pix = page.get_pixmap(dpi=150)
+        png_path = slides_png_dir / f"slide_{i+1}.png"
+        pix.save(str(png_path))
+        slide_imgs.append(Image.open(png_path))
 
-# Build 3x2 grid preview image (matching the exact repo preview in Screenshot 2!)
-thumb_w = 768
-thumb_h = 432
-grid_w = thumb_w * 3 + 48
-grid_h = thumb_h * 2 + 36
+    # Build 3x2 grid preview image: 768*3 + 48 = 2352w, 432*2 + 36 = 900h
+    thumb_w = 768
+    thumb_h = 432
+    grid_w = thumb_w * 3 + 48
+    grid_h = thumb_h * 2 + 36
 
-preview_img = Image.new('RGB', (grid_w, grid_h), color=(15, 26, 22))
+    preview_img = Image.new('RGB', (grid_w, grid_h), color=(15, 26, 22))
 
-for idx, simg in enumerate(slide_imgs[:6]):
-    col = idx % 3
-    row = idx // 3
-    x = 16 + col * (thumb_w + 8)
-    y = 12 + row * (thumb_h + 12)
-    resized = simg.resize((thumb_w, thumb_h), Image.Resampling.LANCZOS)
-    preview_img.paste(resized, (x, y))
+    for idx, simg in enumerate(slide_imgs[:6]):
+        col = idx % 3
+        row = idx // 3
+        x = 16 + col * (thumb_w + 8)
+        y = 12 + row * (thumb_h + 12)
+        resized = simg.resize((thumb_w, thumb_h), Image.Resampling.LANCZOS)
+        preview_img.paste(resized, (x, y))
 
-deliverable_preview = os.path.join(base_dir, "deliverables", "ReturnLens_v4_preview.png")
-root_preview = os.path.join(base_dir, "ReturnLens_v4_preview.png")
+    deliverable_preview = base_dir / "deliverables" / "ReturnLens_v4_preview.png"
+    root_preview = base_dir / "ReturnLens_v4_preview.png"
 
-preview_img.save(deliverable_preview, format="PNG", optimize=True)
-preview_img.save(root_preview, format="PNG", optimize=True)
-print(f"Saved preview: {deliverable_preview} and {root_preview}")
+    preview_img.save(deliverable_preview, format="PNG", optimize=True)
+    preview_img.save(root_preview, format="PNG", optimize=True)
+    print(f"Saved preview: {deliverable_preview} ({deliverable_preview.stat().st_size} bytes, dimensions {preview_img.size})")
+
+if __name__ == "__main__":
+    build()
