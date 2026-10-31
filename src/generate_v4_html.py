@@ -66,6 +66,7 @@ html_content = f"""<!DOCTYPE html>
     --coral-dark: #991B1B;
     --amber: #D97706;
     --amber-light: #FEF3C7;
+    --amber-dark: #92400E;
     --blue-light: #EFF6FF;
     --blue-dark: #1E40AF;
     --text-muted: #596E64;
@@ -73,7 +74,6 @@ html_content = f"""<!DOCTYPE html>
     --border-light: #E2DED4;
     --border-dark: #223830;
     --card-dark: #172621;
-    --card-dark-alt: #121F1B;
     --dark-bg: #0F1A16;
   }}
 
@@ -112,7 +112,7 @@ html_content = f"""<!DOCTYPE html>
     height: 720px;
     background-color: var(--cream);
     position: relative;
-    padding: 46px 64px 38px 64px;
+    padding: 42px 64px 38px 64px;
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
     overflow: hidden;
     display: flex;
@@ -131,7 +131,7 @@ html_content = f"""<!DOCTYPE html>
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--primary-teal);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }}
 
   .slide.dark .tag-label {{
@@ -139,9 +139,9 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide-title {{
-    font-size: 38px;
+    font-size: 36px;
     font-weight: 800;
-    letter-spacing: -1px;
+    letter-spacing: -0.8px;
     line-height: 1.15;
     color: var(--dark-green);
     margin-bottom: 6px;
@@ -152,11 +152,11 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide-sub {{
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 400;
     line-height: 1.35;
     color: var(--text-muted);
-    margin-bottom: 18px;
+    margin-bottom: 16px;
   }}
 
   .slide.dark .slide-sub {{
@@ -182,11 +182,13 @@ html_content = f"""<!DOCTYPE html>
     color: #5C786E;
   }}
 
-  /* SLIDE 1 STYLES */
+  /* =========================================================================
+     SLIDE 1: PRODUCT HERO & CONSOLE
+     ========================================================================= */
   .hero-layout {{
     display: grid;
-    grid-template-columns: 38% 62%;
-    gap: 36px;
+    grid-template-columns: 420px 1fr;
+    gap: 40px;
     flex: 1;
     align-items: stretch;
   }}
@@ -195,20 +197,20 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 20px;
+    padding-bottom: 16px;
   }}
 
   .hero-title {{
-    font-size: 58px;
+    font-size: 52px;
     font-weight: 900;
-    letter-spacing: -2px;
+    letter-spacing: -1.5px;
     color: var(--dark-green);
     line-height: 1;
     margin-bottom: 12px;
   }}
 
   .hero-statement {{
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--dark-green);
     line-height: 1.25;
@@ -217,38 +219,18 @@ html_content = f"""<!DOCTYPE html>
 
   .hero-summary {{
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }}
 
-  .hero-metrics-row {{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }}
-
-  .metric-card {{
-    background: #FFFFFF;
-    border: 1px solid var(--border-light);
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }}
-
-  .metric-val {{
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--dark-green);
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }}
-
-  .metric-lbl {{
-    font-size: 9.5px;
-    color: var(--text-muted);
-    line-height: 1.3;
+  .hero-meta {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-subtle);
+    padding-top: 12px;
+    border-top: 1px solid var(--border-light);
   }}
 
   .console-wrapper {{
@@ -257,176 +239,174 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+    height: 100%;
   }}
 
   .console-header {{
     background: #1F302A;
     color: var(--teal-accent);
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 12px 18px;
+    padding: 12px 20px;
     letter-spacing: 1px;
     display: flex;
     justify-content: space-between;
   }}
 
   .console-body {{
-    padding: 16px 20px;
+    padding: 18px 22px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    flex: 1;
     justify-content: space-between;
+    flex: 1;
+    gap: 12px;
   }}
 
-  .console-split {{
+  .console-images-grid {{
     display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 18px;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }}
 
-  .console-img-box {{
-    width: 200px;
-    height: 160px;
+  .img-card {{
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--border-light);
-    overflow: hidden;
-    position: relative;
     background: #FAFAFA;
+    overflow: hidden;
   }}
 
-  .console-img-box img {{
+  .img-card img {{
     width: 100%;
-    height: 100%;
+    height: 180px;
     object-fit: cover;
   }}
 
-  .console-data-col {{
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }}
-
-  .c-label {{
+  .img-badge {{
+    padding: 6px 8px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    color: var(--text-subtle);
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    text-align: center;
   }}
 
-  .c-val {{
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--dark-green);
-    line-height: 1.35;
+  .badge-ordered {{
+    background: var(--teal-light);
+    color: var(--primary-teal);
+  }}
+
+  .badge-observed {{
+    background: var(--coral-light);
+    color: var(--coral-dark);
   }}
 
   .c-alert-box {{
     background: var(--coral-light);
     border: 1px solid var(--coral);
     padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    border-radius: 2px;
   }}
 
   .c-alert-title {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--coral-dark);
+    margin-bottom: 2px;
   }}
 
   .c-alert-desc {{
     font-size: 11px;
     color: var(--coral-dark);
-    line-height: 1.35;
   }}
 
   .c-status-bar {{
     background: var(--amber-light);
-    padding: 8px 12px;
+    color: var(--amber-dark);
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
+    font-size: 11px;
     font-weight: 700;
-    color: #92400E;
+    padding: 9px 12px;
     text-align: center;
+    border-radius: 2px;
   }}
 
   .c-button {{
     background: var(--primary-teal);
     color: #FFFFFF;
-    text-align: center;
-    padding: 12px;
-    font-weight: 700;
+    font-family: 'Inter', sans-serif;
     font-size: 13.5px;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    padding: 11px 16px;
+    text-align: center;
+    border-radius: 2px;
+    letter-spacing: 0.2px;
   }}
 
-  /* SLIDE 2 STYLES */
+  /* =========================================================================
+     SLIDE 2: THE PROBLEM (FRAGMENTATION AS A VISUAL STORY)
+     ========================================================================= */
   .problem-layout {{
     display: grid;
-    grid-template-columns: 1fr 1.15fr 1fr;
-    gap: 18px;
+    grid-template-columns: 520px 40px 1fr;
+    gap: 16px;
     flex: 1;
-    align-items: stretch;
-    padding-bottom: 24px;
+    align-items: center;
   }}
 
-  .prob-col {{
+  .sources-stack {{
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }}
 
-  .source-card {{
+  .source-strip {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 18px 20px;
-    flex: 1;
+    padding: 14px 18px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 4px;
   }}
 
-  .s-num {{
+  .source-strip-header {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--primary-teal);
-    letter-spacing: 1px;
-    margin-bottom: 6px;
   }}
 
-  .s-title {{
-    font-size: 14px;
-    font-weight: 700;
+  .source-strip-detail {{
+    font-size: 13px;
+    font-weight: 600;
     color: var(--dark-green);
-    margin-bottom: 4px;
   }}
 
-  .s-desc {{
-    font-size: 11.5px;
-    color: var(--text-muted);
-    line-height: 1.4;
+  .arrow-connector {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--coral);
+    text-align: center;
   }}
 
-  .gap-pillar {{
+  .gap-focal-card {{
     background: var(--dark-green);
-    color: #F5F3EF;
     border: 2px solid var(--coral);
-    padding: 24px 22px;
+    padding: 32px 36px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     text-align: center;
+    height: 100%;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.1);
   }}
 
   .gap-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--coral);
@@ -434,109 +414,40 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .gap-title {{
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.3px;
-    margin-bottom: 12px;
-    line-height: 1.25;
-    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    color: var(--cream);
+    margin-bottom: 14px;
   }}
 
-  .gap-body {{
-    font-size: 12px;
-    line-height: 1.5;
-    color: #D1D5DB;
+  .gap-quote {{
+    font-size: 16px;
+    font-weight: 700;
+    font-style: italic;
+    color: #FBBF24;
+    line-height: 1.4;
     margin-bottom: 16px;
   }}
 
-  .gap-stat-box {{
-    border-top: 1px solid #2B4239;
-    padding-top: 12px;
+  .gap-body {{
+    font-size: 13px;
+    line-height: 1.6;
+    color: #D1D5DB;
   }}
 
-  .gap-stat-num {{
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--coral);
-    margin-bottom: 4px;
-  }}
-
-  .gap-stat-txt {{
-    font-size: 9px;
-    color: #9CA3AF;
-    line-height: 1.35;
-  }}
-
-  /* SLIDE 3 STYLES */
-  .demo-layout {{
+  /* =========================================================================
+     SLIDE 3: EVIDENCE ARENA & DECISION PANEL
+     ========================================================================= */
+  .evidence-layout {{
     display: grid;
     grid-template-columns: 66% 34%;
     gap: 24px;
     flex: 1;
     align-items: stretch;
-    padding-bottom: 24px;
   }}
 
-  .evidence-arena {{
-    background: #FFFFFF;
-    border: 1px solid var(--border-light);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }}
-
-  .arena-pics {{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    flex: 1;
-  }}
-
-  .pic-wrapper {{
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }}
-
-  .pic-frame {{
-    flex: 1;
-    border: 1px solid var(--border-light);
-    overflow: hidden;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 250px;
-  }}
-
-  .pic-frame img {{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }}
-
-  .pic-badge {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    font-weight: 700;
-    padding: 6px 8px;
-    text-align: center;
-  }}
-
-  .badge-ordered {{ background: var(--teal-light); color: var(--primary-teal); }}
-  .badge-observed {{ background: var(--coral-light); color: var(--coral-dark); }}
-
-  .arena-caption {{
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.45;
-    border-top: 1px solid var(--border-light);
-    padding-top: 10px;
-    margin-top: 10px;
-  }}
-
-  .decision-console {{
+  .arena-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
     padding: 20px;
@@ -545,296 +456,353 @@ html_content = f"""<!DOCTYPE html>
     justify-content: space-between;
   }}
 
+  .arena-pics-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }}
+
+  .arena-pic-box {{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+  }}
+
+  .arena-pic-box img {{
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }}
+
+  .arena-caption {{
+    margin-top: 16px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-light);
+    padding-top: 12px;
+  }}
+
+  .decision-panel-card {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-light);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+
   .dec-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--coral);
     margin-bottom: 4px;
   }}
 
   .dec-title {{
-    font-size: 16px;
+    font-size: 19px;
     font-weight: 800;
     color: var(--coral-dark);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }}
 
-  .dec-sub {{
+  .dec-action {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--coral-dark);
     margin-bottom: 12px;
-    line-height: 1.35;
   }}
 
-  .dec-opt-title {{
-    font-size: 11.5px;
+  .dec-section-head {{
+    font-size: 12px;
     font-weight: 700;
     color: var(--dark-green);
+    margin-top: 10px;
     margin-bottom: 6px;
   }}
 
-  .dec-opt-list {{
+  .dec-list {{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }}
+
+  .dec-list li {{
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    padding-left: 12px;
+    position: relative;
+  }}
+
+  .dec-list li::before {{
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--dark-green);
+  }}
+
+  .dec-guardrail-note {{
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light);
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
+    font-weight: 700;
     color: var(--text-muted);
     line-height: 1.4;
+  }}
+
+  /* =========================================================================
+     SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE)
+     ========================================================================= */
+  .arch-container {{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+  }}
+
+  .zones-row {{
+    display: grid;
+    grid-template-columns: 3.6fr 4.2fr 3.45fr;
+    gap: 16px;
+  }}
+
+  .zone-card {{
+    background: var(--card-dark);
+    border: 1px solid var(--border-dark);
+    padding: 16px 18px;
+    border-top: 4px solid var(--teal-accent);
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-bottom: 14px;
   }}
 
-  .dec-guardrail {{
+  .zone-card.code-zone {{
+    border-top-color: var(--cream);
+  }}
+
+  .zone-card.gate-zone {{
+    border-top-color: #FBBF24;
+  }}
+
+  .zone-num {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--text-subtle);
-    border-top: 1px solid var(--border-light);
-    padding-top: 10px;
-    line-height: 1.35;
-  }}
-
-  /* SLIDE 4 STYLES (DARK ARCHITECTURE) */
-  .arch-layout {{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    flex: 1;
-    padding-bottom: 24px;
-  }}
-
-  .arch-pipeline {{
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }}
-
-  .pipe-step {{
-    flex: 1;
-    background: var(--card-dark);
-    border: 1px solid var(--border-dark);
-    padding: 10px 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 84px;
-  }}
-
-  .pipe-step.model-step {{ border-top: 3px solid var(--teal-accent); }}
-  .pipe-step.code-step {{ border-top: 3px solid #E1F2EC; }}
-  .pipe-step.human-step {{ border-top: 3px solid #FBBF24; }}
-
-  .pipe-arrow {{
-    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
     color: var(--teal-accent);
-    font-size: 13px;
-    font-weight: 800;
-    flex-shrink: 0;
   }}
 
-  .pipe-num {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 8.5px;
-    color: #6C8279;
-    margin-bottom: 2px;
-  }}
+  .zone-card.code-zone .zone-num {{ color: var(--cream); }}
+  .zone-card.gate-zone .zone-num {{ color: #FBBF24; }}
 
-  .pipe-title {{
-    font-size: 12px;
+  .zone-title {{
+    font-size: 15px;
     font-weight: 700;
-    color: #F5F3EF;
-    line-height: 1.2;
-    margin-bottom: 3px;
+    color: var(--cream);
   }}
 
-  .pipe-role-tag {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 8px;
-    font-weight: 700;
-    padding: 2px 4px;
-    display: inline-block;
-    align-self: flex-start;
+  .zone-desc {{
+    font-size: 11px;
+    line-height: 1.4;
+    color: #A3B8B0;
   }}
 
-  .tag-model {{ background: #00382B; color: var(--teal-accent); }}
-  .tag-code {{ background: #263831; color: #F5F3EF; }}
-  .tag-human {{ background: #45260A; color: #FBBF24; }}
-
-  .agent-paths-grid {{
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    gap: 14px;
-  }}
-
-  .agent-path-card {{
+  .stateful-box {{
     background: #14221D;
     border: 1.5px solid #2563EB;
-    padding: 14px 16px;
+    padding: 18px 22px;
     display: flex;
     flex-direction: column;
+    gap: 12px;
+  }}
+
+  .stateful-head {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #93C5FD;
+  }}
+
+  .nodes-row {{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
   }}
 
-  .agent-path-card.fast {{
-    border-color: #059669;
-  }}
-
-  .path-header {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }}
-
-  .path-title {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }}
-
-  .path-title.loop {{ color: #93C5FD; }}
-  .path-title.fast {{ color: #34D399; }}
-
-  .trace-steps {{
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }}
-
-  .trace-node {{
+  .state-node {{
     background: #1F302A;
-    border: 1px solid #374151;
-    color: #F3F4F6;
+    border: 1px solid var(--border-dark);
+    padding: 10px 12px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 8.5px;
-    padding: 4px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--cream);
+    text-align: center;
+    flex: 1;
+    border-radius: 2px;
   }}
 
-  .trace-node.wait {{
+  .state-node.highlight {{
     background: #1E3A8A;
     border-color: #60A5FA;
     color: #DBEAFE;
+  }}
+
+  .state-arrow {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: #93C5FD;
+  }}
+
+  .stateful-desc {{
+    font-size: 12px;
+    line-height: 1.45;
+    color: #A3B8B0;
+  }}
+
+  .bottom-traces {{
+    background: #121F1B;
+    border: 1px solid var(--border-dark);
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+  }}
+
+  .trace-fast-path {{
+    color: #34D399;
     font-weight: 700;
   }}
 
-  .trace-arrow {{
-    color: #9CA3AF;
-    font-size: 9px;
-  }}
-
-  .path-desc {{
-    font-size: 10px;
+  .trace-audit {{
     color: #A3B8B0;
-    line-height: 1.35;
   }}
 
-  .arch-legend {{
-    background: var(--card-dark-alt);
-    border: 1px solid var(--border-dark);
-    padding: 10px 14px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: #A3B8B0;
-    line-height: 1.35;
-  }}
-
-  /* SLIDE 5 STYLES */
-  .scenarios-grid {{
+  /* =========================================================================
+     SLIDE 5: 4 SCENARIOS MATRIX
+     ========================================================================= */
+  .scenarios-stack {{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
-    padding-bottom: 24px;
   }}
 
-  .scenario-lane {{
+  .sc-lane {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 12px 18px;
+    padding: 14px 20px;
     display: grid;
-    grid-template-columns: 160px 1fr 24px 1.15fr;
+    grid-template-columns: 220px 1fr 30px 1.2fr;
     gap: 16px;
     align-items: center;
-    flex: 1;
   }}
 
   .sc-badge {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 8px 10px;
+    padding: 8px 12px;
     text-align: center;
+    border-radius: 2px;
   }}
 
-  .badge-match {{ background: var(--teal-light); color: var(--primary-teal); }}
-  .badge-mismatch {{ background: var(--coral-light); color: var(--coral-dark); }}
-  .badge-unclear {{ background: var(--blue-light); color: var(--blue-dark); }}
-  .badge-continuity {{ background: #ECFDF5; color: #065F46; }}
+  .badge-01 {{ background: var(--teal-light); color: var(--primary-teal); }}
+  .badge-02 {{ background: var(--coral-light); color: var(--coral-dark); }}
+  .badge-03 {{ background: var(--blue-light); color: var(--blue-dark); }}
+  .badge-04 {{ background: #ECFDF5; color: #065F46; }}
 
-  .sc-evidence {{
-    font-size: 12px;
-    font-weight: 600;
+  .sc-obs {{
+    font-size: 12.5px;
+    font-weight: 700;
     color: var(--dark-green);
     line-height: 1.35;
   }}
 
-  .sc-arrow {{
+  .sc-arr {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--primary-teal);
     text-align: center;
   }}
 
-  .sc-action {{
-    font-size: 11.5px;
+  .sc-act {{
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }}
+
+  .sc-act-head {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }}
+
+  .badge-01 ~ .sc-arr ~ .sc-act .sc-act-head {{ color: var(--primary-teal); }}
+  .badge-02 ~ .sc-arr ~ .sc-act .sc-act-head {{ color: var(--coral-dark); }}
+  .badge-03 ~ .sc-arr ~ .sc-act .sc-act-head {{ color: var(--blue-dark); }}
+  .badge-04 ~ .sc-arr ~ .sc-act .sc-act-head {{ color: #065F46; }}
+
+  .sc-act-desc {{
+    font-size: 11px;
     color: var(--text-muted);
     line-height: 1.35;
   }}
 
-  /* SLIDE 6 STYLES */
-  .timeline-container {{
+  /* =========================================================================
+     SLIDE 6: 24-HOUR PROTOTYPE PLAN
+     ========================================================================= */
+  .plan-container {{
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     flex: 1;
-    padding-bottom: 24px;
   }}
 
-  .timeline-table-grid {{
+  .timeline-flow {{
+    position: relative;
+    border-top: 4px solid var(--primary-teal);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
+    gap: 16px;
+    padding-top: 14px;
   }}
 
-  .t-cell {{
+  .t-step-box {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    border-top: 4px solid var(--primary-teal);
-    padding: 14px;
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
     gap: 4px;
   }}
 
-  .t-time {{
+  .t-time-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--primary-teal);
   }}
 
   .t-title {{
-    font-size: 13.5px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--dark-green);
   }}
 
   .t-owner {{
+    font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 700;
     color: var(--primary-teal);
@@ -842,43 +810,64 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .t-desc {{
-    font-size: 10px;
+    font-size: 11.5px;
+    line-height: 1.4;
     color: var(--text-muted);
-    line-height: 1.35;
   }}
 
-  .scope-grid {{
+  .scope-split {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    flex: 1;
+    gap: 20px;
   }}
 
-  .scope-card {{
+  .scope-block {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 16px 20px;
+    padding: 18px 22px;
     display: flex;
     flex-direction: column;
     gap: 8px;
   }}
 
-  .scope-card.scope-in {{ border-left: 5px solid var(--primary-teal); }}
-  .scope-card.scope-out {{ border-left: 5px solid var(--coral); }}
+  .scope-block.must-deliver {{
+    border-left: 6px solid var(--primary-teal);
+  }}
+
+  .scope-block.cut-first {{
+    border-left: 6px solid var(--coral);
+  }}
 
   .scope-head {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.5px;
   }}
 
-  .scope-in .scope-head {{ color: var(--primary-teal); }}
-  .scope-out .scope-head {{ color: var(--coral); }}
+  .scope-block.must-deliver .scope-head {{ color: var(--primary-teal); }}
+  .scope-block.cut-first .scope-head {{ color: var(--coral); }}
 
-  .scope-text {{
-    font-size: 11.5px;
+  .scope-items {{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }}
+
+  .scope-items li {{
+    font-size: 12px;
+    line-height: 1.4;
     color: var(--dark-green);
-    line-height: 1.5;
+    padding-left: 12px;
+    position: relative;
+  }}
+
+  .scope-items li::before {{
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--dark-green);
   }}
 </style>
 </head>
@@ -892,23 +881,9 @@ html_content = f"""<!DOCTYPE html>
           <div class="tag-label">{d1['tag']}</div>
           <h1 class="hero-title">{d1['headline']}</h1>
           <div class="hero-statement">{d1['subheadline']}</div>
-          <p class="hero-summary">{d1['summary']}<br><br>When a customer submits a return video, ReturnLens extracts keyframes, cross-references order truth and shipping timestamps, verifies deterministic code policies, and gives the solo seller a 1-click decision console.</p>
+          <p class="hero-summary">{d1['summary']}<br><br>When a customer submits an unboxing video, ReturnLens cross-references store truth, verifies deterministic code policies, and gives the solo seller a 1-click decision console.</p>
         </div>
-
-        <div class="hero-metrics-row">
-          <div class="metric-card">
-            <div class="metric-val" style="color: var(--coral);">15–20m</div>
-            <div class="metric-lbl">Manual triage time eliminated</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-val" style="color: var(--primary-teal);">1-Click</div>
-            <div class="metric-lbl">Merchant human verification</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-val">24h</div>
-            <div class="metric-lbl">Prototype build feasibility</div>
-          </div>
-        </div>
+        <div class="hero-meta">{data['meta']['team']} · 24-Hour Prototype Feasibility</div>
       </div>
 
       <div class="console-wrapper">
@@ -917,25 +892,20 @@ html_content = f"""<!DOCTYPE html>
           <span>{d1['console_mockup']['case_badge']}</span>
         </div>
         <div class="console-body">
-          <div class="console-split">
-            <div class="console-img-box">
-              <img src="{white_b64}" alt="White Headphones">
+          <div class="console-images-grid">
+            <div class="img-card">
+              <img src="{white_b64}" alt="Ordered White Headphones">
+              <div class="img-badge badge-ordered">ORDERED: {d1['console_mockup']['order_info']['sku']} (WHITE)</div>
             </div>
-            <div class="console-data-col">
-              <div>
-                <div class="c-label">ORDER INFORMATION</div>
-                <div class="c-val">{d1['console_mockup']['order_info']['order_id']} · {d1['console_mockup']['order_info']['sku']}<br>{d1['console_mockup']['order_info']['color']} · Price: {d1['console_mockup']['order_info']['price']}<br>{d1['console_mockup']['order_info']['delivery']}</div>
-              </div>
-              <div>
-                <div class="c-label">EVIDENCE CITATION (STAGED)</div>
-                <div class="c-val" style="color: var(--text-muted); font-size: 11px;">{d1['console_mockup']['evidence_citation']['timestamp']}<br>{d1['console_mockup']['evidence_citation']['observation']}</div>
-              </div>
+            <div class="img-card">
+              <img src="{black_b64}" alt="Observed Black Headphones">
+              <div class="img-badge badge-observed">OBSERVED: BLACK ITEM · FRAME 00:07</div>
             </div>
           </div>
 
           <div class="c-alert-box">
-            <div class="c-alert-title">POLICY GATE: {d1['console_mockup']['evidence_citation']['status_badge']}</div>
-            <div class="c-alert-desc">{d1['console_mockup']['policy_check']['window_check']} | {d1['console_mockup']['policy_check']['color_check']}</div>
+            <div class="c-alert-title">{d1['console_mockup']['evidence_citation']['status_badge']}</div>
+            <div class="c-alert-desc">{d1['console_mockup']['policy_check']['window_check']}  |  {d1['console_mockup']['policy_check']['color_check']}</div>
           </div>
 
           <div class="c-status-bar">{d1['console_mockup']['action_prompt']}</div>
@@ -950,99 +920,93 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 2: THE PROBLEM -->
+  <!-- SLIDE 2: THE PROBLEM (FRAGMENTATION) -->
   <section class="slide" id="slide-2">
     <div class="tag-label">{d2['tag']}</div>
     <h2 class="slide-title">{d2['headline']}</h2>
-    <p class="slide-sub">{d2['subheadline']} · {d2['supporting_statement']}</p>
+    <p class="slide-sub">{d2['subheadline']}  {d2['supporting_statement']}</p>
 
     <div class="problem-layout">
-      <div class="prob-col">
-        <div class="source-card">
-          <div class="s-num">{d2['sources'][0]['number']} {d2['sources'][0]['name'].upper()}</div>
-          <div class="s-title">{d2['sources'][0]['name']}</div>
-          <div class="s-desc">{d2['sources'][0]['detail']}</div>
+      <div class="sources-stack">
+        <div class="source-strip">
+          <div class="source-strip-header">{d2['sources'][0]['number']}  {d2['sources'][0]['name'].upper()}</div>
+          <div class="source-strip-detail">{d2['sources'][0]['detail']}</div>
         </div>
-        <div class="source-card">
-          <div class="s-num">{d2['sources'][2]['number']} {d2['sources'][2]['name'].upper()}</div>
-          <div class="s-title">{d2['sources'][2]['name']}</div>
-          <div class="s-desc">{d2['sources'][2]['detail']}</div>
+        <div class="source-strip">
+          <div class="source-strip-header">{d2['sources'][1]['number']}  {d2['sources'][1]['name'].upper()}</div>
+          <div class="source-strip-detail">{d2['sources'][1]['detail']}</div>
+        </div>
+        <div class="source-strip">
+          <div class="source-strip-header">{d2['sources'][2]['number']}  {d2['sources'][2]['name'].upper()}</div>
+          <div class="source-strip-detail">{d2['sources'][2]['detail']}</div>
+        </div>
+        <div class="source-strip">
+          <div class="source-strip-header">{d2['sources'][3]['number']}  {d2['sources'][3]['name'].upper()}</div>
+          <div class="source-strip-detail">{d2['sources'][3]['detail']}</div>
         </div>
       </div>
 
-      <div class="gap-pillar">
-        <div class="gap-tag">CRITICAL INFORMATION GAP</div>
+      <div class="arrow-connector">→</div>
+
+      <div class="gap-focal-card">
+        <div class="gap-tag">{d2['gap_card']['tag']}</div>
         <div class="gap-title">{d2['gap_card']['title']}</div>
-        <div class="gap-body">{d2['gap_card']['description']}</div>
-        <div class="gap-stat-box">
-          <div class="gap-stat-num">9.0% vs 15.14%</div>
-          <div class="gap-stat-txt">{data['meta']['fraud_metrics']['nrf_2025']} | {data['meta']['fraud_metrics']['deloitte_2024']}<br>{data['meta']['fraud_metrics']['distinction']}</div>
-        </div>
-      </div>
-
-      <div class="prob-col">
-        <div class="source-card">
-          <div class="s-num">{d2['sources'][1]['number']} {d2['sources'][1]['name'].upper()}</div>
-          <div class="s-title">{d2['sources'][1]['name']}</div>
-          <div class="s-desc">{d2['sources'][1]['detail']}</div>
-        </div>
-        <div class="source-card">
-          <div class="s-num">{d2['sources'][3]['number']} {d2['sources'][3]['name'].upper()}</div>
-          <div class="s-title">{d2['sources'][3]['name']}</div>
-          <div class="s-desc">{d2['sources'][3]['detail']}</div>
-        </div>
+        <div class="gap-quote">“{d2['gap_card']['question']}”</div>
+        <div class="gap-body">{d2['gap_card']['body']}<br><br><strong>{d2['gap_card']['callout']}</strong></div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Fraud statistics note: 9.0% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse)</span>
+      <span>Fraud research: 9% strict fraud (NRF 2025) vs 15.14% fraud + abuse (Appriss/Deloitte 2024). Details in notes.</span>
       <span>Slide 2 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 3: STAR DEMO -->
+  <!-- SLIDE 3: EVIDENCE ARENA & DECISION PANEL -->
   <section class="slide" id="slide-3">
     <div class="tag-label">{d3['tag']}</div>
     <h2 class="slide-title">{d3['headline']}</h2>
     <p class="slide-sub">{d3['subheadline']}</p>
 
-    <div class="demo-layout">
-      <div class="evidence-arena">
-        <div class="arena-pics">
-          <div class="pic-wrapper">
-            <div class="pic-frame">
-              <img src="{white_b64}" alt="White Headphones Ordered">
-            </div>
-            <div class="pic-badge badge-ordered">{d3['ordered_evidence']['label']}: {d3['ordered_evidence']['sku']} (WHITE)</div>
+    <div class="evidence-layout">
+      <div class="arena-card">
+        <div class="arena-pics-grid">
+          <div class="arena-pic-box">
+            <img src="{white_b64}" alt="White Headphones Ordered">
+            <div class="img-badge badge-ordered">{d3['ordered_evidence']['label']}: {d3['ordered_evidence']['sku']} (WHITE)</div>
           </div>
-          <div class="pic-wrapper">
-            <div class="pic-frame">
-              <img src="{black_b64}" alt="Black Headphones Unboxed">
-            </div>
-            <div class="pic-badge badge-observed">{d3['observed_evidence']['label']}: {d3['observed_evidence']['color'].upper()}</div>
+          <div class="arena-pic-box">
+            <img src="{black_b64}" alt="Black Headphones Observed">
+            <div class="img-badge badge-observed">{d3['observed_evidence']['label']}: {d3['observed_evidence']['color'].upper()}</div>
           </div>
         </div>
         <div class="arena-caption">
-          Visual Grounding Honesty: Keyframe resolution reveals black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Midnight Black · Exact SKU: Not verified' and cites frame 00:07.
+          Visual Grounding Honesty: Keyframe resolution proves black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Black · Exact SKU: Not verified' and cites frame 00:07.
         </div>
       </div>
 
-      <div class="decision-console">
+      <div class="decision-panel-card">
         <div>
-          <div class="dec-tag">DETERMINISTIC POLICY GATE</div>
-          <div class="dec-title">P-03: COLOR CONTRADICTION</div>
-          <div class="dec-sub">{d3['decision_panel']['next_action']}<br>Observed: {d3['decision_panel']['observed_color']} · Exact SKU: {d3['decision_panel']['exact_sku']}</div>
-          <div class="dec-opt-title">Seller Resolution Options:</div>
-          <div class="dec-opt-list">
-            <div>• {d3['decision_panel']['seller_options'][0]}</div>
-            <div>• {d3['decision_panel']['seller_options'][1]}</div>
-            <div>• {d3['decision_panel']['seller_options'][2]}</div>
-          </div>
+          <div class="dec-tag">{d3['decision_panel']['tag']}</div>
+          <div class="dec-title">{d3['decision_panel']['title']}</div>
+          <div class="dec-action">{d3['decision_panel']['next_action']}</div>
+
+          <div class="dec-section-head">Key Findings:</div>
+          <ul class="dec-list">
+            <li>{d3['decision_panel']['observations'][0]}</li>
+            <li>{d3['decision_panel']['observations'][1]}</li>
+          </ul>
+
+          <div class="dec-section-head">Seller Resolution Options:</div>
+          <ul class="dec-list">
+            <li>{d3['decision_panel']['seller_options'][0]}</li>
+            <li>{d3['decision_panel']['seller_options'][1]}</li>
+            <li>{d3['decision_panel']['seller_options'][2]}</li>
+          </ul>
         </div>
-        <div class="dec-guardrail">
-          Financial Safety Ceiling:<br>
-          {data['meta']['refund_guardrail']['formula']}<br>
-          No auto-denial · No refund released without seller click
+
+        <div class="dec-guardrail-note">
+          {d3['decision_panel']['guardrail_note']}
         </div>
       </div>
     </div>
@@ -1053,114 +1017,52 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 4: ARCHITECTURE -->
+  <!-- SLIDE 4: ARCHITECTURE (DARK) -->
   <section class="slide dark" id="slide-4">
     <div class="tag-label">{d4['tag']}</div>
     <h2 class="slide-title">{d4['headline']}</h2>
     <p class="slide-sub">{d4['subheadline']}</p>
 
-    <div class="arch-layout">
-      <!-- 6-Step Pipeline -->
-      <div class="arch-pipeline">
-        <div class="pipe-step model-step">
-          <div>
-            <div class="pipe-num">01 PLAN</div>
-            <div class="pipe-title">Plan</div>
-          </div>
-          <span class="pipe-role-tag tag-model">MODEL</span>
+    <div class="arch-container">
+      <div class="zones-row">
+        <div class="zone-card">
+          <div class="zone-num">01 MODEL ZONE</div>
+          <div class="zone-title">Plan &amp; Observe</div>
+          <div class="zone-desc">Planner validates JSON schema · Vision extracts keyframes &amp; non-binding visual metadata.</div>
         </div>
-        <span class="pipe-arrow">→</span>
-
-        <div class="pipe-step code-step">
-          <div>
-            <div class="pipe-num">02 RETRIEVE</div>
-            <div class="pipe-title">Retrieve</div>
-          </div>
-          <span class="pipe-role-tag tag-code">CODE</span>
+        <div class="zone-card code-zone">
+          <div class="zone-num">02 CODE ZONE</div>
+          <div class="zone-title">Retrieve &amp; Enforce Policy</div>
+          <div class="zone-desc">Deterministic Python rules P-01 to P-08 · Shippo &amp; Shopify mock APIs enforce hard rules.</div>
         </div>
-        <span class="pipe-arrow">→</span>
-
-        <div class="pipe-step code-step">
-          <div>
-            <div class="pipe-num">03 EVALUATE</div>
-            <div class="pipe-title">Evaluate</div>
-          </div>
-          <span class="pipe-role-tag tag-code">CODE</span>
-        </div>
-        <span class="pipe-arrow">→</span>
-
-        <div class="pipe-step model-step">
-          <div>
-            <div class="pipe-num">04 AUDIT</div>
-            <div class="pipe-title">Audit</div>
-          </div>
-          <span class="pipe-role-tag tag-model">MODEL</span>
-        </div>
-        <span class="pipe-arrow">→</span>
-
-        <div class="pipe-step human-step">
-          <div>
-            <div class="pipe-num">05 AUTHORIZE</div>
-            <div class="pipe-title">Authorize</div>
-          </div>
-          <span class="pipe-role-tag tag-human">HUMAN</span>
-        </div>
-        <span class="pipe-arrow">→</span>
-
-        <div class="pipe-step code-step">
-          <div>
-            <div class="pipe-num">06 RECORD</div>
-            <div class="pipe-title">Record</div>
-          </div>
-          <span class="pipe-role-tag tag-code">CODE</span>
+        <div class="zone-card gate-zone">
+          <div class="zone-num">03 HUMAN SELLER GATE</div>
+          <div class="zone-title">Authorize Consequential Action</div>
+          <div class="zone-desc">Fail-closed authorization gate · 1-click human merchant confirmation for refund release.</div>
         </div>
       </div>
 
-      <!-- Dual Operational Branches -->
-      <div class="agent-paths-grid">
-        <div class="agent-path-card">
-          <div class="path-header">
-            <span class="path-title loop">{d4['case_c_flow']['title']}</span>
-            <span style="font-size: 8.5px; color: #93C5FD; font-family: 'IBM Plex Mono', monospace;">Observe → Decide → Act → Wait → Resume</span>
-          </div>
-          <div class="trace-steps">
-            <span class="trace-node">Dark Frames</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">ask_for_evidence()</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node wait">WAITING_FOR_EVIDENCE</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">Customer Uploads</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">Resume Case</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">Seller Review</span>
-          </div>
-          <div class="path-desc">When lighting is insufficient, the agent halts standard execution, prompts a targeted checklist, pauses state in WAITING_FOR_EVIDENCE, and seamlessly resumes context upon media receipt (1 retry limit protects customer experience).</div>
+      <div class="stateful-box">
+        <div class="stateful-head">{d4['case_c_flow']['title']}</div>
+        <div class="nodes-row">
+          <div class="state-node">{d4['case_c_flow']['steps'][0]}</div>
+          <div class="state-arrow">→</div>
+          <div class="state-node">{d4['case_c_flow']['steps'][1]}</div>
+          <div class="state-arrow">→</div>
+          <div class="state-node highlight">{d4['case_c_flow']['steps'][2]}</div>
+          <div class="state-arrow">→</div>
+          <div class="state-node highlight">{d4['case_c_flow']['steps'][3]}</div>
+          <div class="state-arrow">→</div>
+          <div class="state-node highlight">{d4['case_c_flow']['steps'][4]}</div>
+          <div class="state-arrow">→</div>
+          <div class="state-node">{d4['case_c_flow']['steps'][5]}</div>
         </div>
-
-        <div class="agent-path-card fast">
-          <div class="path-header">
-            <span class="path-title fast">SECONDARY PS-04 ROUTE: ORDER STATUS FAST PATH</span>
-            <span style="font-size: 8.5px; color: #34D399; font-family: 'IBM Plex Mono', monospace;">Zero-Vision Direct Route</span>
-          </div>
-          <div class="trace-steps">
-            <span class="trace-node">“Where is my order?”</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">Query Store &amp; Shippo APIs</span>
-            <span class="trace-arrow">→</span>
-            <span class="trace-node">Delivery Scan &amp; Time</span>
-          </div>
-          <div class="path-desc">Routine order queries take a direct tool route without calling heavy multimodal models. Escalates to human seller only if courier scan shows abnormal transit delay.</div>
-        </div>
+        <div class="stateful-desc">{d4['case_c_flow']['desc']}</div>
       </div>
 
-      <!-- Governance Pillars -->
-      <div class="arch-legend">
-        <span><strong style="color: var(--teal-accent);">■ {d4['governance_rules'][0]['label']}:</strong> {d4['governance_rules'][0]['text']}</span>
-        <span><strong style="color: #F5F3EF;">■ {d4['governance_rules'][1]['label']}:</strong> {d4['governance_rules'][1]['text']}</span>
-        <span><strong style="color: #60A5FA;">■ {d4['governance_rules'][2]['label']}:</strong> {d4['governance_rules'][2]['text']}</span>
-        <span><strong style="color: #FBBF24;">■ {d4['governance_rules'][3]['label']}:</strong> {d4['governance_rules'][3]['text']}</span>
+      <div class="bottom-traces">
+        <div class="trace-fast-path">{d4['secondary_route']['text']}</div>
+        <div class="trace-audit">{d4['audit_output']['text']}</div>
       </div>
     </div>
 
@@ -1170,107 +1072,116 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 5: DEMO SCENARIOS -->
+  <!-- SLIDE 5: 4 SCENARIOS MATRIX -->
   <section class="slide" id="slide-5">
     <div class="tag-label">{d5['tag']}</div>
     <h2 class="slide-title">{d5['headline']}</h2>
     <p class="slide-sub">{d5['subheadline']}</p>
 
-    <div class="scenarios-grid">
-      <div class="scenario-lane">
-        <div class="sc-badge badge-match">CASE {d5['cases'][0]['number']} · {d5['cases'][0]['name']}</div>
-        <div class="sc-evidence">{d5['cases'][0]['observation']}</div>
-        <div class="sc-arrow">→</div>
-        <div class="sc-action"><strong>{d5['cases'][0]['state_action']}</strong><br>{d5['cases'][0]['action_detail']}</div>
+    <div class="scenarios-stack">
+      <div class="sc-lane">
+        <div class="sc-badge badge-01">{d5['cases'][0]['number']} · {d5['cases'][0]['name']}</div>
+        <div class="sc-obs">{d5['cases'][0]['observation']}</div>
+        <div class="sc-arr">→</div>
+        <div class="sc-act">
+          <div class="sc-act-head">{d5['cases'][0]['action']}</div>
+          <div class="sc-act-desc">{d5['cases'][0]['detail']}</div>
+        </div>
       </div>
 
-      <div class="scenario-lane">
-        <div class="sc-badge badge-mismatch">CASE {d5['cases'][1]['number']} · {d5['cases'][1]['name']}</div>
-        <div class="sc-evidence">{d5['cases'][1]['observation']}</div>
-        <div class="sc-arrow">→</div>
-        <div class="sc-action"><strong>{d5['cases'][1]['state_action']}</strong><br>{d5['cases'][1]['action_detail']}</div>
+      <div class="sc-lane">
+        <div class="sc-badge badge-02">{d5['cases'][1]['number']} · {d5['cases'][1]['name']}</div>
+        <div class="sc-obs">{d5['cases'][1]['observation']}</div>
+        <div class="sc-arr">→</div>
+        <div class="sc-act">
+          <div class="sc-act-head">{d5['cases'][1]['action']}</div>
+          <div class="sc-act-desc">{d5['cases'][1]['detail']}</div>
+        </div>
       </div>
 
-      <div class="scenario-lane">
-        <div class="sc-badge badge-unclear">CASE {d5['cases'][2]['number']} · {d5['cases'][2]['name']}</div>
-        <div class="sc-evidence">{d5['cases'][2]['observation']}</div>
-        <div class="sc-arrow">→</div>
-        <div class="sc-action"><strong>{d5['cases'][2]['state_action']}</strong><br>{d5['cases'][2]['action_detail']}</div>
+      <div class="sc-lane">
+        <div class="sc-badge badge-03">{d5['cases'][2]['number']} · {d5['cases'][2]['name']}</div>
+        <div class="sc-obs">{d5['cases'][2]['observation']}</div>
+        <div class="sc-arr">→</div>
+        <div class="sc-act">
+          <div class="sc-act-head">{d5['cases'][2]['action']}</div>
+          <div class="sc-act-desc">{d5['cases'][2]['detail']}</div>
+        </div>
       </div>
 
-      <div class="scenario-lane">
-        <div class="sc-badge badge-continuity">CASE {d5['cases'][3]['number']} · {d5['cases'][3]['name']}</div>
-        <div class="sc-evidence">{d5['cases'][3]['observation']}</div>
-        <div class="sc-arrow">→</div>
-        <div class="sc-action"><strong>{d5['cases'][3]['state_action']}</strong><br>{d5['cases'][3]['action_detail']}</div>
+      <div class="sc-lane">
+        <div class="sc-badge badge-04">{d5['cases'][3]['number']} · {d5['cases'][3]['name']}</div>
+        <div class="sc-obs">{d5['cases'][3]['observation']}</div>
+        <div class="sc-arr">→</div>
+        <div class="sc-act">
+          <div class="sc-act-head">{d5['cases'][3]['action']}</div>
+          <div class="sc-act-desc">{d5['cases'][3]['detail']}</div>
+        </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining, paid)</span>
+      <span>Staged prototype scenarios · Expected agent behaviors, not measured production metrics</span>
       <span>Slide 5 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 6: 24-HOUR BUILD PLAN -->
+  <!-- SLIDE 6: 24-HOUR PROTOTYPE PLAN -->
   <section class="slide" id="slide-6">
     <div class="tag-label">{d6['tag']}</div>
     <h2 class="slide-title">{d6['headline']}</h2>
     <p class="slide-sub">{d6['subheadline']}</p>
 
-    <div class="timeline-container">
-      <div class="timeline-table-grid">
-        <div class="t-cell">
-          <div class="t-time">{d6['timeline'][0]['hours']} · {d6['timeline'][0]['phase']}</div>
+    <div class="plan-container">
+      <div class="timeline-flow">
+        <div class="t-step-box">
+          <div class="t-time-tag">{d6['timeline'][0]['hours']} · {d6['timeline'][0]['phase']}</div>
           <div class="t-title">{d6['timeline'][0]['title']}</div>
           <div class="t-owner">{d6['timeline'][0]['owner']}</div>
-          <div class="t-desc">{d6['timeline'][0]['deliverables']}</div>
+          <div class="t-desc">{d6['timeline'][0]['desc']}</div>
         </div>
-
-        <div class="t-cell">
-          <div class="t-time">{d6['timeline'][1]['hours']} · {d6['timeline'][1]['phase']}</div>
+        <div class="t-step-box">
+          <div class="t-time-tag">{d6['timeline'][1]['hours']} · {d6['timeline'][1]['phase']}</div>
           <div class="t-title">{d6['timeline'][1]['title']}</div>
           <div class="t-owner">{d6['timeline'][1]['owner']}</div>
-          <div class="t-desc">{d6['timeline'][1]['deliverables']}</div>
+          <div class="t-desc">{d6['timeline'][1]['desc']}</div>
         </div>
-
-        <div class="t-cell">
-          <div class="t-time">{d6['timeline'][2]['hours']} · {d6['timeline'][2]['phase']}</div>
+        <div class="t-step-box">
+          <div class="t-time-tag">{d6['timeline'][2]['hours']} · {d6['timeline'][2]['phase']}</div>
           <div class="t-title">{d6['timeline'][2]['title']}</div>
           <div class="t-owner">{d6['timeline'][2]['owner']}</div>
-          <div class="t-desc">{d6['timeline'][2]['deliverables']}</div>
+          <div class="t-desc">{d6['timeline'][2]['desc']}</div>
         </div>
-
-        <div class="t-cell">
-          <div class="t-time">{d6['timeline'][3]['hours']} · {d6['timeline'][3]['phase']}</div>
+        <div class="t-step-box">
+          <div class="t-time-tag">{d6['timeline'][3]['hours']} · {d6['timeline'][3]['phase']}</div>
           <div class="t-title">{d6['timeline'][3]['title']}</div>
           <div class="t-owner">{d6['timeline'][3]['owner']}</div>
-          <div class="t-desc">{d6['timeline'][3]['deliverables']}</div>
+          <div class="t-desc">{d6['timeline'][3]['desc']}</div>
         </div>
       </div>
 
-      <div class="scope-grid">
-        <div class="scope-card scope-in">
+      <div class="scope-split">
+        <div class="scope-block must-deliver">
           <div class="scope-head">MUST DELIVER (CORE PROTOTYPE)</div>
-          <div class="scope-text">
-            • Deterministic policy engine (P-01 to P-08)<br>
-            • Evidence-pack keyframe citations<br>
-            • Fail-closed seller authorization gate<br>
-            • Structured JSON audit trail log<br>
-            • Stateful clarification/resume loop<br>
-            • 4 reproducible demo scenarios
-          </div>
+          <ul class="scope-items">
+            <li>{d6['scope_boundaries']['must_deliver'][0]}</li>
+            <li>{d6['scope_boundaries']['must_deliver'][1]}</li>
+            <li>{d6['scope_boundaries']['must_deliver'][2]}</li>
+            <li>{d6['scope_boundaries']['must_deliver'][3]}</li>
+            <li>{d6['scope_boundaries']['must_deliver'][4]}</li>
+            <li>{d6['scope_boundaries']['must_deliver'][5]}</li>
+          </ul>
         </div>
 
-        <div class="scope-card scope-out">
+        <div class="scope-block cut-first">
           <div class="scope-head">CUT FIRST IF BEHIND (DEFERRED EXPANSION)</div>
-          <div class="scope-text">
-            • Live carrier webhooks (keep mock courier)<br>
-            • Multi-item return parsing (keep 1 item/return)<br>
-            • Video OCR barcode scanner (keep visual color)<br>
-            • Live payment gateways (keep draft refunds)<br>
-            • Merchant analytics dashboard
-          </div>
+          <ul class="scope-items">
+            <li>{d6['scope_boundaries']['cut_first'][0]}</li>
+            <li>{d6['scope_boundaries']['cut_first'][1]}</li>
+            <li>{d6['scope_boundaries']['cut_first'][2]}</li>
+            <li>{d6['scope_boundaries']['cut_first'][3]}</li>
+            <li>{d6['scope_boundaries']['cut_first'][4]}</li>
+          </ul>
         </div>
       </div>
     </div>
