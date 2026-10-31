@@ -2218,3 +2218,4 @@ with open(dest_path, "w", encoding="utf-8") as f:
     f.write(html_code)
 
 print("Saved HTML successfully to:", dest_path, f"({len(html_code)} bytes)")
+
