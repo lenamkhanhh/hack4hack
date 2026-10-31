@@ -1418,8 +1418,8 @@ def generate_v5():
               </div>
               <div class="comp-meta">
                 <span class="meta-tag">OBSERVED · VIDEO FRAME 00:07</span>
-                <span class="meta-name">HEAD-BLK-09 (Midnight Black)</span>
-                <span class="meta-sub">Observed: Black casing · Barcode unverified</span>
+                <span class="meta-name">Black Casing (HEAD-BLK-09 Color)</span>
+                <span class="meta-sub">Color-consistent with HEAD-BLK-09 · SKU not verified</span>
               </div>
             </div>
           </div>
@@ -1574,7 +1574,7 @@ def generate_v5():
           <div class="board-meta-item">SKU: <strong>{d3["ordered_evidence"]["sku"]}</strong></div>
           <div class="board-meta-item">Color: <strong>{d3["ordered_evidence"]["color"]}</strong></div>
           <div class="board-meta-item">Price: <strong>{d3["ordered_evidence"]["price"]} paid</strong></div>
-          <div class="board-meta-item">Delivered: <strong>4d ago (Shippo)</strong></div>
+          <div class="board-meta-item">Delivered: <strong>4d ago (Shippo #SH-9012)</strong></div>
         </div>
       </div>
 
@@ -1600,10 +1600,10 @@ def generate_v5():
           </div>
         </div>
         <div class="board-meta-strip" style="background: var(--coral-light);">
-          <div class="board-meta-item">Observed: <strong style="color:var(--coral-dark);">HEAD-BLK-09</strong></div>
-          <div class="board-meta-item">Casing: <strong style="color:var(--coral-dark);">{d3["observed_evidence"]["color"]}</strong></div>
-          <div class="board-meta-item">Lighting: <strong>Optimal (142/255)</strong></div>
-          <div class="board-meta-item">Barcode: <strong>Unverified</strong></div>
+          <div class="board-meta-item">Observed: <strong style="color:var(--coral-dark);">Black Casing</strong></div>
+          <div class="board-meta-item">Color Match: <strong style="color:var(--coral-dark);">Consistent with HEAD-BLK-09</strong></div>
+          <div class="board-meta-item">Exact SKU: <strong>Not verified (Barcode unverified)</strong></div>
+          <div class="board-meta-item">Lighting: <strong>Optimal (142/255) · REC 00:07 / 00:24</strong></div>
         </div>
       </div>
     </div>
@@ -1726,10 +1726,10 @@ def generate_v5():
 
       <div class="arch-banner">
         <div>
-          <strong>FAIL-CLOSED FINANCIAL GATE:</strong> <code>requires_seller_approval: true</code> enforced at schema layer.
+          <strong>FAIL-CLOSED FINANCIAL GATE:</strong> <code>requires_seller_approval: true</code> · Approval binds case + evidence hash + policy version.
         </div>
         <div>
-          Server Cap: <code>{meta["refund_guardrail"]["formula"]}</code>
+          Server Cap: <code>{meta["refund_guardrail"]["formula"]}</code> · Revalidation check before draft release.
         </div>
       </div>
     </div>
@@ -1753,7 +1753,7 @@ def generate_v5():
       </div>
       <div class="headline-wrap">
         <h2 class="slide-title">{d5["headline"]}</h2>
-        <p class="slide-subtitle">{d5["subheadline"]}</p>
+        <p class="slide-subtitle">Every case produces an auditable mock evidence pack. No automatic policy approvals.</p>
       </div>
     </div>
 
@@ -1776,7 +1776,7 @@ def generate_v5():
             </div>
             <div class="b-evidence-row">
               <span>Observed Frame 00:07:</span>
-              <strong>HEAD-BLK-09 (Midnight Black)</strong>
+              <strong>Black casing (color-consistent with HEAD-BLK-09, SKU not verified)</strong>
             </div>
             <div class="b-evidence-row">
               <span>Policy Evaluation:</span>
@@ -1829,7 +1829,7 @@ def generate_v5():
             <strong>Evidence:</strong> 4-second dark unboxing video &bull; Brightness score 28/255 &bull; Only 2 usable keyframes extracted.
           </div>
           <div class="case-row-result">
-            Outcome: Agent issues re-film checklist &bull; Case stays in <code>WAITING_FOR_EVIDENCE</code> &bull; Resumes on upload (1 retry limit).
+            Outcome: Agent issues re-film checklist &bull; Case stays in <code>WAITING_FOR_EVIDENCE</code> &bull; Resumes on upload (after 1 retry, escalates with both attempts logged; never auto-denies).
           </div>
         </div>
 
@@ -1924,7 +1924,7 @@ def generate_v5():
       <div class="scope-bottom-band">
         <div class="band-block">
           <span class="band-label">Must Deliver (Core Prototype)</span>
-          <span class="band-content">Mock APIs &bull; Policy engine &bull; Case B mismatch &bull; Case C re-film &bull; Seller gate &bull; Tiny order route</span>
+          <span class="band-content">{" &bull; ".join(d6["scope_boundaries"]["must_deliver"])}</span>
         </div>
 
         <div class="band-block">
@@ -2128,3 +2128,4 @@ def generate_v5():
 
 if __name__ == "__main__":
     generate_v5()
+

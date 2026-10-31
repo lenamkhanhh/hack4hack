@@ -48,13 +48,15 @@
           "color": "Matte White",
           "price": "₹1,499",
           "delivery": "Delivered 4 days ago",
-          "buyer": "Buyer #BY-4412"
+          "buyer": "Buyer #BY-4412",
+          "courier_tracking": "Shippo #SH-9012"
         },
         "evidence_citation": {
           "source": "Unboxing Video Keyframe",
           "timestamp": "Frame 00:07 (Staged)",
-          "observation": "Observed item casing is Midnight Black. Exact barcode unverified.",
-          "status_badge": "P-03: COLOR CONTRADICTION DETECTED"
+          "observation": "Observed: Black casing (color-consistent with HEAD-BLK-09) · Barcode unverified",
+          "status_badge": "P-03: COLOR CONTRADICTION DETECTED",
+          "casing": "Black casing (color-consistent with HEAD-BLK-09)"
         },
         "policy_check": {
           "window_check": "P-04 Return Window: PASS (Day 4 of 7)",
@@ -119,9 +121,12 @@
       "observed_evidence": {
         "label": "UNBOXING KEYFRAME (STAGED)",
         "timestamp": "Frame 00:07",
-        "color": "Midnight Black",
+        "color": "Black casing (color-consistent with HEAD-BLK-09, SKU not verified)",
         "status": "Contradiction Flagged",
-        "image_file": "unboxing_black_headphones.jpg"
+        "image_file": "unboxing_black_headphones.jpg",
+        "lighting": "Optimal (142/255)",
+        "duration": "00:24",
+        "courier_tracking": "Shippo #SH-9012"
       },
       "grounding_caption": "Visual Grounding: Keyframe 00:07 confirms black casing. Exact SKU barcode is unverified in this frame.",
       "decision_panel": {
@@ -140,7 +145,7 @@
           "Hold return for physical parcel inspection"
         ]
       },
-      "speaker_notes": "Slide 3 — The Star Demo & Technical Honesty in Vision Citation:\n- Core Benchmark Scenario (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 shows black headphones.\n- Visual Grounding Honesty: The agent does NOT claim to read an unreadable SKU barcode from frame 00:07. It factually observes: 'Observed Color: Midnight Black · Exact SKU: Not verified · Tag: Not visible in cited frame'. Frame citations provide a traceable reference, not proof of footage authenticity.\n- Decision Logic: Seeing a black item when white was ordered is an undeniable visual contradiction against the manifest. Instead of auto-denying the customer, the policy engine triggers ESCALATE.\n- Three Clear Merchant Options:\n  1. Request unboxing video with packaging label / serial number visible.\n  2. Reject return under policy (item does not match order record).\n  3. Override & approve if seller acknowledges known warehouse fulfillment error.\n- Financial Guardrail: min(₹4,999, remaining refundable amount, order paid amount). No money moves without seller click."
+      "speaker_notes": "Slide 3 — The Star Demo & Technical Honesty in Vision Citation:\n- Core Benchmark Scenario (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 shows black casing.\n- Visual Grounding Honesty: The agent does NOT claim to verify the exact SKU barcode from frame 00:07. It factually observes: 'Black casing (color-consistent with HEAD-BLK-09) · Barcode unverified · SKU not verified'. Frame citations provide a traceable reference, not proof of footage authenticity.\n- Decision Logic: Seeing a black item when white was ordered is an undeniable visual contradiction against the manifest. Instead of auto-denying the customer, the policy engine triggers ESCALATE.\n- Three Preserved Seller Options (matching slide face):\n  1. Accept as warehouse mis-shipment.\n  2. Request photo of outside-box shipping label.\n  3. Hold return for physical parcel inspection.\n- Financial Guardrail: min(₹4,999, remaining refundable amount, order paid amount). No money moves without seller click."
     },
     {
       "slide_number": 4,
@@ -185,14 +190,15 @@
         "title": "STRUCTURED AUDIT LOG",
         "text": "Structured JSON Audit Log recorded at every state transition."
       },
-      "speaker_notes": "Slide 4 — System Architecture, Agentic Governance & Technical Q&A Defense:\n- Philosophy: 'Models observe. Code verifies. Seller authorizes.'\n- Responsibilities: Planner model proposes tool actions; backend code validates JSON schemas; FFmpeg extracts keyframes; vision model generates cited observations; deterministic Python rules evaluate policy P-01 to P-08; seller gate authorizes consequential actions.\n- DEFENSE QUESTION 1: Why is this an agent rather than a hardcoded workflow?\n  ReturnLens is an autonomous state machine with dynamic action selection, multimodal observation, and stateful lifecycle management. In Case C, when a customer submits a dark or blurry video (average brightness 28), the agent does NOT simply fail or run a static linear chain. It inspects the frames, determines evidence is insufficient under Policy P-05, dynamically decides to invoke ask_for_evidence() with specific re-filming guidance, transitions the ticket to WAITING_FOR_EVIDENCE, pauses execution while retaining state and order context, and resumes the exact triage session when new media arrives. Conversely, for routine order status requests, the agent selects the zero-vision fast path directly querying mock APIs.\n- DEFENSE QUESTION 2: What happens if vision or critic models hallucinate?\n  Vision models produce non-binding observation metadata, never authoritative decisions. Hard business rules (return windows from carrier delivery timestamps, SKU comparisons) are executed in deterministic Python code (P-01 to P-08). The critic provides an adversarial sanity check against cited timestamps. If both vision and critic experience correlated hallucinations, the fail-closed human seller gate guarantees that no refund or return label can ever be issued without seller review.\n- DEFENSE QUESTION 3: How do you prevent duplicate or incorrect refunds?\n  1. Idempotency keys (hash(order_id, return_id, transaction_type)) with backend uniqueness checks prevent duplicate execution.\n  2. Ledgers enforce: 0 < amount <= min(₹4,999, remaining_refundable_amount, order_paid_amount).\n  3. Sequence: Refund proposal -> Code validation -> Seller approval -> Revalidation -> Draft creation -> Receipt -> Release. LLMs possess zero capability to call payment gateways directly."
+      "speaker_notes": "Slide 4 — System Architecture, Agentic Governance & Technical Q&A Defense:\n- Philosophy: 'Models observe. Code verifies. Seller authorizes.'\n- Responsibilities: Planner model proposes tool actions; backend code validates JSON schemas; FFmpeg extracts keyframes; vision model generates cited observations; deterministic Python rules evaluate policy P-01 to P-08; seller gate authorizes consequential actions.\n- DEFENSE QUESTION 1: Why is this an agent rather than a hardcoded workflow?\n  ReturnLens is an autonomous state machine with dynamic action selection, multimodal observation, and stateful lifecycle management. In Case C, when a customer submits a dark or blurry video (average brightness 28), the agent does NOT simply fail or run a static linear chain. It inspects the frames, determines evidence is insufficient under Policy P-05, dynamically decides to invoke ask_for_evidence() with specific re-filming guidance, transitions the ticket to WAITING_FOR_EVIDENCE, pauses execution while retaining state and order context, and resumes the exact triage session when new media arrives. Conversely, for routine order status requests, the agent selects the zero-vision fast path directly querying mock APIs.\n- DEFENSE QUESTION 2: What happens if vision or critic models hallucinate?\n  Vision models produce non-binding observation metadata, never authoritative decisions. Hard business rules (return windows from carrier delivery timestamps, SKU comparisons) are executed in deterministic Python code (P-01 to P-08). The critic provides an adversarial sanity check against cited timestamps. If both vision and critic experience correlated hallucinations, the fail-closed human seller gate guarantees that no refund or return label can ever be issued without seller review.\n- DEFENSE QUESTION 3: How do you prevent duplicate or incorrect refunds?\n  1. Idempotency keys (hash(order_id, return_id, transaction_type)) with backend uniqueness checks prevent duplicate execution.\n  2. Ledgers enforce: 0 < amount <= min(₹4,999, remaining_refundable_amount, order_paid_amount).\n  3. Sequence: Refund proposal -> Code validation -> Seller approval -> Revalidation -> Draft creation -> Receipt -> Release. LLMs possess zero capability to call payment gateways directly.\n- Security Hardening: Authorization signature binds case ID, SHA256 evidence hash, and policy version. State is revalidated before any draft release.",
+      "approval_binding": "Approval binds case ID + evidence hash + policy version · Revalidation check before draft release"
     },
     {
       "slide_number": 5,
       "id": "scenarios",
       "tag": "DEMO SCENARIOS · BEHAVIORAL MATRIX",
       "headline": "Different evidence. Different action.",
-      "subheadline": "Predictable, controlled prototype responses across four distinct evidence conditions.",
+      "subheadline": "Every case produces an auditable mock evidence pack. No automatic policy approvals.",
       "cases": [
         {
           "number": "01",
@@ -204,16 +210,16 @@
         {
           "number": "02",
           "name": "CONTRADICTION",
-          "observation": "Ordered White, Observed Black · HEAD-WHT-02 ordered vs Frame 00:07 Black item",
+          "observation": "Ordered White, Observed Black · Black casing (color-consistent with HEAD-BLK-09, SKU not verified)",
           "action": "ESCALATE TO SELLER",
-          "detail": "Policy P-03 blocks automation. Inhibits label and refund. Seller selects: mis-shipment / box label / warehouse inspection."
+          "detail": "Policy P-03 blocks automation. Inhibits label and refund. Preserved options: mis-shipment / box label / physical inspection."
         },
         {
           "number": "03",
           "name": "UNCLEAR",
           "observation": "Insufficient Visual Evidence · 4s low-light video (brightness 28/255), barcode obscured",
           "action": "ASK AND RESUME",
-          "detail": "Calls ask_for_evidence(); transitions to WAITING_FOR_EVIDENCE; resumes context on upload (1 retry limit)."
+          "detail": "Calls ask_for_evidence(); transitions to WAITING_FOR_EVIDENCE; resumes on upload. After 1 retry, escalates to seller with both attempts logged (never auto-denies)."
         },
         {
           "number": "04",
@@ -251,7 +257,7 @@
           "phase": "INTEGRATION",
           "title": "State Flow & Scenarios",
           "owner": "Person C (Fixtures / Integration / QA)",
-          "desc": "Clarification/resume loop, wiring 4 staged demo cases, end-to-end event bus."
+          "desc": "Case C pause/resume loop · 3 core cases (A–C) + Case D sequence test · Critic review"
         },
         {
           "hours": "18–24h",
@@ -264,13 +270,14 @@
       "scope_boundaries": {
         "must_deliver": [
           "Mock store & courier APIs",
-          "Deterministic policy & seller gate",
-          "Color-mismatch contradiction scenario",
-          "Clarification / resume scenario (Case C)",
-          "Structured JSON audit trail log",
-          "Order-status fast path lookup"
+          "Deterministic policy engine & seller gate",
+          "Case B color contradiction & Case C re-film loop",
+          "3 core demo cases (A–C) + Case D sequence test",
+          "Approval binding (case + evidence hash + policy version)",
+          "Structured JSON audit trail & order-status fast path"
         ],
         "cut_first": [
+          "Advanced video forensic splice analysis (Case D stretch)",
           "WhatsApp bot",
           "Exchanges",
           "Multi-seller auth",

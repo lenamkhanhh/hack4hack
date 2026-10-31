@@ -160,10 +160,10 @@ def run_tests():
     for page in doc_v5:
         pdf_v5_text += page.get_text() + "\n"
 
-    pdf_lower = pdf_v5_text.lower()
+    pdf_lower = " ".join(pdf_v5_text.lower().split())
 
     # Grounding check 1: Honest SKU unverified on Slide 3
-    if "barcode: unverified" not in pdf_lower and "barcode unverified" not in pdf_lower:
+    if "barcode: unverified" not in pdf_lower and "barcode unverified" not in pdf_lower and "barcode is unverified" not in pdf_lower:
         print("FAILED: 'Barcode unverified' missing from Slide 3 evidence.")
         all_passed = False
     else:
