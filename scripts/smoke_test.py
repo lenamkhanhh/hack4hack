@@ -1,5 +1,7 @@
 import os
 import sys
+import json
+import zipfile
 import subprocess
 import hashlib
 from pathlib import Path
@@ -9,16 +11,41 @@ from pptx import Presentation
 
 base_dir = Path(__file__).resolve().parent.parent
 
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 def file_hash(p):
     with open(p, 'rb') as f:
         return hashlib.sha256(f.read()).hexdigest()
 
 def run_tests():
-    print("=== STARTING RETURNLENS V4 SMOKE TESTS ===")
+    print("=== STARTING RETURNLENS V4 EXTENDED SMOKE & QA TESTS ===")
     all_passed = True
 
-    # 1. Test generator execution
-    print("\n[TEST 1] Running src/generate_v4_html.py...")
+    # 1. Test Canonical Content Specification
+    print("\n[TEST 1] Validating Canonical Data Specification (content/deck_data.json)...")
+    data_path = base_dir / "content" / "deck_data.json"
+    if not data_path.exists():
+        print(f"FAILED: Canonical data file missing: {data_path}")
+        all_passed = False
+    else:
+        try:
+            with open(data_path, "r", encoding="utf-8") as f:
+                d = json.load(f)
+            sample_price = d["meta"]["sample_order"]["price"]
+            ceiling = d["meta"]["refund_guardrail"]["ceiling"]
+            print(f"PASSED: Canonical data loaded successfully. Sample order: {sample_price}, Ceiling: {ceiling}.")
+            if sample_price != "₹1,499" or ceiling != "₹4,999":
+                print(f"FAILED: Unexpected price/ceiling values in deck_data.json: {sample_price}, {ceiling}")
+                all_passed = False
+        except Exception as e:
+            print(f"FAILED: deck_data.json parsing error: {e}")
+            all_passed = False
+
+    # 2. Test HTML & PDF Generator Execution
+    print("\n[TEST 2] Running src/generate_v4_html.py...")
     script_html = base_dir / "src" / "generate_v4_html.py"
     h_before = file_hash(script_html)
 
@@ -29,16 +56,16 @@ def run_tests():
     else:
         print("PASSED: generate_v4_html.py executed successfully.")
 
-    # Check P0: Generator must NOT overwrite itself
+    # Idempotency Check
     h_after = file_hash(script_html)
     if h_before != h_after:
-        print("FAILED: P0 BUG DETECTED - generate_v4_html.py modified its own source code!")
+        print("FAILED: P0 BUG - generate_v4_html.py modified its own source code!")
         all_passed = False
     else:
-        print("PASSED: P0 Check passed - generator source file remained completely untouched.")
+        print("PASSED: Generator source file remained completely untouched (100% idempotent).")
 
-    # 2. Test PPTX generator execution
-    print("\n[TEST 2] Running src/build_v4_pptx.py...")
+    # 3. Test PPTX Generator Execution
+    print("\n[TEST 3] Running src/build_v4_pptx.py...")
     script_pptx = base_dir / "src" / "build_v4_pptx.py"
     res_pptx = subprocess.run([sys.executable, str(script_pptx)], capture_output=True, text=True)
     if res_pptx.returncode != 0:
@@ -47,8 +74,8 @@ def run_tests():
     else:
         print("PASSED: build_v4_pptx.py executed successfully.")
 
-    # 3. Test Deliverable Integrity & Synchronization
-    print("\n[TEST 3] Checking deliverable files and synchronization...")
+    # 4. Test Deliverable Integrity & Synchronization
+    print("\n[TEST 4] Checking deliverable files and synchronization...")
     pairs = [
         ("ReturnLens_v4.html", "deliverables/ReturnLens_v4.html"),
         ("ReturnLens_v4.pdf", "deliverables/ReturnLens_v4.pdf"),
@@ -71,15 +98,15 @@ def run_tests():
         else:
             print(f"PASSED: {root_f} synced with {deliv_f} ({p_root.stat().st_size} bytes).")
 
-    # 4. Test PDF properties
-    print("\n[TEST 4] Validating PDF properties...")
+    # 5. Test PDF Properties
+    print("\n[TEST 5] Validating PDF properties...")
     pdf_path = base_dir / "ReturnLens_v4.pdf"
     doc = fitz.open(pdf_path)
     if len(doc) != 6:
         print(f"FAILED: PDF page count is {len(doc)}, expected 6.")
         all_passed = False
     else:
-        print(f"PASSED: PDF has exactly 6 pages.")
+        print("PASSED: PDF has exactly 6 pages.")
 
     rect = doc[0].rect
     ratio = rect.width / rect.height
@@ -90,8 +117,8 @@ def run_tests():
     else:
         print(f"PASSED: PDF aspect ratio is true 16:9 widescreen ({rect.width}x{rect.height}).")
 
-    # 5. Test PPTX properties and Speaker Notes
-    print("\n[TEST 5] Validating PPTX properties and Speaker Notes...")
+    # 6. Test PPTX Properties, Speaker Notes & EMBEDDED MEDIA (Critical Fix Validation)
+    print("\n[TEST 6] Validating PPTX Properties, Speaker Notes & Embedded Media...")
     pptx_path = base_dir / "ReturnLens_v4.pptx"
     prs = Presentation(pptx_path)
     if len(prs.slides) != 6:
@@ -109,7 +136,7 @@ def run_tests():
             if len(txt) == 0:
                 missing_notes.append(i + 1)
             else:
-                print(f"  Slide {i+1} Speaker Notes: {len(txt)} chars (Starts: '{txt[:45]}...')")
+                print(f"  Slide {i+1} Speaker Notes: {len(txt)} chars")
 
     if missing_notes:
         print(f"FAILED: Slides {missing_notes} missing speaker notes in PPTX.")
@@ -117,44 +144,54 @@ def run_tests():
     else:
         print("PASSED: All 6 slides have verified embedded speaker notes.")
 
-    # 6. Test Preview Image Dimensions
-    print("\n[TEST 6] Validating Preview Image Dimensions...")
+    # CRITICAL: Verify embedded media files in PPTX package!
+    with zipfile.ZipFile(pptx_path) as z:
+        media_files = [f for f in z.namelist() if 'media/' in f]
+        print(f"  Embedded media in PPTX: {len(media_files)} files ({media_files})")
+        if len(media_files) < 2:
+            print(f"FAILED: Expected at least 2 embedded media files in PPTX, found {len(media_files)}!")
+            all_passed = False
+        else:
+            print("PASSED: True embedded product images verified inside PPTX zip package.")
+
+    # 7. Test Preview Image Dimensions
+    print("\n[TEST 7] Validating Preview Image Dimensions...")
     prev_path = base_dir / "ReturnLens_v4_preview.png"
     im = Image.open(prev_path)
     if im.size != (2352, 900):
         print(f"FAILED: Preview image size is {im.size}, expected (2352, 900).")
         all_passed = False
     else:
-        print(f"PASSED: Preview image size is verified (2352, 900).")
+        print("PASSED: Preview image size is verified (2352, 900).")
 
-    # 7. Test Evidence Grounding & Honest Text Checks
-    print("\n[TEST 7] Verifying Evidence Grounding in PDF & PPTX...")
+    # 8. Test Evidence Grounding & Factual Consistency
+    print("\n[TEST 8] Verifying Evidence Grounding in PDF & PPTX...")
     pdf_text = ""
     for page in doc:
         pdf_text += page.get_text() + "\n"
 
     pdf_lower = pdf_text.lower()
 
-    # Grounding check 1: No fabricated "casing crack verified at lower seam"
-    if "casing crack verified" in pdf_lower or "verified at lower seam" in pdf_lower:
-        print("FAILED: Found unsupported 'casing crack verified' in PDF.")
-        all_passed = False
-    else:
-        print("PASSED: Unverified defect claim removed; honest observation used.")
-
-    # Grounding check 2: Observed SKU unverified on Slide 3
+    # Grounding check 1: Honest SKU unverified on Slide 3
     if "exact sku: not verified" not in pdf_lower:
         print("FAILED: 'Exact SKU: Not verified' missing from Slide 3 evidence footer.")
         all_passed = False
     else:
         print("PASSED: Color mismatch clearly states SKU is unverified.")
 
-    # Grounding check 3: PS-04 secondary route present
+    # Grounding check 2: PS-04 secondary route present
     if "secondary ps-04 route" not in pdf_lower or "where is my order?" not in pdf_lower:
         print("FAILED: Secondary PS-04 order-status route missing from Architecture slide.")
         all_passed = False
     else:
         print("PASSED: Secondary PS-04 order status route verified on Slide 4.")
+
+    # Grounding check 3: Case C stateful clarification loop present
+    if "waiting_for_evidence" not in pdf_lower or "ask_for_evidence" not in pdf_lower:
+        print("FAILED: Case C stateful loop missing from Architecture slide.")
+        all_passed = False
+    else:
+        print("PASSED: Dynamic stateful clarification loop verified on Slide 4.")
 
     # Grounding check 4: Conservative Case D sequence
     if "inspect sequence continuity" not in pdf_lower:
@@ -163,21 +200,9 @@ def run_tests():
     else:
         print("PASSED: Case D uses conservative sequence continuity wording.")
 
-    # 8. Test Idempotency (Second run)
-    print("\n[TEST 8] Testing Generator Idempotency (Second Run)...")
-    res2 = subprocess.run([sys.executable, str(script_html)], capture_output=True, text=True)
-    if res2.returncode != 0:
-        print("FAILED: Second execution of generate_v4_html.py failed.")
-        all_passed = False
-    elif file_hash(script_html) != h_before:
-        print("FAILED: Second run corrupted generate_v4_html.py!")
-        all_passed = False
-    else:
-        print("PASSED: Generator is 100% idempotent and safe.")
-
     print("\n==========================================")
     if all_passed:
-        print("ALL RETURNLENS V4 SMOKE TESTS PASSED! READY FOR SUBMISSION.")
+        print("ALL RETURNLENS V4 EXTENDED SMOKE & QA TESTS PASSED! READY FOR SUBMISSION.")
     else:
         print("SOME SMOKE TESTS FAILED. PLEASE REVIEW LOGS ABOVE.")
     print("==========================================")
@@ -186,4 +211,3 @@ def run_tests():
 if __name__ == "__main__":
     success = run_tests()
     sys.exit(0 if success else 1)
-

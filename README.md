@@ -10,7 +10,7 @@
 ## 📌 Project Overview & Current Stage
 
 > **Submission Scope:** **Idea Round Prototype Proposal**  
-> This repository contains the official pitch deck, generation engine, staged benchmark evidence, and verified build pipeline. It defines the architecture, deterministic policy rules, and 24-hour execution roadmap for the hackathon prototype. It is not an existing live commercial deployment.
+> This repository contains the official pitch deck, canonical content specification, generation engine, staged benchmark evidence, and verified build pipeline. It defines the architecture, deterministic policy rules, and 24-hour execution roadmap for the hackathon prototype. It is not an existing live commercial deployment.
 
 **ReturnLens** is an evidence-backed returns triage agent tailored for solo direct-to-consumer (D2C) online sellers who manage customer support, orders, and returns alone.
 
@@ -30,7 +30,7 @@ When an online customer submits a return request with a short unboxing video (30
 
 While ReturnLens differentiates itself through **multimodal, video-backed return triage** (solving the solo seller's most expensive problem), it also covers routine customer support inquiries under Problem Statement PS-04:
 - **Primary Video Triage Route:** Analyzes customer unboxing footage, checks policies P-01–P-08, extracts timestamp citations, and prepares human-in-the-loop authorization.
-- **Secondary Order Status Route (Zero-Vision Fast Path):** When a buyer asks *"Where is my order?"*, the agent directly reuses the mock Shopify and Shippo APIs to return real-time delivery timestamps and courier status scans in sub-second time, escalating to the seller only if courier delay thresholds are exceeded.
+- **Secondary Order Status Route (Zero-Vision Fast Path):** When a buyer asks *"Where is my order?"*, the agent directly reuses the mock Shopify and Shippo APIs to return real-time delivery timestamps and courier status scans, escalating to the seller only if courier delay thresholds are exceeded.
 
 ---
 
@@ -50,18 +50,22 @@ All deliverables are generated from source code and maintained in both the repos
 
 | Deliverable | File Path | Verified Specifications |
 | :--- | :--- | :--- |
+| **Canonical Content Spec** | [`content/deck_data.json`](content/deck_data.json) | Single source of truth containing verified copy, metrics, policy rules, and technical speaker notes consumed by both HTML and PPTX generators. |
 | **Interactive HTML Deck** | [`ReturnLens_v4.html`](ReturnLens_v4.html) / [`index.html`](index.html) | Standalone, self-contained 16:9 widescreen presentation (1280×720) with embedded base64 photorealistic assets and keyboard navigation (`←`/`→`/`Space`). |
 | **Submission PDF** | [`ReturnLens_v4.pdf`](ReturnLens_v4.pdf) | Exactly 6-page 16:9 widescreen PDF rendered via headless browser engine with vector typography and zero margin clipping. |
-| **PowerPoint Deck** | [`ReturnLens_v4.pptx`](ReturnLens_v4.pptx) | Native, editable 16:9 presentation with embedded high-resolution photos, vector shapes, and **verified speaker notes on all 6 slides**. |
+| **PowerPoint Deck** | [`ReturnLens_v4.pptx`](ReturnLens_v4.pptx) | Native, editable 16:9 presentation with embedded high-resolution photos, vector shapes, and **verified speaker notes on all 6 slides** (~1.2 MB package). |
 | **Master Preview** | [`ReturnLens_v4_preview.png`](ReturnLens_v4_preview.png) | High-resolution 2352×900 master 6-slide contact sheet preview (3×2 grid). |
-| **HTML & PDF Generator** | [`src/generate_v4_html.py`](src/generate_v4_html.py) | Python master build script with automatic cross-platform browser discovery (Chrome/Edge) and 100% idempotent execution. |
-| **PowerPoint Generator** | [`src/build_v4_pptx.py`](src/build_v4_pptx.py) | Python script generating native PPTX via `python-pptx` with embedded technical speaker notes. |
-| **Smoke Test Suite** | [`scripts/smoke_test.py`](scripts/smoke_test.py) | Automated test suite validating deliverable synchronization, PDF page counts, PPTX speaker notes, preview dimensions, and generator idempotency. |
+| **HTML & PDF Generator** | [`src/generate_v4_html.py`](src/generate_v4_html.py) | Python master build script consuming `deck_data.json`, with cross-platform browser discovery (Chrome/Edge) and 100% idempotent execution. |
+| **PowerPoint Generator** | [`src/build_v4_pptx.py`](src/build_v4_pptx.py) | Python script generating native PPTX via `python-pptx` with embedded product imagery and technical speaker notes. |
+| **Extended Smoke Tests** | [`scripts/smoke_test.py`](scripts/smoke_test.py) | Automated test suite validating deliverable synchronization, PDF page counts, PPTX embedded media integrity, speaker notes, preview dimensions, and generator idempotency. |
 
 ```text
 hack4hack/
+├── content/                          # Single Source of Truth
+│   └── deck_data.json                # Canonical presentation content, prices, and notes
+│
 ├── deliverables/                     # Official v4 submission artifacts
-│   ├── ReturnLens_v4.pptx            # Native editable PowerPoint deck (16:9) with speaker notes
+│   ├── ReturnLens_v4.pptx            # Native editable PowerPoint deck (16:9) with speaker notes & media
 │   ├── ReturnLens_v4.pdf             # 6-page presentation PDF (16:9)
 │   ├── ReturnLens_v4.html            # Standalone interactive HTML deck
 │   └── ReturnLens_v4_preview.png     # Full 6-slide preview contact-sheet (2352x900)
@@ -70,12 +74,12 @@ hack4hack/
 │   ├── build_v4_pptx.py              # Python script generating native PPTX with notes
 │   ├── generate_v4_html.py           # Python script compiling HTML, PDF & preview
 │   └── assets/                       # Staged photos, video frames, and slide renders
-│       ├── studio_white_headphones.png  # Store catalog ground truth photo (HEAD-WHT-02, Matte White)
-│       ├── unboxing_black_headphones.png # Customer video unboxing frame at 00:07 (Midnight Black)
+│       ├── studio_white_headphones.jpg  # Store catalog ground truth photo (HEAD-WHT-02, Matte White)
+│       ├── unboxing_black_headphones.jpg # Customer video unboxing frame at 00:07 (Midnight Black)
 │       └── slides/                   # High-resolution rendered PNG images of slides 1 to 6
 │
 ├── scripts/                          # Automated testing and verification
-│   └── smoke_test.py                 # 8-step smoke test verifying build & deliverable integrity
+│   └── smoke_test.py                 # Extended smoke test verifying build, media & deliverable integrity
 │
 ├── research/                         # Background research & problem statement analysis
 │   └── AgentX_Idea_Research.html     # Deep dive on 7 AgentX problem statements & market friction
@@ -99,33 +103,32 @@ hack4hack/
 - **Headline**: `RETURNLENS` — *“Every return decision, backed by evidence.”*
 - **Value Proposition**: Evidence-backed returns triage agent for solo direct-to-consumer online sellers.
 - **Scope Guardrails**: Return triage core + 1 zero-vision order-status route. Fail-closed architecture; no autonomous refunds.
-- **Visual Anchor**: Seller Review Console mockup featuring Case RT-1042 / ORD-8821 with inspection frame 00:14, store truth (`HEAD-WHT-02`, ₹4,999), honest visual observation (*“Potential casing damage flagged · Requires manual confirmation”*), policy verification (`P-01 FLAGGED FOR REVIEW`, `P-04 PASS`), status `READY FOR SELLER REVIEW (FLAGGED)`, and 1-click draft authorization.
+- **Visual Anchor**: Seller Review Console mockup featuring Case RT-8821 / ORD-7729 with store truth (`HEAD-WHT-02`, ₹1,499), unboxing keyframe 00:07 citation, honest visual observation (*“Observed item casing is Midnight Black. Exact barcode unverified.”*), policy verification (`P-03 Manifest Match: CONTRADICTION FLAGGED`, `P-04 Return Window: PASS`), status `STATUS: ESCALATED FOR SELLER DECISION`, and 1-click review authorization.
 
 ### Slide 2: The Problem as a Visual Story (3-Column Zero-Overlap Layout)
 - **Tag**: `The Problem · Solo Seller Bottleneck`
-- **Headline**: `One return decision. Four disconnected sources.`
-- **Subtitle**: *Sellers decide returns from memory today. ReturnLens assembles one trace before money moves.*
+- **Headline**: `One return. Four disconnected sources.`
+- **Subtitle**: *Four systems. No traceable decision. Without a shared record, the seller connects order facts, video, and policy manually from memory.*
 - **Visual Layout**: 3-column composition without overlap:
-  - *Left Column*: Source 01 (Buyer Chat: “Received damaged item”, 30–60s video) & Source 03 (Courier Tracking: Delivered 4 days ago, Shippo mock API scan).
-  - *Center Pillar (Critical Gap)*: **`Four systems. No traceable decision.`** · **`NO SHARED EVIDENCE RECORD`** — *Today the seller opens 4 tabs, then decides alone. A wrong refund loses inventory; an unfair denial loses a customer. The gap is that no single record ties order truth, video frames, policy clauses, and decisions together.*
-  - *Right Column*: Source 02 (Order Record: White Headphones, ₹4,999, Shopify mock API) & Source 04 (Return Policy: 7-day window, sealed tag, code rules P-01 to P-08).
+  - *Left Column*: Source 01 (Buyer Video & Claim) & Source 03 (Courier Tracking Scan: Delivered 4 days ago, Shippo mock API).
+  - *Center Pillar (Critical Gap)*: **`NO SHARED EVIDENCE RECORD`** — *Today the seller opens 4 browser tabs and guesses. An erroneous refund burns inventory margin; an unfair denial destroys repeat customer trust. The gap is the absence of an auditable artifact tying order truth, video keyframes, and policy clauses together before money moves.*
+  - *Right Column*: Source 02 (Store Order Truth: White Headphones, ₹1,499, Shopify mock API) & Source 04 (Store Return Policy: 7-day window, sealed tag, code rules P-01 to P-08).
 - **Sourced Signal**: Fraud estimates differ by definition: **9%** (*NRF 2025, fraud only*) vs **15.14%** (*Appriss/Deloitte 2024, fraud + abuse*).
 
 ### Slide 3: The Star Demo (Visual Evidence Benchmark)
-- **Tag**: `Star Demo · Visual Grounding & Color Contradiction`
+- **Tag**: `Visual Evidence Benchmark · Core Demonstration`
 - **Headline**: `The order says white. The video shows black.`
-- **Subtitle**: *ReturnLens extracts keyframes, flags color discrepancies, and halts auto-payout for seller approval.*
+- **Subtitle**: *ReturnLens flags the contradiction — the seller decides.*
 - **Visual Contrast**:
-  - *Left Card (Order Ground Truth)*: Studio photo of `HEAD-WHT-02` (Matte White, ₹4,999, delivered 4 days ago, tag present).
-  - *Center Badge*: `COLOR CONTRADICTION`.
+  - *Left Card (Order Ground Truth)*: High-resolution catalog photo of `HEAD-WHT-02` (Matte White, ₹1,499, delivered 4 days ago).
   - *Right Card (Video Keyframe)*: Customer unboxing frame at `00:07` showing Midnight Black item. Grounded citation explicitly notes: *“Observed Color: Midnight Black · Exact SKU: Not verified · Tag: Not visible in cited frame”*.
 - **Deterministic Policy Gate**:
-  - Rule `P-03 Check: COLOR CONTRADICTION`.
+  - Rule `P-03: COLOR CONTRADICTION`.
   - Plan Schema: `typed JSON, requires_seller_approval: true`.
   - Status: `STATUS: ESCALATE (SELLER REVIEW REQUIRED)` — Color contradiction observed; exact SKU unverified; automated return label and refund payout inhibited.
   - **3 Seller Options**:
     1. Request unboxing video with packaging label / serial number visible.
-    2. Reject return under Clause 4.2 (Item does not match order record).
+    2. Reject return under policy (item does not match order record).
     3. Override & approve if seller acknowledges known warehouse fulfillment error.
   - **Financial Cap**: $0 < \text{amount} \le \min(₹4,999, \text{remaining refundable amount}, \text{order paid amount})$.
 
@@ -137,12 +140,7 @@ hack4hack/
   $$\text{01 PLAN [MODEL]} \longrightarrow \text{02 RETRIEVE [CODE]} \longrightarrow \text{03 EVALUATE [CODE]} \longrightarrow \text{04 AUDIT [MODEL]} \longrightarrow \text{05 AUTHORIZE [HUMAN]} \longrightarrow \text{06 RECORD [CODE]}$$
 - **Dual Operational Branches**:
   - *Dynamic Stateful Clarification Loop (Case C)*: $\text{Dark Frames} \longrightarrow \text{ask\_for\_evidence()} \longrightarrow \text{WAITING\_FOR\_EVIDENCE} \longrightarrow \text{Customer Uploads} \longrightarrow \text{Resume Case}$
-  - *Secondary PS-04 Order Status Fast Path*: $\text{Query: “Where is my order?”} \longrightarrow \text{Mock Store API} \longrightarrow \text{Courier Scan} \longrightarrow \text{Instant Delivery Timestamp}$
-- **4 Decision Function Outcomes (Strict Priority Order)**:
-  1. `Contradiction → Escalate`: Discrepancy flagged (e.g. Case B); inhibits automated label and refund draft.
-  2. `Hard Fail → Escalate`: Mandatory rule violation (e.g. expired return window); seller decides; never auto-deny.
-  3. `Unclear Only → Ask More`: Low brightness or blurry barcode (e.g. Case C); exact re-film checklist (1 retry limit).
-  4. `All Pass → Approve Review`: All clauses pass (e.g. Case A); prepares mock label and drafts refund in `pending_return_receipt`.
+  - *Secondary PS-04 Order Status Fast Path*: $\text{Query: “Where is my order?”} \longrightarrow \text{Direct Mock Store \& Shippo API} \longrightarrow \text{Delivery Scan \& Timestamp}$
 - **Core Architecture Guarantees**:
   - *Model Calls*: Bounded design estimate (3 base calls: planner, vision, critic + retries).
   - *Policy Rules*: Deterministic Python code rules `P-01` to `P-08`, never prompts.
@@ -151,36 +149,34 @@ hack4hack/
 
 ### Slide 5: Four Demo Benchmark Scenarios
 - **Tag**: `Demo Scenarios · Controlled Prototype Behaviors`
-- **Headline**: `Four scenarios. Four predictable behaviors.`
+- **Headline**: `Four evidence conditions. Four controlled actions.`
 - **Subtitle**: *Expected prototype behaviors across staged benchmark cases. Not measured production metrics.*
 - **4 Reproducible Benchmark Cases**:
-  - **Case A · Ready (`ORD-1042`, ₹4,999)**:
-    - *Evidence*: Verified Damage · Staged cosmetic crack, timestamp 00:04 · Defect verified.
-    - *Expected Action*: Agent prepares mock label & draft refund in `pending_return_receipt`; seller one-click confirms.
-  - **Case B · Mismatch (Color Contradiction - Core Benchmark)**:
-    - *Evidence*: Color Contradiction · `HEAD-WHT-02` (White) ordered vs Frame 00:07 Black item · SKU unverified.
-    - *Expected Action*: `P-03` contradiction blocks automation; seller selects 1 of 3 options: mis-shipment / box label / warehouse inspection.
-  - **Case C · Unclear (Agentic Clarification Loop)**:
-    - *Evidence*: Insufficient Visibility · 4-second dark video, brightness 28, only 2 usable frames.
-    - *Expected Action*: Agent requests targeted photo; enters `WAITING_FOR_EVIDENCE`; resumes case on upload (1 retry limit).
-  - **Case D · Context (Sequence Continuity)**:
-    - *Evidence*: Sequence Continuity · Staged parcel-to-product take: opening sealed parcel to product reveal.
-    - *Expected Action*: *Expected prototype behavior: inspect sequence continuity and flag missing transitions for seller review.*
+  - **Case 01 · Consistent (Clear Defect - ORD-1042, ₹1,499)**:
+    - *Evidence*: Staged casing crack verified in unboxing frame 00:04 · Manifest & return window match.
+    - *Expected Action*: **PREPARE SELLER REVIEW** — Agent prepares mock shipping label & drafts refund in `pending_return_receipt`. Money releases only upon warehouse receipt.
+  - **Case 02 · Contradiction (Color Mismatch - Core Benchmark)**:
+    - *Evidence*: White ordered (`HEAD-WHT-02`) vs Black unboxed in Frame 00:07 · Exact SKU unverified.
+    - *Expected Action*: **ESCALATE TO SELLER** — Policy `P-03` blocks automation. Inhibits label and refund. Seller selects 1 of 3 concrete resolution options.
+  - **Case 03 · Unclear (Low Lighting - Agentic Clarification Loop)**:
+    - *Evidence*: 4-second dark video, brightness 28/255, barcode obscured · Insufficient visual evidence.
+    - *Expected Action*: **ASK AND RESUME** — Agent calls `ask_for_evidence()`; transitions ticket to `WAITING_FOR_EVIDENCE`; resumes context on upload (1 retry limit).
+  - **Case 04 · Sequence (Continuity Check)**:
+    - *Evidence*: Staged continuous take from sealed parcel opening to product reveal · Sequence inspected.
+    - *Expected Action*: **INSPECT CONTINUITY** — *Expected prototype behavior: inspect sequence continuity and flag missing transitions for seller review.*
 
 ### Slide 6: 24-Hour Execution & Feasibility
 - **Tag**: `24-Hour Prototype Plan · Feasibility & Scope Guardrails`
-- **Headline**: `Built for a 24-hour sprint.`
-- **Subtitle**: *Strict scope boundaries and clear division of labor make the prototype fully buildable in one day.*
+- **Headline**: `A credible prototype in 24 hours.`
+- **Subtitle**: *Strict scope boundaries and single-threaded ownership make the prototype fully buildable in one day.*
 - **24-Hour Timeline Grid**:
-  - `00h – 06h · Foundation`: **Mock APIs & Agent Core** · LangGraph skeleton, mock store/courier fixtures, order status route · *Owner: Person A (Backend), supported by C*
-  - `06h – 12h`: **Evidence Pipeline & Policy** · FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt · *Owner: Person B (Video & UI)*
-  - `12h – 18h`: **State Flow & Scenarios** · End-to-end wiring, clarification/resume loop, seller console UI · *Owner: Person C (Integration), supported by A/B*
-  - `18h – 24h`: **Testing & Submission** · Fallback testing, authorization tests, demo video recording, README · *All 3 Members*
+  - `00h – 06h · Foundation`: **Mock APIs & Agent State** · LangGraph skeleton, mock store/courier fixtures, order status route · *Owner: Person A (Backend)*
+  - `06h – 12h · Evidence`: **Evidence Pipeline & Policy** · FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt · *Owner: Person B (Vision & UI)*
+  - `12h – 18h · Integration`: **State Flow & Scenarios** · Clarification/resume loop, seller console UI, wiring 4 staged demo cases · *Owner: Person C (Integration) with A/B*
+  - `18h – 24h · Validation`: **Testing & Submission** · Fallback testing, authorization tests, demo video recording, README · *All 3 Members*
 - **Scope Discipline**:
-  - **Never Cut (Core Engine)**: Deterministic policy engine (`P-01` to `P-08`), evidence-pack frame citation, fail-closed seller approval gate, structured JSON audit log, clarification/resume loop, 4 reproducible demo cases.
-  - **Cut First If Behind (Deferred Expansion)**: Real carrier webhook integration (keep mock courier), multi-product order parsing (keep 1 item/return), custom video encoding (keep standard 1 fps FFmpeg extraction), production payment gateways / live WhatsApp webhooks, seller analytics dashboard.
-- **Closing Motto**:
-  > *“The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control.”*
+  - **Must Deliver (Core Prototype)**: Deterministic policy engine (`P-01` to `P-08`), evidence-pack keyframe citations, fail-closed seller authorization gate, structured JSON audit log, stateful clarification/resume loop, 4 reproducible demo scenarios.
+  - **Cut First If Behind (Deferred Expansion)**: Live carrier webhooks (keep mock courier), multi-product order parsing (keep 1 item/return), video OCR barcode scanner (keep visual color), live payment gateways (keep draft refunds), merchant analytics dashboard.
 
 ---
 
@@ -195,17 +191,19 @@ hack4hack/
 pip install -r requirements.txt
 ```
 
-### 2. Run the Automated Smoke Test Suite
+### 2. Run the Extended Smoke & QA Test Suite
 ```bash
 python scripts/smoke_test.py
 ```
 This script will:
+- Validate `content/deck_data.json` single source of truth.
 - Run `src/generate_v4_html.py` to compile HTML and invoke Edge/Chrome headless PDF rendering.
 - Verify that `generate_v4_html.py` does not modify its own source code (idempotency check).
 - Run `src/build_v4_pptx.py` to generate the native PowerPoint presentation.
 - Verify byte synchronization across root and `deliverables/`.
 - Validate that the PDF has exactly 6 pages in 16:9 widescreen.
 - Validate that all 6 slides in the PPTX contain embedded technical speaker notes.
+- **Verify that the native PPTX package contains genuine embedded media files (checking media files count $\ge 2$).**
 - Check that preview dimensions are exactly 2352×900.
 - Check that all evidence grounding rules are satisfied.
 
