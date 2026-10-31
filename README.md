@@ -65,33 +65,39 @@ hack4hack/
 ├── content/                          # Single Source of Truth
 │   └── deck_data.json                # Canonical presentation content, prices, and notes
 │
-├── deliverables/                     # Official v4 submission artifacts
-│   ├── ReturnLens_v4.pptx            # Native editable PowerPoint deck (16:9) with speaker notes & media
-│   ├── ReturnLens_v4.pdf             # 6-page presentation PDF (16:9)
-│   ├── ReturnLens_v4.html            # Standalone interactive HTML deck
-│   └── ReturnLens_v4_preview.png     # Full 6-slide preview contact-sheet (2352x900)
+├── deliverables/                     # Official submission artifacts
+│   ├── ReturnLens_v5.pptx            # Flagship native editable PowerPoint deck (16:9) with notes
+│   ├── ReturnLens_v5.pdf             # Flagship 6-page vector PDF (16:9, 960x540 pt)
+│   ├── ReturnLens_v5.html            # Flagship standalone interactive HTML deck
+│   ├── ReturnLens_v5_preview.png     # Flagship 6-slide preview contact-sheet (2352x882)
+│   ├── ReturnLens_v4.pptx            # Baseline v4 native editable PowerPoint deck
+│   ├── ReturnLens_v4.pdf             # Baseline v4 6-page PDF
+│   ├── ReturnLens_v4.html            # Baseline v4 standalone interactive HTML deck
+│   └── ReturnLens_v4_preview.png     # Baseline v4 preview contact-sheet (2352x900)
 │
 ├── src/                              # Source code, generators, and assets
-│   ├── build_v4_pptx.py              # Python script generating native PPTX with notes
-│   ├── generate_v4_html.py           # Python script compiling HTML, PDF & preview
+│   ├── build_v5_pptx.py              # Flagship Python script generating native v5 PPTX
+│   ├── generate_v5_html.py           # Flagship Python script compiling v5 HTML, PDF & preview
+│   ├── build_v4_pptx.py              # Baseline Python script generating v4 PPTX
+│   ├── generate_v4_html.py           # Baseline Python script compiling v4 HTML & PDF
 │   └── assets/                       # Staged photos, video frames, and slide renders
-│       ├── studio_white_headphones.jpg  # Store catalog ground truth photo (HEAD-WHT-02, Matte White)
+│       ├── studio_white_headphones.jpg   # Store catalog ground truth photo (HEAD-WHT-02, Matte White)
 │       ├── unboxing_black_headphones.jpg # Customer video unboxing frame at 00:07 (Midnight Black)
-│       └── slides/                   # High-resolution rendered PNG images of slides 1 to 6
+│       └── slides/                       # High-resolution rendered PNG images
 │
 ├── scripts/                          # Automated testing and verification
-│   └── smoke_test.py                 # Extended smoke test verifying build, media & deliverable integrity
+│   └── smoke_test.py                 # Extended QA suite validating v5 & v4 build, media & sync
 │
 ├── research/                         # Background research & problem statement analysis
 │   └── AgentX_Idea_Research.html     # Deep dive on 7 AgentX problem statements & market friction
 │
 ├── archive/                          # Historical iterations (v0, v1 Swiss, v2, v3)
 ├── requirements.txt                  # Python build dependencies
-├── ReturnLens_v4.html                # Root deliverable (matches deliverables/)
-├── ReturnLens_v4.pdf                 # Root deliverable (matches deliverables/)
-├── ReturnLens_v4.pptx                # Root deliverable (matches deliverables/)
-├── ReturnLens_v4_preview.png         # Root deliverable (matches deliverables/)
-├── index.html                        # GitHub Pages entry point
+├── ReturnLens_v5.html                # Flagship root deliverable (matches deliverables/)
+├── ReturnLens_v5.pdf                 # Flagship root deliverable (matches deliverables/)
+├── ReturnLens_v5.pptx                # Flagship root deliverable (matches deliverables/)
+├── ReturnLens_v5_preview.png         # Flagship root deliverable (matches deliverables/)
+├── index.html                        # GitHub Pages entry point (Flagship v5)
 └── README.md                         # Project documentation and review guide
 ```
 
@@ -198,24 +204,28 @@ python scripts/smoke_test.py
 ```
 This script will:
 - Validate `content/deck_data.json` single source of truth.
-- Run `src/generate_v4_html.py` to compile HTML and invoke Edge/Chrome headless PDF rendering.
-- Verify that `generate_v4_html.py` does not modify its own source code (idempotency check).
-- Run `src/build_v4_pptx.py` to generate the native PowerPoint presentation.
-- Verify byte synchronization across root and `deliverables/`.
-- Validate that the PDF has exactly 6 pages in 16:9 widescreen.
-- Validate that all 6 slides in the PPTX contain embedded technical speaker notes.
-- **Verify that the native PPTX package contains genuine embedded media files (checking media files count $\ge 2$).**
-- Check that preview dimensions are exactly 2352×900.
-- Check that all evidence grounding rules are satisfied.
-- **Run automated visual QA (Test 9)**: Validate shape boundary safety, absence of footer collisions, positive clear separation between Slide 4 Case C title and flow nodes, and Slide 1 text/metadata separation.
+- Run `src/generate_v5_html.py` to compile HTML, invoke Edge/Chrome headless PDF rendering, and export contact sheet preview.
+- Verify that `generate_v5_html.py` does not modify its own source code (idempotency check).
+- Run `src/build_v5_pptx.py` to generate the flagship native PowerPoint presentation.
+- Verify byte synchronization across root and `deliverables/` (HTML, PDF, PPTX, Preview PNG).
+- Validate that the flagship PDF has exactly 6 pages in true 16:9 widescreen ($960 \times 540\text{ pt}$).
+- Validate that all 6 slides in the PPTX contain verified embedded technical speaker notes.
+- Check that preview dimensions are exactly 2352×882 (true 16:9 for 3×2 grid).
+- Check that all evidence grounding rules are satisfied (honest unverified barcode citation, secondary PS-04 route, Case C stateful loop, conservative Case D sequence, zero exchange contradiction).
+- **Run automated visual QA (Test 9)**: Validate shape boundary safety, absence of footer collisions, positive clear separation between titles, nodes, and metadata.
 
 ### 3. Rebuild Individual Outputs
-- To rebuild HTML, PDF, and slide PNG preview:
+- To rebuild flagship v5 HTML, PDF, and slide contact sheet preview:
+  ```bash
+  python src/generate_v5_html.py
+  ```
+- To rebuild flagship v5 native PowerPoint presentation:
+  ```bash
+  python src/build_v5_pptx.py
+  ```
+- To rebuild baseline v4 deliverables:
   ```bash
   python src/generate_v4_html.py
-  ```
-- To rebuild native PowerPoint presentation:
-  ```bash
   python src/build_v4_pptx.py
   ```
 

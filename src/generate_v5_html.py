@@ -1,0 +1,2130 @@
+import os
+import sys
+import json
+import shutil
+import subprocess
+from pathlib import Path
+import fitz
+from PIL import Image
+
+def generate_v5():
+    base_dir = Path(__file__).resolve().parent.parent
+    data_path = base_dir / "content" / "deck_data.json"
+    deliverables_dir = base_dir / "deliverables"
+    deliverables_dir.mkdir(parents=True, exist_ok=True)
+
+    if not data_path.exists():
+        raise FileNotFoundError(f"Canonical data file missing: {data_path}")
+
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    meta = data["meta"]
+    slides_data = {s["slide_number"]: s for s in data["slides"]}
+    d1 = slides_data[1]
+    d2 = slides_data[2]
+    d3 = slides_data[3]
+    d4 = slides_data[4]
+    d5 = slides_data[5]
+    d6 = slides_data[6]
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReturnLens — Evidence-Checked Returns Triage Agent (AgentX Hackathon 2026, PS-04)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after {{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }}
+
+  :root {{
+    --paper: #FAF8F5;
+    --paper-tint: #F2EFEB;
+    --paper-card: #FFFFFF;
+    --ink: #14241E;
+    --ink-light: #243830;
+    --muted: #5C7066;
+    --subtle: #8A9C93;
+    --border: #E3DDD4;
+    --border-strong: #CDC5B8;
+    
+    --teal: #006B54;
+    --teal-dark: #004D3C;
+    --teal-light: #E6F4F0;
+    --teal-border: #99D4C5;
+    --teal-accent: #00D1A7;
+
+    --coral: #C0392B;
+    --coral-dark: #962D22;
+    --coral-light: #FDF2F2;
+    --coral-border: #F5B7B1;
+
+    --amber: #D97706;
+    --amber-dark: #92400E;
+    --amber-light: #FEF3C7;
+    --amber-border: #FCD34D;
+
+    --dark-bg: #0E1815;
+    --dark-card: #152420;
+    --dark-border: #233932;
+    --dark-ink: #F7F5F0;
+    --dark-muted: #8EABA0;
+  }}
+
+  html, body {{
+    background-color: #24322D;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }}
+
+  #deck-container {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 0 80px 0;
+    gap: 36px;
+  }}
+
+  .slide {{
+    width: 1280px;
+    height: 720px;
+    background-color: var(--paper);
+    position: relative;
+    padding: 36px 44px 28px 44px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    flex-shrink: 0;
+  }}
+
+  .slide.dark {{
+    background-color: var(--dark-bg);
+    color: var(--dark-ink);
+  }}
+
+  .tag-label {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }}
+
+  .slide.dark .tag-label {{
+    color: var(--teal-accent);
+  }}
+
+  .tag-pill {{
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }}
+
+  .slide.dark .tag-pill {{
+    background: rgba(0, 209, 167, 0.15);
+    color: var(--teal-accent);
+  }}
+
+  .headline-wrap {{
+    margin-top: 4px;
+    margin-bottom: 12px;
+  }}
+
+  .slide-title {{
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    line-height: 1.1;
+    color: var(--ink);
+  }}
+
+  .slide.dark .slide-title {{
+    color: var(--dark-ink);
+  }}
+
+  .slide-subtitle {{
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.35;
+  }}
+
+  .slide.dark .slide-subtitle {{
+    color: var(--dark-muted);
+  }}
+
+  .slide-footer {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--subtle);
+  }}
+
+  .slide.dark .slide-footer {{
+    border-top-color: var(--dark-border);
+    color: var(--dark-muted);
+  }}
+
+  .footer-left {{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }}
+
+  .footer-dot {{
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--subtle);
+  }}
+
+  /* SLIDE 1 */
+  .hero-grid {{
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 32px;
+    align-items: center;
+    height: 100%;
+    margin-bottom: 8px;
+  }}
+
+  .hero-text {{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+  }}
+
+  .hero-tagline {{
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.6px;
+    color: var(--ink);
+  }}
+
+  .hero-tagline em {{
+    font-style: normal;
+    color: var(--teal);
+    border-bottom: 2px solid var(--teal);
+  }}
+
+  .hero-desc {{
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: var(--muted);
+  }}
+
+  .hero-meta-pill {{
+    background: var(--paper-tint);
+    border-left: 3px solid var(--teal);
+    padding: 8px 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink-light);
+    border-radius: 0 4px 4px 0;
+  }}
+
+  .hero-meta-pill strong {{
+    color: var(--teal-dark);
+  }}
+
+  .console-window {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    box-shadow: 0 14px 36px rgba(20, 36, 30, 0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }}
+
+  .console-header {{
+    background: var(--ink);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #FFFFFF;
+  }}
+
+  .window-dots {{
+    display: flex;
+    gap: 6px;
+  }}
+
+  .window-dot {{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }}
+
+  .window-title {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #E2ECE8;
+  }}
+
+  .mock-badge {{
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFD485;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }}
+
+  .console-subbar {{
+    background: var(--paper-tint);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }}
+
+  .console-subbar strong {{
+    color: var(--ink);
+  }}
+
+  .console-body {{
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }}
+
+  .visual-comparison-strip {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }}
+
+  .comp-col {{
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }}
+
+  .comp-col.highlight-col {{
+    border-color: var(--coral-border);
+    background: var(--coral-light);
+  }}
+
+  .svg-preview-box {{
+    width: 68px;
+    height: 68px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.06);
+  }}
+
+  .comp-meta {{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }}
+
+  .meta-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+  }}
+
+  .meta-name {{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }}
+
+  .meta-sub {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }}
+
+  .comp-col.highlight-col .meta-tag {{
+    color: var(--coral);
+  }}
+  .comp-col.highlight-col .meta-name {{
+    color: var(--coral-dark);
+  }}
+
+  .conflict-strip {{
+    background: var(--coral-light);
+    border: 1px solid var(--coral-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }}
+
+  .conflict-left {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }}
+
+  .conflict-badge {{
+    background: var(--coral);
+    color: #FFFFFF;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }}
+
+  .conflict-text {{
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--coral-dark);
+  }}
+
+  .conflict-cite {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    color: var(--muted);
+  }}
+
+  .console-actions {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 4px;
+  }}
+
+  .action-gate-status {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber-dark);
+  }}
+
+  .gate-light {{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 6px rgba(217, 119, 6, 0.6);
+  }}
+
+  .btn-group {{
+    display: flex;
+    gap: 8px;
+  }}
+
+  .btn {{
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: default;
+  }}
+
+  .btn-secondary {{
+    background: var(--paper-tint);
+    border-color: var(--border-strong);
+    color: var(--ink);
+  }}
+
+  .btn-primary {{
+    background: var(--teal);
+    color: #FFFFFF;
+  }}
+
+  /* SLIDE 2 */
+  .problem-layout {{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }}
+
+  .convergence-diagram {{
+    display: grid;
+    grid-template-columns: 340px 60px 1fr;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(20, 36, 30, 0.05);
+    margin: 8px 0;
+  }}
+
+  .sources-stack {{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }}
+
+  .source-item {{
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }}
+
+  .source-num {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal);
+  }}
+
+  .source-title {{
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+  }}
+
+  .source-detail {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }}
+
+  .flow-arrow-col {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }}
+
+  .flow-bracket-svg {{
+    width: 44px;
+    height: 200px;
+  }}
+
+  .focal-question-card {{
+    background: var(--ink);
+    border-radius: 10px;
+    padding: 30px;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }}
+
+  .focal-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #FFD485;
+    text-transform: uppercase;
+  }}
+
+  .focal-question {{
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+  }}
+
+  .focal-answer {{
+    font-size: 14px;
+    line-height: 1.45;
+    color: #B5CCC2;
+  }}
+
+  .problem-bottom-strip {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }}
+
+  .strip-box {{
+    background: var(--paper-tint);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }}
+
+  .strip-stat {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--teal-dark);
+    white-space: nowrap;
+  }}
+
+  .strip-text {{
+    font-size: 12.5px;
+    color: var(--ink-light);
+    line-height: 1.35;
+  }}
+
+  /* SLIDE 3 */
+  .comparison-stage {{
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin: 8px 0;
+  }}
+
+  .product-board {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }}
+
+  .product-board.mismatch-target {{
+    border-color: var(--coral-border);
+    background: #FFFDFC;
+  }}
+
+  .board-header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }}
+
+  .board-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }}
+
+  .board-tag.coral-tag {{
+    color: var(--coral);
+  }}
+
+  .board-visual-area {{
+    height: 190px;
+    background: var(--paper);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid var(--border);
+  }}
+
+  .board-visual-area.video-mock {{
+    background: #18221E;
+  }}
+
+  .video-time-stamp {{
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #FFFFFF;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }}
+
+  .time-dot {{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #E74C3C;
+  }}
+
+  .board-meta-strip {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background: var(--paper-tint);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }}
+
+  .board-meta-item strong {{
+    color: var(--ink);
+  }}
+
+  .vs-divider {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }}
+
+  .vs-pill {{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--coral);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(192, 57, 43, 0.4);
+  }}
+
+  .vs-label {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--coral);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }}
+
+  .decision-full-strip {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-left: 6px solid var(--amber);
+    border-radius: 8px;
+    padding: 14px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  }}
+
+  .decision-status {{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }}
+
+  .decision-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--amber-dark);
+  }}
+
+  .decision-val {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--coral-dark);
+  }}
+
+  .decision-options {{
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-light);
+  }}
+
+  .decision-options strong {{
+    color: var(--ink);
+  }}
+
+  .decision-cap {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }}
+
+  /* SLIDE 4 */
+  .arch-container {{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }}
+
+  .pipeline-bar {{
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px 0;
+  }}
+
+  .pipe-step {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }}
+
+  .step-num {{
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 209, 167, 0.15);
+    color: var(--teal-accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }}
+
+  .step-content {{
+    display: flex;
+    flex-direction: column;
+  }}
+
+  .step-name {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }}
+
+  .step-desc {{
+    font-size: 10.5px;
+    color: var(--dark-muted);
+  }}
+
+  .pipe-arrow {{
+    color: var(--dark-border);
+    font-size: 16px;
+    font-weight: bold;
+  }}
+
+  .guarantee-grid {{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 4px 0;
+  }}
+
+  .guarantee-card {{
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }}
+
+  .guarantee-card.highlight-card {{
+    border-color: rgba(0, 209, 167, 0.35);
+    background: #142822;
+  }}
+
+  .g-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--teal-accent);
+  }}
+
+  .g-title {{
+    font-size: 15px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }}
+
+  .g-text {{
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--dark-muted);
+  }}
+
+  .arch-banner {{
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--dark-border);
+    border-radius: 6px;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--dark-muted);
+  }}
+
+  .arch-banner strong {{
+    color: #FFD485;
+  }}
+
+  /* SLIDE 5 */
+  .matrix-split {{
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 22px;
+    height: 100%;
+    margin-bottom: 8px;
+  }}
+
+  .case-b-hero {{
+    background: #FFFFFF;
+    border: 1px solid var(--coral-border);
+    border-top: 5px solid var(--coral);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(192, 57, 43, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+
+  .b-hero-top {{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }}
+
+  .badge-escalate {{
+    background: var(--coral-light);
+    color: var(--coral-dark);
+    border: 1px solid var(--coral-border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }}
+
+  .b-hero-title {{
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-top: 4px;
+  }}
+
+  .b-hero-sub {{
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }}
+
+  .b-evidence-box {{
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    margin: 12px 0;
+  }}
+
+  .b-evidence-row {{
+    display: flex;
+    justify-content: space-between;
+  }}
+
+  .b-evidence-row strong {{
+    color: var(--coral-dark);
+  }}
+
+  .b-actions-list {{
+    background: var(--paper-tint);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }}
+
+  .b-act-head {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+  }}
+
+  .b-act-item {{
+    font-size: 12px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }}
+
+  .b-act-bullet {{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--coral);
+  }}
+
+  .compact-cases-stack {{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: space-between;
+  }}
+
+  .case-row {{
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }}
+
+  .case-row-header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }}
+
+  .case-row-title {{
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }}
+
+  .badge-pass {{
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }}
+
+  .badge-warn {{
+    background: var(--amber-light);
+    color: var(--amber-dark);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }}
+
+  .badge-info {{
+    background: var(--paper-tint);
+    color: var(--ink-light);
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }}
+
+  .case-row-body {{
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }}
+
+  .case-row-result {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal-dark);
+    font-weight: 600;
+    background: var(--paper-tint);
+    padding: 4px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }}
+
+  /* SLIDE 6 */
+  .sprint-layout {{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }}
+
+  .timeline-bar {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    margin: 6px 0;
+  }}
+
+  .time-slot {{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-left: 3px solid var(--teal);
+    padding-left: 12px;
+  }}
+
+  .slot-hours {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--teal);
+  }}
+
+  .slot-name {{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+  }}
+
+  .slot-deliverables {{
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.35;
+  }}
+
+  .people-strip {{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }}
+
+  .person-card {{
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }}
+
+  .person-role {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--teal);
+  }}
+
+  .person-name {{
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+  }}
+
+  .person-tasks {{
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }}
+
+  .scope-bottom-band {{
+    background: var(--ink);
+    border-radius: 8px;
+    padding: 14px 20px;
+    color: #FFFFFF;
+    display: grid;
+    grid-template-columns: 1.4fr 1.4fr 1.2fr;
+    gap: 20px;
+    align-items: center;
+  }}
+
+  .band-block {{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }}
+
+  .band-label {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: #FFD485;
+    text-transform: uppercase;
+  }}
+
+  .band-content {{
+    font-size: 11.5px;
+    color: #E2ECE8;
+    line-height: 1.35;
+  }}
+
+  .band-content.formula-text {{
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--teal-accent);
+    font-size: 11px;
+  }}
+
+  #deck-controls {{
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(14, 24, 21, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }}
+
+  .nav-btn {{
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }}
+
+  .nav-btn:hover {{
+    background: rgba(255,255,255,0.15);
+  }}
+
+  .dots-track {{
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }}
+
+  .jump-dot {{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+    transition: all 0.2s;
+  }}
+
+  .jump-dot.active {{
+    width: 22px;
+    border-radius: 10px;
+    background: var(--teal-accent);
+  }}
+
+  #notes-drawer {{
+    position: fixed;
+    right: 20px;
+    bottom: 74px;
+    width: 380px;
+    max-height: 220px;
+    background: #FFFFFF;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    z-index: 999;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    display: none;
+    overflow-y: auto;
+  }}
+
+  #notes-drawer.open {{
+    display: block;
+  }}
+
+  .notes-header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+  }}
+
+  @page {{
+    size: 1280px 720px;
+    margin: 0;
+  }}
+
+  @media print {{
+    html, body {{
+      background: none;
+      padding: 0;
+    }}
+    #deck-container {{
+      padding: 0;
+      gap: 0;
+    }}
+    .slide {{
+      box-shadow: none !important;
+      page-break-after: always;
+      break-after: page;
+    }}
+    #deck-controls, #notes-drawer {{
+      display: none !important;
+    }}
+  }}
+
+  body.overview-mode #deck-container {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 40px;
+    max-width: 1360px;
+    margin: 0 auto;
+  }}
+
+  body.overview-mode .slide {{
+    width: 420px;
+    height: 236px;
+    transform-origin: top left;
+    zoom: 0.328;
+    cursor: pointer;
+  }}
+</style>
+</head>
+<body>
+
+<div id="deck-container">
+
+  <!-- SLIDE 1: PRODUCT HERO & CONSOLE -->
+  <section class="slide" id="slide-1" data-slide="1">
+    <div class="tag-label">
+      <span>{d1["tag"].split("·")[0].strip()}</span>
+      <span class="tag-pill">PS-04 Track</span>
+      <span>·</span>
+      <span>{meta["team"]}</span>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-text">
+        <h1 class="slide-title" style="font-size: 46px;">{d1["headline"]}</h1>
+        <div class="hero-tagline">
+          Every return decision, backed by <em>verifiable evidence</em>.
+        </div>
+        <p class="hero-desc">
+          {d1["supporting"]}
+        </p>
+        <div class="hero-meta-pill">
+          <strong>Core Thesis:</strong> {meta["core_thesis"]}<br>
+          <span style="color: var(--muted); font-size: 11px;">Scope: Return triage + order status · Mock fixtures · Never auto-refunds</span>
+        </div>
+      </div>
+
+      <div class="console-window">
+        <div class="console-header">
+          <div class="window-dots">
+            <div class="window-dot" style="background: #E74C3C;"></div>
+            <div class="window-dot" style="background: #F1C40F;"></div>
+            <div class="window-dot" style="background: #2ECC71;"></div>
+          </div>
+          <div class="window-title">{d1["console_mockup"]["title"]} — {d1["console_mockup"]["case_badge"]}</div>
+          <div class="mock-badge">MOCK EVIDENCE PACK</div>
+        </div>
+
+        <div class="console-subbar">
+          <div>CASE: <strong>#{meta["sample_order"]["case_id"]}</strong> · ORDER: <strong>#{meta["sample_order"]["order_id"]}</strong> · SKU: <strong>{meta["sample_order"]["sku"]}</strong></div>
+          <div>DELIVERED: <strong>4d ago</strong> (Day 4/7 Window: PASS)</div>
+        </div>
+
+        <div class="console-body">
+          <div class="visual-comparison-strip">
+            <div class="comp-col">
+              <div class="svg-preview-box" style="background: #FAF9F6;">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <path d="M10 24C10 16.268 16.268 10 24 10C31.732 10 38 16.268 38 24" stroke="#D1CCC0" stroke-width="3" stroke-linecap="round"/>
+                  <rect x="7" y="24" width="7" height="15" rx="3.5" fill="#EAE6DC" stroke="#B8B2A4" stroke-width="1.5"/>
+                  <rect x="34" y="24" width="7" height="15" rx="3.5" fill="#EAE6DC" stroke="#B8B2A4" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="comp-meta">
+                <span class="meta-tag">STORE TRUTH · SHOPIFY</span>
+                <span class="meta-name">{meta["sample_order"]["sku"]} ({meta["sample_order"]["ordered_color"]})</span>
+                <span class="meta-sub">{meta["sample_order"]["price"]} · Studio Catalog Spec</span>
+              </div>
+            </div>
+
+            <div class="comp-col highlight-col">
+              <div class="svg-preview-box" style="background: #1C2622;">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <path d="M10 24C10 16.268 16.268 10 24 10C31.732 10 38 16.268 38 24" stroke="#485952" stroke-width="3" stroke-linecap="round"/>
+                  <rect x="7" y="24" width="7" height="15" rx="3.5" fill="#141E1A" stroke="#000000" stroke-width="1.5"/>
+                  <rect x="34" y="24" width="7" height="15" rx="3.5" fill="#141E1A" stroke="#000000" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="comp-meta">
+                <span class="meta-tag">OBSERVED · VIDEO FRAME 00:07</span>
+                <span class="meta-name">HEAD-BLK-09 (Midnight Black)</span>
+                <span class="meta-sub">Observed: Black casing · Barcode unverified</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="conflict-strip">
+            <div class="conflict-left">
+              <span class="conflict-badge">P-03 CONTRADICTION</span>
+              <span class="conflict-text">Color Contradiction Detected: Item in parcel does not match ordered SKU</span>
+            </div>
+            <span class="conflict-cite">Citation: Keyframe 00:07</span>
+          </div>
+
+          <div class="console-actions">
+            <div class="action-gate-status">
+              <div class="gate-light"></div>
+              <span>SELLER AUTHORIZATION REQUIRED (FAIL-CLOSED)</span>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-secondary">Request Box Label</button>
+              <button class="btn btn-primary">{d1["console_mockup"]["button_text"]}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>RETURNLENS · 24-HOUR PROTOTYPE PROPOSAL</span>
+        <div class="footer-dot"></div>
+        <span>MOCK EVIDENCE PACK</span>
+      </div>
+      <div>01 / 06</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: THE PROBLEM -->
+  <section class="slide" id="slide-2" data-slide="2">
+    <div>
+      <div class="tag-label">
+        <span>The Problem</span>
+        <span class="tag-pill">Solo Merchant Bottleneck</span>
+      </div>
+      <div class="headline-wrap">
+        <h2 class="slide-title">{d2["headline"]}</h2>
+        <p class="slide-subtitle">{d2["supporting_statement"]}</p>
+      </div>
+    </div>
+
+    <div class="convergence-diagram">
+      <div class="sources-stack">
+        <div class="source-item">
+          <div>
+            <div class="source-num">SOURCE 01</div>
+            <div class="source-title">{d2["sources"][0]["name"]}</div>
+          </div>
+          <div class="source-detail">{d2["sources"][0]["detail"]}</div>
+        </div>
+        <div class="source-item">
+          <div>
+            <div class="source-num">SOURCE 02</div>
+            <div class="source-title">{d2["sources"][1]["name"]}</div>
+          </div>
+          <div class="source-detail">{d2["sources"][1]["detail"]}</div>
+        </div>
+        <div class="source-item">
+          <div>
+            <div class="source-num">SOURCE 03</div>
+            <div class="source-title">{d2["sources"][2]["name"]}</div>
+          </div>
+          <div class="source-detail">{d2["sources"][2]["detail"]}</div>
+        </div>
+        <div class="source-item">
+          <div>
+            <div class="source-num">SOURCE 04</div>
+            <div class="source-title">{d2["sources"][3]["name"]}</div>
+          </div>
+          <div class="source-detail">{d2["sources"][3]["detail"]}</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow-col">
+        <svg class="flow-bracket-svg" viewBox="0 0 44 200" fill="none">
+          <path d="M 8 20 C 24 20, 24 90, 36 100 C 24 110, 24 180, 8 180" stroke="#006B54" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M 32 94 L 40 100 L 32 106" fill="#006B54"/>
+        </svg>
+      </div>
+
+      <div class="focal-question-card">
+        <div class="focal-tag">{d2["gap_card"]["tag"]}</div>
+        <div class="focal-question">
+          “{d2["gap_card"]["question"]}”
+        </div>
+        <p class="focal-answer">
+          {d2["gap_card"]["note"]}
+        </p>
+      </div>
+    </div>
+
+    <div class="problem-bottom-strip">
+      <div class="strip-box">
+        <div class="strip-stat">9% vs 15.14%</div>
+        <div class="strip-text">
+          <strong>Industry Baseline:</strong> {meta["fraud_metrics"]["nrf_2025"]} vs {meta["fraud_metrics"]["deloitte_2024"]} ({meta["fraud_metrics"]["distinction"].split(":")[0].strip()}).
+        </div>
+      </div>
+      <div class="strip-box">
+        <div class="strip-stat">Manual Triage</div>
+        <div class="strip-text">
+          <strong>Asymmetric Merchant Risk:</strong> High cognitive overhead on unboxing triage; memory-based manual checks create friction and financial leaks.
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>PROBLEM FORMULATION</span>
+        <div class="footer-dot"></div>
+        <span>PS-04 PROBLEM STATEMENT</span>
+      </div>
+      <div>02 / 06</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: STAR DEMO -->
+  <section class="slide" id="slide-3" data-slide="3">
+    <div>
+      <div class="tag-label">
+        <span>Star Demo</span>
+        <span class="tag-pill">Case B · Core Benchmark</span>
+      </div>
+      <div class="headline-wrap">
+        <h2 class="slide-title">{d3["headline"]}</h2>
+        <p class="slide-subtitle">{d3["subheadline"]}</p>
+      </div>
+    </div>
+
+    <div class="comparison-stage">
+      <div class="product-board">
+        <div class="board-header">
+          <span class="board-tag">{d3["ordered_evidence"]["label"]}</span>
+          <span style="font-family:'IBM Plex Mono'; font-weight:700; font-size:12px; color:var(--teal);">#{meta["sample_order"]["order_id"]}</span>
+        </div>
+        <div class="board-visual-area">
+          <svg width="120" height="120" viewBox="0 0 48 48" fill="none">
+            <path d="M10 24C10 16.268 16.268 10 24 10C31.732 10 38 16.268 38 24" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+            <rect x="7" y="24" width="7" height="15" rx="3.5" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/>
+            <rect x="34" y="24" width="7" height="15" rx="3.5" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="board-meta-strip">
+          <div class="board-meta-item">SKU: <strong>{d3["ordered_evidence"]["sku"]}</strong></div>
+          <div class="board-meta-item">Color: <strong>{d3["ordered_evidence"]["color"]}</strong></div>
+          <div class="board-meta-item">Price: <strong>{d3["ordered_evidence"]["price"]} paid</strong></div>
+          <div class="board-meta-item">Delivered: <strong>4d ago (Shippo)</strong></div>
+        </div>
+      </div>
+
+      <div class="vs-divider">
+        <div class="vs-pill">≠</div>
+        <div class="vs-label">COLOR<br>FAIL</div>
+      </div>
+
+      <div class="product-board mismatch-target">
+        <div class="board-header">
+          <span class="board-tag coral-tag">MOCK EVIDENCE PACK · VIDEO CITATION</span>
+          <span style="font-family:'IBM Plex Mono'; font-weight:700; font-size:12px; color:var(--coral);">{d3["observed_evidence"]["timestamp"].upper()}</span>
+        </div>
+        <div class="board-visual-area video-mock">
+          <svg width="120" height="120" viewBox="0 0 48 48" fill="none">
+            <path d="M10 24C10 16.268 16.268 10 24 10C31.732 10 38 16.268 38 24" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+            <rect x="7" y="24" width="7" height="15" rx="3.5" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+            <rect x="34" y="24" width="7" height="15" rx="3.5" fill="#0F172A" stroke="#334155" stroke-width="1.5"/>
+          </svg>
+          <div class="video-time-stamp">
+            <div class="time-dot"></div>
+            <span>REC 00:07 / 00:24</span>
+          </div>
+        </div>
+        <div class="board-meta-strip" style="background: var(--coral-light);">
+          <div class="board-meta-item">Observed: <strong style="color:var(--coral-dark);">HEAD-BLK-09</strong></div>
+          <div class="board-meta-item">Casing: <strong style="color:var(--coral-dark);">{d3["observed_evidence"]["color"]}</strong></div>
+          <div class="board-meta-item">Lighting: <strong>Optimal (142/255)</strong></div>
+          <div class="board-meta-item">Barcode: <strong>Unverified</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-full-strip">
+      <div class="decision-status">
+        <span class="decision-tag">POLICY P-03 RESULT</span>
+        <span class="decision-val">ESCALATE TO SELLER</span>
+      </div>
+      <div class="decision-options">
+        <strong>3 Preserved Seller Actions:</strong> (1) Accept as warehouse mis-shipment · (2) Request photo of outside-box shipping label · (3) Hold return for physical parcel inspection.
+      </div>
+      <div class="decision-cap">
+        Server Cap Formula:<br>
+        <code>0 &lt; amount &le; min(₹4,999, rem, paid)</code>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>STAR DEMO · CASE B</span>
+        <div class="footer-dot"></div>
+        <span>{d3["grounding_caption"].upper()}</span>
+      </div>
+      <div>03 / 06</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: SYSTEM ARCHITECTURE -->
+  <section class="slide dark" id="slide-4" data-slide="4">
+    <div>
+      <div class="tag-label">
+        <span>System Architecture</span>
+        <span class="tag-pill">Fail-Closed Governance</span>
+      </div>
+      <div class="headline-wrap">
+        <h2 class="slide-title">{d4["headline"]}</h2>
+        <p class="slide-subtitle">{d4["subheadline"]}</p>
+      </div>
+    </div>
+
+    <div class="arch-container">
+      <div class="pipeline-bar">
+        <div class="pipe-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <span class="step-name">Planner</span>
+            <span class="step-desc">Typed actions</span>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <span class="step-name">Tools</span>
+            <span class="step-desc">FFmpeg ~1fps + APIs</span>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <span class="step-name">Policy P-01–08</span>
+            <span class="step-desc">Deterministic rules</span>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <span class="step-name">Critic</span>
+            <span class="step-desc">Review cited frames</span>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="step-num" style="background:#006B54; color:#FFF;">5</div>
+          <div class="step-content">
+            <span class="step-name" style="color:#00D1A7;">Seller Gate</span>
+            <span class="step-desc">1-Click authorization</span>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <span class="step-name">Audit Log</span>
+            <span class="step-desc">Append-only JSON</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="guarantee-grid">
+        <div class="guarantee-card">
+          <div class="g-tag">CALL BUDGET</div>
+          <div class="g-title">Exactly 3 Model Calls</div>
+          <p class="g-text">
+            1. Planner proposes typed tool actions.<br>
+            2. Vision model inspects server-generated keyframes.<br>
+            3. Critic evaluates citations against policy. Model never accesses payment APIs directly.
+          </p>
+        </div>
+
+        <div class="guarantee-card highlight-card">
+          <div class="g-tag">STATEFUL RESUMPTION</div>
+          <div class="g-title">Case C: Re-Film Loop</div>
+          <p class="g-text">
+            When video is too dark (brightness 28, 2 frames), agent calls <code>ask_for_evidence()</code> with a re-film checklist. Case state saved to <code>WAITING_FOR_EVIDENCE</code> and resumes on upload (1 retry limit).
+          </p>
+        </div>
+
+        <div class="guarantee-card">
+          <div class="g-tag">SECONDARY ROUTE</div>
+          <div class="g-title">Tiny PS-04 Order Route</div>
+          <p class="g-text">
+            For routine <em>"Where is my order?"</em> inquiries, agent bypasses vision entirely: Store API &rarr; Courier API &rarr; Instant status reply. Zero token waste.
+          </p>
+        </div>
+      </div>
+
+      <div class="arch-banner">
+        <div>
+          <strong>FAIL-CLOSED FINANCIAL GATE:</strong> <code>requires_seller_approval: true</code> enforced at schema layer.
+        </div>
+        <div>
+          Server Cap: <code>{meta["refund_guardrail"]["formula"]}</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>ARCHITECTURE &amp; GOVERNANCE</span>
+        <div class="footer-dot"></div>
+        <span>LANGGRAPH STATE MACHINE · FAIL-CLOSED HUMAN GATE</span>
+      </div>
+      <div>04 / 06</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: 4 BENCHMARK CASES -->
+  <section class="slide" id="slide-5" data-slide="5">
+    <div>
+      <div class="tag-label">
+        <span>Evaluation Suite</span>
+        <span class="tag-pill">4 Controlled Scenarios</span>
+      </div>
+      <div class="headline-wrap">
+        <h2 class="slide-title">{d5["headline"]}</h2>
+        <p class="slide-subtitle">{d5["subheadline"]}</p>
+      </div>
+    </div>
+
+    <div class="matrix-split">
+      <div class="case-b-hero">
+        <div>
+          <div class="b-hero-top">
+            <div>
+              <span class="tag-label" style="color:var(--coral); font-size:10px;">CORE BENCHMARK SCENARIO</span>
+              <div class="b-hero-title">Case B: Color Contradiction</div>
+              <div class="b-hero-sub">P-03 Failure &bull; Order White vs Video Black</div>
+            </div>
+            <span class="badge-escalate">ESCALATE</span>
+          </div>
+
+          <div class="b-evidence-box">
+            <div class="b-evidence-row">
+              <span>Order Record:</span>
+              <strong>{meta["sample_order"]["sku"]} ({meta["sample_order"]["ordered_color"]}, {meta["sample_order"]["price"]})</strong>
+            </div>
+            <div class="b-evidence-row">
+              <span>Observed Frame 00:07:</span>
+              <strong>HEAD-BLK-09 (Midnight Black)</strong>
+            </div>
+            <div class="b-evidence-row">
+              <span>Policy Evaluation:</span>
+              <strong>P-03 Color Match: FAIL</strong>
+            </div>
+            <div class="b-evidence-row">
+              <span>Automated Action:</span>
+              <span>No label &bull; No refund draft &bull; No denial</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="b-actions-list">
+          <div class="b-act-head">PRESERVED SELLER OPTIONS IN MOCK EVIDENCE PACK:</div>
+          <div class="b-act-item">
+            <div class="b-act-bullet"></div>
+            <span>Accept as warehouse mis-shipment</span>
+          </div>
+          <div class="b-act-item">
+            <div class="b-act-bullet"></div>
+            <span>Request customer photo of outer box shipping barcode</span>
+          </div>
+          <div class="b-act-item">
+            <div class="b-act-bullet"></div>
+            <span>Hold case for physical receipt inspection at depot</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="compact-cases-stack">
+        <div class="case-row">
+          <div class="case-row-header">
+            <span class="case-row-title">Case A: Valid Return (ORD-1042)</span>
+            <span class="badge-pass">PREPARE SELLER REVIEW</span>
+          </div>
+          <div class="case-row-body">
+            <strong>Evidence:</strong> ORD-1042 &bull; ₹1,499 &bull; SKU matches catalog &bull; Tag clearly present &bull; Within 7-day return window.
+          </div>
+          <div class="case-row-result">
+            Outcome: Mock shipping label created &bull; Refund draft placed in <code>pending_return_receipt</code> (not executed).
+          </div>
+        </div>
+
+        <div class="case-row">
+          <div class="case-row-header">
+            <span class="case-row-title">Case C: Low-Light Video (Re-Film Loop)</span>
+            <span class="badge-warn">ASK &amp; RESUME</span>
+          </div>
+          <div class="case-row-body">
+            <strong>Evidence:</strong> 4-second dark unboxing video &bull; Brightness score 28/255 &bull; Only 2 usable keyframes extracted.
+          </div>
+          <div class="case-row-result">
+            Outcome: Agent issues re-film checklist &bull; Case stays in <code>WAITING_FOR_EVIDENCE</code> &bull; Resumes on upload (1 retry limit).
+          </div>
+        </div>
+
+        <div class="case-row">
+          <div class="case-row-header">
+            <span class="case-row-title">Case D: Continuous Unboxing Sequence</span>
+            <span class="badge-info">INSPECT SEQUENCE</span>
+          </div>
+          <div class="case-row-body">
+            <strong>Evidence:</strong> Single continuous take from opening sealed parcel to displaying label in one sequence.
+          </div>
+          <div class="case-row-result">
+            Outcome: Inspects sequence continuity and flags abrupt transitions. <em>Does not claim proof of identical item.</em>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>BENCHMARK SUITE · CASES A, B, C, D</span>
+        <div class="footer-dot"></div>
+        <span>MOCK FIXTURE SCENARIOS · AUDITABLE DECISION LOGS</span>
+      </div>
+      <div>05 / 06</div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: 24-HOUR PROTOTYPE PLAN -->
+  <section class="slide" id="slide-6" data-slide="6">
+    <div>
+      <div class="tag-label">
+        <span>24-Hour Prototype Plan</span>
+        <span class="tag-pill">{meta["team"]}</span>
+      </div>
+      <div class="headline-wrap">
+        <h2 class="slide-title">{d6["headline"]}</h2>
+        <p class="slide-subtitle">{d6["subheadline"]}</p>
+      </div>
+    </div>
+
+    <div class="sprint-layout">
+      <div class="timeline-bar">
+        <div class="time-slot">
+          <span class="slot-hours">00 – 06h</span>
+          <span class="slot-name">{d6["timeline"][0]["phase"].title()}</span>
+          <span class="slot-deliverables">{d6["timeline"][0]["desc"]}</span>
+        </div>
+        <div class="time-slot">
+          <span class="slot-hours">06 – 12h</span>
+          <span class="slot-name">{d6["timeline"][1]["phase"].title()}</span>
+          <span class="slot-deliverables">{d6["timeline"][1]["desc"]}</span>
+        </div>
+        <div class="time-slot">
+          <span class="slot-hours">12 – 18h</span>
+          <span class="slot-name">{d6["timeline"][2]["phase"].title()}</span>
+          <span class="slot-deliverables">{d6["timeline"][2]["desc"]}</span>
+        </div>
+        <div class="time-slot">
+          <span class="slot-hours">18 – 24h</span>
+          <span class="slot-name">{d6["timeline"][3]["phase"].title()}</span>
+          <span class="slot-deliverables">{d6["timeline"][3]["desc"]}</span>
+        </div>
+      </div>
+
+      <div class="people-strip">
+        <div class="person-card">
+          <span class="person-role">PERSON A</span>
+          <span class="person-name">Backend, Policy &amp; Audit</span>
+          <p class="person-tasks">
+            LangGraph state machine, policy engine P-01 to P-08, Critic validation, append-only JSON audit trail, server-side refund cap calculation.
+          </p>
+        </div>
+
+        <div class="person-card">
+          <span class="person-role">PERSON B</span>
+          <span class="person-name">Video &amp; Seller Console</span>
+          <p class="person-tasks">
+            FFmpeg keyframe pipeline (~1fps sampling), vision model structured citation prompt, interactive 1-click Seller Console mockup.
+          </p>
+        </div>
+
+        <div class="person-card">
+          <span class="person-role">PERSON C</span>
+          <span class="person-name">Integration, Scenarios &amp; QA</span>
+          <p class="person-tasks">
+            Test fixtures for Cases A–D, Case C stateful pause/resume lifecycle, fail-closed human gate testing, benchmark runner, video capture.
+          </p>
+        </div>
+      </div>
+
+      <div class="scope-bottom-band">
+        <div class="band-block">
+          <span class="band-label">Must Deliver (Core Prototype)</span>
+          <span class="band-content">Mock APIs &bull; Policy engine &bull; Case B mismatch &bull; Case C re-film &bull; Seller gate &bull; Tiny order route</span>
+        </div>
+
+        <div class="band-block">
+          <span class="band-label" style="color:#FFA07A;">Cut First If Behind</span>
+          <span class="band-content">{" &bull; ".join(d6["scope_boundaries"]["cut_first"])}</span>
+        </div>
+
+        <div class="band-block">
+          <span class="band-label" style="color:var(--teal-accent);">Financial Ceiling Formula</span>
+          <span class="band-content formula-text">0 &lt; amt &le; min(₹4,999, rem_ref, paid)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-footer">
+      <div class="footer-left">
+        <span>FEASIBILITY &amp; EXECUTION PLAN</span>
+        <div class="footer-dot"></div>
+        <span>AGENTX HACKATHON 2026 · TEAM ROOKIE</span>
+      </div>
+      <div>06 / 06</div>
+    </div>
+  </section>
+
+</div>
+
+<div id="deck-controls">
+  <button class="nav-btn" id="prev-btn" title="Previous Slide (Left Arrow / PageUp)">&larr; Prev</button>
+  <div class="dots-track" id="dots-track">
+    <div class="jump-dot active" data-target="1"></div>
+    <div class="jump-dot" data-target="2"></div>
+    <div class="jump-dot" data-target="3"></div>
+    <div class="jump-dot" data-target="4"></div>
+    <div class="jump-dot" data-target="5"></div>
+    <div class="jump-dot" data-target="6"></div>
+  </div>
+  <button class="nav-btn" id="next-btn" title="Next Slide (Right Arrow / Space / PageDown)">Next &rarr;</button>
+  <span style="color:rgba(255,255,255,0.25); font-size:12px;">|</span>
+  <button class="nav-btn" id="notes-btn" title="Toggle Speaker Notes (N)">Notes (N)</button>
+  <button class="nav-btn" id="overview-btn" title="Toggle Grid View (O)">Grid (O)</button>
+</div>
+
+<div id="notes-drawer">
+  <div class="notes-header">
+    <span id="notes-slide-title">SPEAKER NOTES · SLIDE 1</span>
+    <span style="cursor:pointer;" id="close-notes">&times;</span>
+  </div>
+  <div id="notes-body">
+    {d1["speaker_notes"]}
+  </div>
+</div>
+
+<script>
+  const speakerNotes = {{
+    1: {json.dumps(d1["speaker_notes"])},
+    2: {json.dumps(d2["speaker_notes"])},
+    3: {json.dumps(d3["speaker_notes"])},
+    4: {json.dumps(d4["speaker_notes"])},
+    5: {json.dumps(d5["speaker_notes"])},
+    6: {json.dumps(d6["speaker_notes"])}
+  }};
+
+  let currentSlide = 1;
+  const totalSlides = 6;
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.querySelectorAll('.jump-dot');
+  const notesDrawer = document.getElementById('notes-drawer');
+  const notesBody = document.getElementById('notes-body');
+  const notesTitle = document.getElementById('notes-slide-title');
+
+  function updateSlide(target) {{
+    if (target < 1) target = 1;
+    if (target > totalSlides) target = totalSlides;
+    currentSlide = target;
+
+    dots.forEach((dot, idx) => {{
+      dot.classList.toggle('active', idx + 1 === currentSlide);
+    }});
+
+    const targetEl = document.getElementById(`slide-${{currentSlide}}`);
+    if (targetEl && !document.body.classList.contains('overview-mode')) {{
+      targetEl.scrollIntoView({{ behavior: 'smooth', block: 'center' }});
+    }}
+
+    if (speakerNotes[currentSlide]) {{
+      notesTitle.innerText = `SPEAKER NOTES · SLIDE ${{currentSlide}}`;
+      notesBody.innerText = speakerNotes[currentSlide];
+    }}
+  }}
+
+  window.addEventListener('keydown', (e) => {{
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {{
+      e.preventDefault();
+      updateSlide(currentSlide + 1);
+    }} else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {{
+      e.preventDefault();
+      updateSlide(currentSlide - 1);
+    }} else if (e.key === 'Home') {{
+      e.preventDefault();
+      updateSlide(1);
+    }} else if (e.key === 'End') {{
+      e.preventDefault();
+      updateSlide(totalSlides);
+    }} else if (e.key === 'n' || e.key === 'N') {{
+      notesDrawer.classList.toggle('open');
+    }} else if (e.key === 'o' || e.key === 'O' || e.key === 'g' || e.key === 'G') {{
+      document.body.classList.toggle('overview-mode');
+    }}
+  }});
+
+  document.getElementById('prev-btn').addEventListener('click', () => updateSlide(currentSlide - 1));
+  document.getElementById('next-btn').addEventListener('click', () => updateSlide(currentSlide + 1));
+  document.getElementById('notes-btn').addEventListener('click', () => notesDrawer.classList.toggle('open'));
+  document.getElementById('close-notes').addEventListener('click', () => notesDrawer.classList.remove('open'));
+  document.getElementById('overview-btn').addEventListener('click', () => document.body.classList.toggle('overview-mode'));
+
+  dots.forEach(dot => {{
+    dot.addEventListener('click', () => {{
+      const target = parseInt(dot.getAttribute('data-target'));
+      updateSlide(target);
+    }});
+  }});
+
+  slides.forEach((slide, idx) => {{
+    slide.addEventListener('click', () => {{
+      if (document.body.classList.contains('overview-mode')) {{
+        document.body.classList.remove('overview-mode');
+        updateSlide(idx + 1);
+      }}
+    }});
+  }});
+
+  updateSlide(1);
+</script>
+</body>
+</html>"""
+
+    # Write HTML files
+    html_target = deliverables_dir / "ReturnLens_v5.html"
+    root_target = base_dir / "ReturnLens_v5.html"
+    index_target = base_dir / "index.html"
+
+    with open(html_target, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    shutil.copy2(html_target, root_target)
+    shutil.copy2(html_target, index_target)
+    print("Compiled HTML files from deck_data.json successfully.")
+
+    # Export PDF via headless browser
+    edge_paths = [
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+    ]
+    browser = None
+    for p in edge_paths:
+        if os.path.exists(p):
+            browser = p
+            break
+
+    pdf_deliverable = deliverables_dir / "ReturnLens_v5.pdf"
+    pdf_root = base_dir / "ReturnLens_v5.pdf"
+
+    if browser:
+        cmd = [
+            browser,
+            "--headless",
+            "--disable-gpu",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={pdf_deliverable}",
+            str(html_target)
+        ]
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        if res.returncode == 0 and pdf_deliverable.exists():
+            shutil.copy2(pdf_deliverable, pdf_root)
+            print(f"Exported vector PDF: {pdf_deliverable} ({os.path.getsize(pdf_deliverable)} bytes)")
+
+            # Render Preview Sheet
+            doc = fitz.open(str(pdf_deliverable))
+            images = []
+            for page in doc:
+                pix = page.get_pixmap(dpi=150)
+                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                images.append(img)
+
+            if len(images) == 6:
+                thumb_w = 784
+                thumb_h = int(thumb_w * images[0].size[1] / images[0].size[0])
+                resized = [img.resize((thumb_w, thumb_h), Image.Resampling.LANCZOS) for img in images]
+                grid = Image.new("RGB", (thumb_w * 3, thumb_h * 2), (20, 32, 28))
+                for idx, img in enumerate(resized):
+                    row = idx // 3
+                    col = idx % 3
+                    grid.paste(img, (col * thumb_w, row * thumb_h))
+
+                preview_deliv = deliverables_dir / "ReturnLens_v5_preview.png"
+                preview_root = base_dir / "ReturnLens_v5_preview.png"
+                grid.save(preview_deliv, quality=95)
+                shutil.copy2(preview_deliv, preview_root)
+                print(f"Exported preview contact sheet: {preview_deliv} ({grid.size})")
+
+if __name__ == "__main__":
+    generate_v5()

@@ -47,7 +47,8 @@
           "sku": "HEAD-WHT-02",
           "color": "Matte White",
           "price": "₹1,499",
-          "delivery": "Delivered 4 days ago"
+          "delivery": "Delivered 4 days ago",
+          "buyer": "Buyer #BY-4412"
         },
         "evidence_citation": {
           "source": "Unboxing Video Keyframe",
@@ -70,7 +71,7 @@
       "tag": "THE PROBLEM · SOLO SELLER BOTTLENECK",
       "headline": "One return. Four disconnected sources.",
       "subheadline": "Four systems. No traceable decision.",
-      "supporting_statement": "Without a shared record, the seller connects order facts, video, and policy manually from memory.",
+      "supporting_statement": "Solo merchants cross-reference tabs, video footage, and policy rules manually before moving money.",
       "sources": [
         {
           "number": "01",
@@ -132,7 +133,12 @@
           "EXACT SKU — Not verified"
         ],
         "action_badge": "SELLER REVIEW REQUIRED",
-        "supporting": "No automatic denial or refund without seller authorization."
+        "supporting": "No automatic denial or refund without seller authorization.",
+        "preserved_actions": [
+          "Accept as warehouse mis-shipment",
+          "Request photo of outside-box shipping label",
+          "Hold return for physical parcel inspection"
+        ]
       },
       "speaker_notes": "Slide 3 — The Star Demo & Technical Honesty in Vision Citation:\n- Core Benchmark Scenario (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 shows black headphones.\n- Visual Grounding Honesty: The agent does NOT claim to read an unreadable SKU barcode from frame 00:07. It factually observes: 'Observed Color: Midnight Black · Exact SKU: Not verified · Tag: Not visible in cited frame'. Frame citations provide a traceable reference, not proof of footage authenticity.\n- Decision Logic: Seeing a black item when white was ordered is an undeniable visual contradiction against the manifest. Instead of auto-denying the customer, the policy engine triggers ESCALATE.\n- Three Clear Merchant Options:\n  1. Request unboxing video with packaging label / serial number visible.\n  2. Reject return under policy (item does not match order record).\n  3. Override & approve if seller acknowledges known warehouse fulfillment error.\n- Financial Guardrail: min(₹4,999, remaining refundable amount, order paid amount). No money moves without seller click."
     },
@@ -211,10 +217,10 @@
         },
         {
           "number": "04",
-          "name": "SEQUENCE",
-          "observation": "Continuity Uncertain · Staged take from sealed parcel opening to product reveal",
-          "action": "INSPECT SEQUENCE CONTINUITY",
-          "detail": "Expected prototype behavior: inspect sequence continuity and flag cutaways for seller review."
+          "name": "CONTINUOUS SEQUENCE",
+          "observation": "Single continuous take from opening sealed parcel to displaying label in one sequence",
+          "action": "INSPECT SEQUENCE",
+          "detail": "Inspects sequence continuity and flags abrupt transitions. Does not claim proof of identical item."
         }
       ],
       "speaker_notes": "Slide 5 — Four Reproducible Benchmark Scenarios:\n- Grounding Note: These four scenarios represent staged prototype test suites and deterministic expected behaviors, NOT ungrounded production field metrics.\n- Case 01 (Consistent Claim): All rules pass (within 7d, SKU matches manifest, tag visible, physical crack observed). System drafts return shipping label and refund draft in 'pending_return_receipt' state. No refund money is transferred until physical warehouse receipt.\n- Case 02 (Contradiction): Color mismatch detected (ordered white, unboxed black). System prevents auto-rejection and routes to seller review with 3 concrete resolution options.\n- Case 03 (Unclear / Agentic Loop): Dark video (28/255 avg brightness). Instead of auto-denying, the agent provides a clear checklist, transitions to WAITING_FOR_EVIDENCE, and resumes on upload (1 retry limit protects customers from infinite loops).\n- Case 04 (Continuity): Expected prototype behavior: inspect parcel-to-product sequence to flag suspicious cut-aways or missing transitions. Does not claim proven prevention of video manipulation.\n- Financial Cap Formula: min(₹4,999, remaining refundable amount, order paid amount) strictly prevents over-refunding."
@@ -265,10 +271,11 @@
           "Order-status fast path lookup"
         ],
         "cut_first": [
-          "Advanced continuity checks (Case D stretch)",
-          "Live external carrier & store integrations",
-          "Video OCR barcode scanner",
-          "Merchant analytics dashboard"
+          "WhatsApp bot",
+          "Exchanges",
+          "Multi-seller auth",
+          "Audio analysis",
+          "Public cloud deployment"
         ]
       },
       "speaker_notes": "Slide 6 — 24-Hour Sprint Feasibility, Ownership & Strict Scope Guardrails:\n- Feasibility Argument: Why is ReturnLens realistically buildable in 24 hours by 3 engineers?\n  1. No live external production dependencies: deterministic mock APIs for Shopify & Shippo eliminate external latency and flakiness.\n  2. Clear division of labor with single-threaded component ownership across 3 teammates:\n     - Person A (Agent / Backend / Policy / Authorization): LangGraph orchestrator, mock store/courier APIs, order status fast path, deterministic rules P-01 to P-08, fail-closed authorization gate.\n     - Person B (Vision / Evidence / UI): FFmpeg keyframe extraction, vision schema, critic prompt, seller console UI.\n     - Person C (Mock Fixtures / Integration / QA): Test fixtures, clarification/resume loop, 4 staged demo cases (A-D), authorization tests, demo video recording, README.\n  3. Strict Scope Discipline:\n     - MUST DELIVER: Mock store/courier APIs, deterministic policy engine, frame citations, seller authorization gate, structured audit log, clarification/resume loop, 4 demo cases.\n     - CUT FIRST IF BEHIND: Case D advanced continuity checks (stretch), real carrier webhooks, multi-product order parsing, video OCR barcode scanning, production payment gateways, seller analytics dashboards.\n- Winning Philosophy: 'The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control.'"
