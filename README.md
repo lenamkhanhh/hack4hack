@@ -5,7 +5,7 @@
 
 ---
 
-![ReturnLens Pitch Deck Preview](deliverables/ReturnLens_v4_preview.png)
+![ReturnLens Pitch Deck Preview](deliverables/ReturnLens_v5_preview.png)
 
 ## 📌 Project Overview & Current Stage
 
@@ -50,11 +50,12 @@ All deliverables are generated from source code and maintained in both the repos
 
 | Deliverable | File Path | Verified Specifications |
 | :--- | :--- | :--- |
+| **Flagship HTML Deck (v5)** | [`ReturnLens_v5.html`](ReturnLens_v5.html) / [`index.html`](index.html) | Standalone editorial redesign (1280×720) with pure CSS/SVG visuals, hero console, keyboard navigation, Grid Overview (`O`), and Speaker Notes (`N`). |
+| **Flagship PDF (v5)** | [`ReturnLens_v5.pdf`](ReturnLens_v5.pdf) / [`deliverables/ReturnLens_v5.pdf`](deliverables/ReturnLens_v5.pdf) | Exactly 6-page vector PDF (16:9, 960×540 pt) rendered via headless browser with zero box clipping. |
+| **Flagship Preview Sheet (v5)**| [`ReturnLens_v5_preview.png`](ReturnLens_v5_preview.png) | High-resolution 2352×882 master 6-slide contact sheet preview (3×2 grid). |
 | **Canonical Content Spec** | [`content/deck_data.json`](content/deck_data.json) | Single source of truth containing verified copy, metrics, policy rules, and technical speaker notes consumed by both HTML and PPTX generators. |
-| **Interactive HTML Deck** | [`ReturnLens_v4.html`](ReturnLens_v4.html) / [`index.html`](index.html) | Standalone, self-contained 16:9 widescreen presentation (1280×720) with embedded base64 photorealistic assets and keyboard navigation (`←`/`→`/`Space`). |
-| **Submission PDF** | [`ReturnLens_v4.pdf`](ReturnLens_v4.pdf) | Exactly 6-page 16:9 widescreen PDF rendered via headless browser engine with vector typography and zero margin clipping. |
-| **PowerPoint Deck** | [`ReturnLens_v4.pptx`](ReturnLens_v4.pptx) | Native, editable 16:9 presentation with embedded high-resolution photos, vector shapes, and **verified speaker notes on all 6 slides** (~1.2 MB package). |
-| **Master Preview** | [`ReturnLens_v4_preview.png`](ReturnLens_v4_preview.png) | High-resolution 2352×900 master 6-slide contact sheet preview (3×2 grid). |
+| **PowerPoint Deck (v4)** | [`ReturnLens_v4.pptx`](ReturnLens_v4.pptx) | Native, editable 16:9 presentation with embedded high-resolution photos, vector shapes, and **verified speaker notes on all 6 slides** (~1.2 MB package). |
+| **Baseline Deck (v4)** | [`ReturnLens_v4.pdf`](ReturnLens_v4.pdf) / [`ReturnLens_v4.html`](ReturnLens_v4.html) | Canonical v4 deliverables retained for regression testing and comparative audits. |
 | **HTML & PDF Generator** | [`src/generate_v4_html.py`](src/generate_v4_html.py) | Python master build script consuming `deck_data.json`, with cross-platform browser discovery (Chrome/Edge) and 100% idempotent execution. |
 | **PowerPoint Generator** | [`src/build_v4_pptx.py`](src/build_v4_pptx.py) | Python script generating native PPTX via `python-pptx` with embedded product imagery and technical speaker notes. |
 | **Extended Smoke Tests** | [`scripts/smoke_test.py`](scripts/smoke_test.py) | Automated test suite validating deliverable synchronization, PDF page counts, PPTX embedded media integrity, speaker notes, preview dimensions, and generator idempotency. |
