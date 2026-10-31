@@ -187,7 +187,7 @@ html_content = f"""<!DOCTYPE html>
      ========================================================================= */
   .hero-layout {{
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 440px 1fr;
     gap: 40px;
     flex: 1;
     align-items: stretch;
@@ -197,7 +197,7 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
   }}
 
   .hero-title {{
@@ -218,8 +218,16 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .hero-summary {{
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--dark-green);
+    margin-bottom: 10px;
+  }}
+
+  .hero-supporting {{
     font-size: 13.5px;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--text-muted);
     margin-bottom: 16px;
   }}
@@ -228,8 +236,8 @@ html_content = f"""<!DOCTYPE html>
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 700;
-    color: var(--text-subtle);
-    padding-top: 12px;
+    color: var(--primary-teal);
+    padding-top: 14px;
     border-top: 1px solid var(--border-light);
   }}
 
@@ -345,7 +353,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   /* =========================================================================
-     SLIDE 2: THE PROBLEM (FRAGMENTATION AS A VISUAL STORY)
+     SLIDE 2: THE PROBLEM (CLEAN VISUAL HIERARCHY)
      ========================================================================= */
   .problem-layout {{
     display: grid;
@@ -394,7 +402,7 @@ html_content = f"""<!DOCTYPE html>
   .gap-focal-card {{
     background: var(--dark-green);
     border: 2px solid var(--coral);
-    padding: 32px 36px;
+    padding: 34px 36px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -414,7 +422,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .gap-title {{
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: var(--cream);
@@ -422,17 +430,25 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .gap-quote {{
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     font-style: italic;
     color: #FBBF24;
     line-height: 1.4;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }}
 
-  .gap-body {{
+  .gap-statement {{
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }}
+
+  .gap-note {{
     font-size: 13px;
-    line-height: 1.6;
+    line-height: 1.55;
     color: #D1D5DB;
   }}
 
@@ -441,7 +457,7 @@ html_content = f"""<!DOCTYPE html>
      ========================================================================= */
   .evidence-layout {{
     display: grid;
-    grid-template-columns: 66% 34%;
+    grid-template-columns: 65% 35%;
     gap: 24px;
     flex: 1;
     align-items: stretch;
@@ -477,7 +493,8 @@ html_content = f"""<!DOCTYPE html>
 
   .arena-caption {{
     margin-top: 16px;
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
     line-height: 1.5;
     color: var(--text-muted);
     border-top: 1px solid var(--border-light);
@@ -487,7 +504,7 @@ html_content = f"""<!DOCTYPE html>
   .decision-panel-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 22px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -495,70 +512,81 @@ html_content = f"""<!DOCTYPE html>
 
   .dec-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--coral);
     margin-bottom: 4px;
   }}
 
   .dec-title {{
-    font-size: 19px;
+    font-size: 21px;
     font-weight: 800;
-    color: var(--coral-dark);
-    margin-bottom: 4px;
-  }}
-
-  .dec-action {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
     color: var(--coral-dark);
     margin-bottom: 12px;
   }}
 
-  .dec-section-head {{
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--dark-green);
-    margin-top: 10px;
-    margin-bottom: 6px;
-  }}
-
-  .dec-list {{
+  .dec-items-list {{
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
+    margin-bottom: 16px;
   }}
 
-  .dec-list li {{
-    font-size: 11.5px;
-    line-height: 1.4;
-    color: var(--text-muted);
+  .dec-items-list li {{
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--dark-green);
     padding-left: 12px;
     position: relative;
   }}
 
-  .dec-list li::before {{
+  .dec-items-list li:nth-child(2) {{
+    color: var(--coral-dark);
+  }}
+
+  .dec-items-list li:nth-child(3) {{
+    color: var(--text-muted);
+  }}
+
+  .dec-items-list li::before {{
     content: "•";
     position: absolute;
     left: 0;
-    color: var(--dark-green);
   }}
 
-  .dec-guardrail-note {{
+  .dec-action-pill {{
+    background: var(--coral-light);
+    border: 1.5px solid var(--coral);
+    color: var(--coral-dark);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: center;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }}
+
+  .dec-supporting {{
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--dark-green);
+    line-height: 1.4;
+  }}
+
+  .dec-ceiling-note {{
     margin-top: 14px;
     padding-top: 10px;
     border-top: 1px solid var(--border-light);
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    font-weight: 700;
     color: var(--text-muted);
     line-height: 1.4;
   }}
 
   /* =========================================================================
-     SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE)
+     SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE, ZERO COLLISION)
      ========================================================================= */
   .arch-container {{
     display: flex;
@@ -569,7 +597,7 @@ html_content = f"""<!DOCTYPE html>
 
   .zones-row {{
     display: grid;
-    grid-template-columns: 3.6fr 4.2fr 3.45fr;
+    grid-template-columns: 3.6fr 4.3fr 3.35fr;
     gap: 16px;
   }}
 
@@ -591,17 +619,17 @@ html_content = f"""<!DOCTYPE html>
     border-top-color: #FBBF24;
   }}
 
-  .zone-num {{
+  .zone-name {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--teal-accent);
   }}
 
-  .zone-card.code-zone .zone-num {{ color: var(--cream); }}
-  .zone-card.gate-zone .zone-num {{ color: #FBBF24; }}
+  .zone-card.code-zone .zone-name {{ color: var(--cream); }}
+  .zone-card.gate-zone .zone-name {{ color: #FBBF24; }}
 
-  .zone-title {{
+  .zone-role {{
     font-size: 15px;
     font-weight: 700;
     color: var(--cream);
@@ -616,7 +644,7 @@ html_content = f"""<!DOCTYPE html>
   .stateful-box {{
     background: #14221D;
     border: 1.5px solid #2563EB;
-    padding: 18px 22px;
+    padding: 16px 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -662,7 +690,7 @@ html_content = f"""<!DOCTYPE html>
     color: #93C5FD;
   }}
 
-  .stateful-desc {{
+  .stateful-sublabel {{
     font-size: 12px;
     line-height: 1.45;
     color: #A3B8B0;
@@ -745,7 +773,7 @@ html_content = f"""<!DOCTYPE html>
 
   .sc-act-head {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
   }}
 
@@ -803,7 +831,7 @@ html_content = f"""<!DOCTYPE html>
 
   .t-owner {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--primary-teal);
     margin-bottom: 2px;
@@ -880,10 +908,11 @@ html_content = f"""<!DOCTYPE html>
         <div>
           <div class="tag-label">{d1['tag']}</div>
           <h1 class="hero-title">{d1['headline']}</h1>
-          <div class="hero-statement">{d1['subheadline']}</div>
-          <p class="hero-summary">{d1['summary']}<br><br>When a customer submits an unboxing video, ReturnLens cross-references store truth, verifies deterministic code policies, and gives the solo seller a 1-click decision console.</p>
+          <div class="hero-statement">“{d1['subheadline']}”</div>
+          <div class="hero-summary">{d1['summary']}</div>
+          <div class="hero-supporting">{d1['supporting']}</div>
         </div>
-        <div class="hero-meta">{data['meta']['team']} · 24-Hour Prototype Feasibility</div>
+        <div class="hero-meta">{d1['team_meta']}</div>
       </div>
 
       <div class="console-wrapper">
@@ -952,7 +981,8 @@ html_content = f"""<!DOCTYPE html>
         <div class="gap-tag">{d2['gap_card']['tag']}</div>
         <div class="gap-title">{d2['gap_card']['title']}</div>
         <div class="gap-quote">“{d2['gap_card']['question']}”</div>
-        <div class="gap-body">{d2['gap_card']['body']}<br><br><strong>{d2['gap_card']['callout']}</strong></div>
+        <div class="gap-statement">{d2['gap_card']['statement']}</div>
+        <div class="gap-note">{d2['gap_card']['note']}</div>
       </div>
     </div>
 
@@ -981,7 +1011,8 @@ html_content = f"""<!DOCTYPE html>
           </div>
         </div>
         <div class="arena-caption">
-          Visual Grounding Honesty: Keyframe resolution proves black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Black · Exact SKU: Not verified' and cites frame 00:07.
+          {d3['grounding_caption']}<br>
+          <span style="font-size: 11px; color: var(--text-subtle);">Frame citation provides a traceable timestamped reference, not absolute proof of video authenticity.</span>
         </div>
       </div>
 
@@ -989,30 +1020,26 @@ html_content = f"""<!DOCTYPE html>
         <div>
           <div class="dec-tag">{d3['decision_panel']['tag']}</div>
           <div class="dec-title">{d3['decision_panel']['title']}</div>
-          <div class="dec-action">{d3['decision_panel']['next_action']}</div>
 
-          <div class="dec-section-head">Key Findings:</div>
-          <ul class="dec-list">
-            <li>{d3['decision_panel']['observations'][0]}</li>
-            <li>{d3['decision_panel']['observations'][1]}</li>
+          <ul class="dec-items-list">
+            <li>{d3['decision_panel']['items'][0]}</li>
+            <li>{d3['decision_panel']['items'][1]}</li>
+            <li>{d3['decision_panel']['items'][2]}</li>
           </ul>
 
-          <div class="dec-section-head">Seller Resolution Options:</div>
-          <ul class="dec-list">
-            <li>{d3['decision_panel']['seller_options'][0]}</li>
-            <li>{d3['decision_panel']['seller_options'][1]}</li>
-            <li>{d3['decision_panel']['seller_options'][2]}</li>
-          </ul>
+          <div class="dec-action-pill">{d3['decision_panel']['action_badge']}</div>
+          <div class="dec-supporting">{d3['decision_panel']['supporting']}</div>
         </div>
 
-        <div class="dec-guardrail-note">
-          {d3['decision_panel']['guardrail_note']}
+        <div class="dec-ceiling-note">
+          Financial safety ceiling:<br>
+          0 &lt; amount &le; min(₹4,999, remaining, paid)
         </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Illustrative staged evidence · Mock Shopify &amp; Shippo APIs</span>
+      <span>Illustrative staged evidence · Exact SKU: Not verified · Mock Shopify &amp; Shippo APIs</span>
       <span>Slide 3 / 6</span>
     </div>
   </section>
@@ -1026,19 +1053,19 @@ html_content = f"""<!DOCTYPE html>
     <div class="arch-container">
       <div class="zones-row">
         <div class="zone-card">
-          <div class="zone-num">01 MODEL ZONE</div>
-          <div class="zone-title">Plan &amp; Observe</div>
-          <div class="zone-desc">Planner validates JSON schema · Vision extracts keyframes &amp; non-binding visual metadata.</div>
+          <div class="zone-name">{d4['authority_zones'][0]['name']}</div>
+          <div class="zone-role">{d4['authority_zones'][0]['role']}</div>
+          <div class="zone-desc">{d4['authority_zones'][0]['desc']}</div>
         </div>
         <div class="zone-card code-zone">
-          <div class="zone-num">02 CODE ZONE</div>
-          <div class="zone-title">Retrieve &amp; Enforce Policy</div>
-          <div class="zone-desc">Deterministic Python rules P-01 to P-08 · Shippo &amp; Shopify mock APIs enforce hard rules.</div>
+          <div class="zone-name">{d4['authority_zones'][1]['name']}</div>
+          <div class="zone-role">{d4['authority_zones'][1]['role']}</div>
+          <div class="zone-desc">{d4['authority_zones'][1]['desc']}</div>
         </div>
         <div class="zone-card gate-zone">
-          <div class="zone-num">03 HUMAN SELLER GATE</div>
-          <div class="zone-title">Authorize Consequential Action</div>
-          <div class="zone-desc">Fail-closed authorization gate · 1-click human merchant confirmation for refund release.</div>
+          <div class="zone-name">{d4['authority_zones'][2]['name']}</div>
+          <div class="zone-role">{d4['authority_zones'][2]['role']}</div>
+          <div class="zone-desc">{d4['authority_zones'][2]['desc']}</div>
         </div>
       </div>
 
@@ -1057,7 +1084,7 @@ html_content = f"""<!DOCTYPE html>
           <div class="state-arrow">→</div>
           <div class="state-node">{d4['case_c_flow']['steps'][5]}</div>
         </div>
-        <div class="stateful-desc">{d4['case_c_flow']['desc']}</div>
+        <div class="stateful-sublabel">{d4['case_c_flow']['sublabel']}</div>
       </div>
 
       <div class="bottom-traces">
@@ -1067,7 +1094,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
 
     <div class="slide-footer">
-      <span>Structured audit log recorded at every state transition · Decision priority: Contradiction &gt; Hard fail &gt; Unclear only &gt; All pass</span>
+      <span>Structured JSON Audit Log recorded at every state transition · Decision priority: Contradiction &gt; Hard fail &gt; Unclear only &gt; All pass</span>
       <span>Slide 4 / 6</span>
     </div>
   </section>
@@ -1135,25 +1162,25 @@ html_content = f"""<!DOCTYPE html>
     <div class="plan-container">
       <div class="timeline-flow">
         <div class="t-step-box">
-          <div class="t-time-tag">{d6['timeline'][0]['hours']} · {d6['timeline'][0]['phase']}</div>
+          <div class="t-time-tag">{d6['timeline'][0]['hours']}</div>
           <div class="t-title">{d6['timeline'][0]['title']}</div>
           <div class="t-owner">{d6['timeline'][0]['owner']}</div>
           <div class="t-desc">{d6['timeline'][0]['desc']}</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">{d6['timeline'][1]['hours']} · {d6['timeline'][1]['phase']}</div>
+          <div class="t-time-tag">{d6['timeline'][1]['hours']}</div>
           <div class="t-title">{d6['timeline'][1]['title']}</div>
           <div class="t-owner">{d6['timeline'][1]['owner']}</div>
           <div class="t-desc">{d6['timeline'][1]['desc']}</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">{d6['timeline'][2]['hours']} · {d6['timeline'][2]['phase']}</div>
+          <div class="t-time-tag">{d6['timeline'][2]['hours']}</div>
           <div class="t-title">{d6['timeline'][2]['title']}</div>
           <div class="t-owner">{d6['timeline'][2]['owner']}</div>
           <div class="t-desc">{d6['timeline'][2]['desc']}</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">{d6['timeline'][3]['hours']} · {d6['timeline'][3]['phase']}</div>
+          <div class="t-time-tag">{d6['timeline'][3]['hours']}</div>
           <div class="t-title">{d6['timeline'][3]['title']}</div>
           <div class="t-owner">{d6['timeline'][3]['owner']}</div>
           <div class="t-desc">{d6['timeline'][3]['desc']}</div>
@@ -1180,7 +1207,6 @@ html_content = f"""<!DOCTYPE html>
             <li>{d6['scope_boundaries']['cut_first'][1]}</li>
             <li>{d6['scope_boundaries']['cut_first'][2]}</li>
             <li>{d6['scope_boundaries']['cut_first'][3]}</li>
-            <li>{d6['scope_boundaries']['cut_first'][4]}</li>
           </ul>
         </div>
       </div>

@@ -200,6 +200,56 @@ def run_tests():
     else:
         print("PASSED: Case D uses conservative sequence continuity wording.")
 
+    # 9. Test Visual Geometry, Collision Avoidance & Margin Safety
+    print("\n[TEST 9] Validating Visual Geometry, Collisions & Safe Margins in PPTX...")
+    prs = Presentation(pptx_path)
+    geom_passed = True
+
+    for s_idx, slide in enumerate(prs.slides):
+        for shape in slide.shapes:
+            left = shape.left.inches if shape.left else 0
+            top = shape.top.inches if shape.top else 0
+            w = shape.width.inches if shape.width else 0
+            h = shape.height.inches if shape.height else 0
+            bottom = top + h
+            right = left + w
+
+            # Bounds check (allow 0.05" epsilon)
+            if right > 13.38 or bottom > 7.55:
+                print(f"FAILED: Shape '{shape.name}' on Slide {s_idx + 1} exceeds slide boundary: right={right:.2f}, bottom={bottom:.2f}")
+                geom_passed = False
+                all_passed = False
+
+            # Footer collision check (content shapes must not cross footer at y=6.92)
+            if top > 0.1 and top < 6.90 and bottom > 6.92:
+                print(f"FAILED: Content shape '{shape.name}' on Slide {s_idx + 1} collides with footer line at y=6.92 (bottom={bottom:.2f})")
+                geom_passed = False
+                all_passed = False
+
+    # Slide 4 collision check: Case C title vs Flow Nodes
+    s4 = prs.slides[3]
+    title_bottom = None
+    node_top = None
+    for shape in s4.shapes:
+        if shape.has_text_frame and "DYNAMIC STATEFUL CLARIFICATION" in shape.text_frame.text:
+            title_bottom = shape.top.inches + shape.height.inches
+        if shape.has_text_frame and "WAITING_FOR_EVIDENCE" in shape.text_frame.text:
+            node_top = shape.top.inches
+
+    if title_bottom is not None and node_top is not None:
+        gap = node_top - title_bottom
+        if gap < 0:
+            print(f"FAILED: Slide 4 Case C title collides with flow nodes! Title bottom: {title_bottom:.2f}, Node top: {node_top:.2f}")
+            geom_passed = False
+            all_passed = False
+        else:
+            print(f"PASSED: Slide 4 Case C title and flow nodes have verified positive clear gap ({gap:.2f}\" clearance).")
+    else:
+        print("WARNING: Could not identify Slide 4 Case C title and node shapes for collision check.")
+
+    if geom_passed:
+        print("PASSED: All slides passed geometry, safe margins, and collision checks.")
+
     print("\n==========================================")
     if all_passed:
         print("ALL RETURNLENS V4 EXTENDED SMOKE & QA TESTS PASSED! READY FOR SUBMISSION.")

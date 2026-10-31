@@ -170,13 +170,13 @@ hack4hack/
 - **Headline**: `A credible prototype in 24 hours.`
 - **Subtitle**: *Strict scope boundaries and single-threaded ownership make the prototype fully buildable in one day.*
 - **24-Hour Timeline Grid**:
-  - `00h – 06h · Foundation`: **Mock APIs & Agent State** · LangGraph skeleton, mock store/courier fixtures, order status route · *Owner: Person A (Backend)*
-  - `06h – 12h · Evidence`: **Evidence Pipeline & Policy** · FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt · *Owner: Person B (Vision & UI)*
-  - `12h – 18h · Integration`: **State Flow & Scenarios** · Clarification/resume loop, seller console UI, wiring 4 staged demo cases · *Owner: Person C (Integration) with A/B*
-  - `18h – 24h · Validation`: **Testing & Submission** · Fallback testing, authorization tests, demo video recording, README · *All 3 Members*
+  - `00h – 06h · Foundation`: **Mock APIs & Agent State** · LangGraph orchestrator, mock store/courier fixtures, order status fast path · *Owner: Person A (Agent / Backend / Policy)*
+  - `06h – 12h · Evidence`: **Evidence Pipeline & UI** · FFmpeg keyframe indexer, vision prompt schema, critic prompt, seller console UI · *Owner: Person B (Vision / Evidence / UI)*
+  - `12h – 18h · Integration`: **State Flow & Scenarios** · Clarification/resume loop, wiring 4 staged demo cases, end-to-end event bus · *Owner: Person C (Fixtures / Integration / QA)*
+  - `18h – 24h · Validation`: **Testing & Submission** · Fallback testing, authorization safety tests, demo video recording, README · *All 3 Members*
 - **Scope Discipline**:
-  - **Must Deliver (Core Prototype)**: Deterministic policy engine (`P-01` to `P-08`), evidence-pack keyframe citations, fail-closed seller authorization gate, structured JSON audit log, stateful clarification/resume loop, 4 reproducible demo scenarios.
-  - **Cut First If Behind (Deferred Expansion)**: Live carrier webhooks (keep mock courier), multi-product order parsing (keep 1 item/return), video OCR barcode scanner (keep visual color), live payment gateways (keep draft refunds), merchant analytics dashboard.
+  - **Must Deliver (Core Prototype)**: Mock store & courier APIs, deterministic policy engine (`P-01` to `P-08`), frame citations, fail-closed seller authorization gate, structured JSON audit log, stateful clarification/resume loop, 4 reproducible demo scenarios.
+  - **Cut First If Behind (Deferred Expansion)**: Advanced continuity checks (Case D stretch), live external carrier/store integrations, video OCR barcode scanner, live payment gateways, merchant analytics dashboard.
 
 ---
 
@@ -206,6 +206,7 @@ This script will:
 - **Verify that the native PPTX package contains genuine embedded media files (checking media files count $\ge 2$).**
 - Check that preview dimensions are exactly 2352×900.
 - Check that all evidence grounding rules are satisfied.
+- **Run automated visual QA (Test 9)**: Validate shape boundary safety, absence of footer collisions, positive clear separation between Slide 4 Case C title and flow nodes, and Slide 1 text/metadata separation.
 
 ### 3. Rebuild Individual Outputs
 - To rebuild HTML, PDF, and slide PNG preview:

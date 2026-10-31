@@ -146,7 +146,7 @@
      ========================================================================= */
   .hero-layout {
     display: grid;
-    grid-template-columns: 420px 1fr;
+    grid-template-columns: 440px 1fr;
     gap: 40px;
     flex: 1;
     align-items: stretch;
@@ -156,7 +156,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
   }
 
   .hero-title {
@@ -177,8 +177,16 @@
   }
 
   .hero-summary {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--dark-green);
+    margin-bottom: 10px;
+  }
+
+  .hero-supporting {
     font-size: 13.5px;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--text-muted);
     margin-bottom: 16px;
   }
@@ -187,8 +195,8 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 700;
-    color: var(--text-subtle);
-    padding-top: 12px;
+    color: var(--primary-teal);
+    padding-top: 14px;
     border-top: 1px solid var(--border-light);
   }
 
@@ -304,7 +312,7 @@
   }
 
   /* =========================================================================
-     SLIDE 2: THE PROBLEM (FRAGMENTATION AS A VISUAL STORY)
+     SLIDE 2: THE PROBLEM (CLEAN VISUAL HIERARCHY)
      ========================================================================= */
   .problem-layout {
     display: grid;
@@ -353,7 +361,7 @@
   .gap-focal-card {
     background: var(--dark-green);
     border: 2px solid var(--coral);
-    padding: 32px 36px;
+    padding: 34px 36px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -373,7 +381,7 @@
   }
 
   .gap-title {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: var(--cream);
@@ -381,17 +389,25 @@
   }
 
   .gap-quote {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     font-style: italic;
     color: #FBBF24;
     line-height: 1.4;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
-  .gap-body {
+  .gap-statement {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.4;
+    margin-bottom: 14px;
+  }
+
+  .gap-note {
     font-size: 13px;
-    line-height: 1.6;
+    line-height: 1.55;
     color: #D1D5DB;
   }
 
@@ -400,7 +416,7 @@
      ========================================================================= */
   .evidence-layout {
     display: grid;
-    grid-template-columns: 66% 34%;
+    grid-template-columns: 65% 35%;
     gap: 24px;
     flex: 1;
     align-items: stretch;
@@ -436,7 +452,8 @@
 
   .arena-caption {
     margin-top: 16px;
-    font-size: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
     line-height: 1.5;
     color: var(--text-muted);
     border-top: 1px solid var(--border-light);
@@ -446,7 +463,7 @@
   .decision-panel-card {
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 22px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -454,70 +471,81 @@
 
   .dec-tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--coral);
     margin-bottom: 4px;
   }
 
   .dec-title {
-    font-size: 19px;
+    font-size: 21px;
     font-weight: 800;
-    color: var(--coral-dark);
-    margin-bottom: 4px;
-  }
-
-  .dec-action {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
     color: var(--coral-dark);
     margin-bottom: 12px;
   }
 
-  .dec-section-head {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--dark-green);
-    margin-top: 10px;
-    margin-bottom: 6px;
-  }
-
-  .dec-list {
+  .dec-items-list {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 6px;
+    margin-bottom: 16px;
   }
 
-  .dec-list li {
-    font-size: 11.5px;
-    line-height: 1.4;
-    color: var(--text-muted);
+  .dec-items-list li {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--dark-green);
     padding-left: 12px;
     position: relative;
   }
 
-  .dec-list li::before {
+  .dec-items-list li:nth-child(2) {
+    color: var(--coral-dark);
+  }
+
+  .dec-items-list li:nth-child(3) {
+    color: var(--text-muted);
+  }
+
+  .dec-items-list li::before {
     content: "•";
     position: absolute;
     left: 0;
-    color: var(--dark-green);
   }
 
-  .dec-guardrail-note {
+  .dec-action-pill {
+    background: var(--coral-light);
+    border: 1.5px solid var(--coral);
+    color: var(--coral-dark);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: center;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  .dec-supporting {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--dark-green);
+    line-height: 1.4;
+  }
+
+  .dec-ceiling-note {
     margin-top: 14px;
     padding-top: 10px;
     border-top: 1px solid var(--border-light);
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    font-weight: 700;
     color: var(--text-muted);
     line-height: 1.4;
   }
 
   /* =========================================================================
-     SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE)
+     SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE, ZERO COLLISION)
      ========================================================================= */
   .arch-container {
     display: flex;
@@ -528,7 +556,7 @@
 
   .zones-row {
     display: grid;
-    grid-template-columns: 3.6fr 4.2fr 3.45fr;
+    grid-template-columns: 3.6fr 4.3fr 3.35fr;
     gap: 16px;
   }
 
@@ -550,17 +578,17 @@
     border-top-color: #FBBF24;
   }
 
-  .zone-num {
+  .zone-name {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--teal-accent);
   }
 
-  .zone-card.code-zone .zone-num { color: var(--cream); }
-  .zone-card.gate-zone .zone-num { color: #FBBF24; }
+  .zone-card.code-zone .zone-name { color: var(--cream); }
+  .zone-card.gate-zone .zone-name { color: #FBBF24; }
 
-  .zone-title {
+  .zone-role {
     font-size: 15px;
     font-weight: 700;
     color: var(--cream);
@@ -575,7 +603,7 @@
   .stateful-box {
     background: #14221D;
     border: 1.5px solid #2563EB;
-    padding: 18px 22px;
+    padding: 16px 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -621,7 +649,7 @@
     color: #93C5FD;
   }
 
-  .stateful-desc {
+  .stateful-sublabel {
     font-size: 12px;
     line-height: 1.45;
     color: #A3B8B0;
@@ -704,7 +732,7 @@
 
   .sc-act-head {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 700;
   }
 
@@ -762,7 +790,7 @@
 
   .t-owner {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--primary-teal);
     margin-bottom: 2px;
@@ -839,10 +867,11 @@
         <div>
           <div class="tag-label">AGENTX HACKATHON 2026 · TRACK PS-04</div>
           <h1 class="hero-title">ReturnLens</h1>
-          <div class="hero-statement">Every return decision, backed by evidence.</div>
-          <p class="hero-summary">Evidence-backed returns triage for independent online sellers.<br><br>When a customer submits an unboxing video, ReturnLens cross-references store truth, verifies deterministic code policies, and gives the solo seller a 1-click decision console.</p>
+          <div class="hero-statement">“Every return decision, backed by evidence.”</div>
+          <div class="hero-summary">Connect customer evidence, order facts and policy — then let the seller decide.</div>
+          <div class="hero-supporting">ReturnLens unifies unboxing video evidence, store truth, and policy checks into a 1-click decision console for solo merchants.</div>
         </div>
-        <div class="hero-meta">Team Rookie (3 Members) · 24-Hour Prototype Feasibility</div>
+        <div class="hero-meta">Team Rookie · AgentX PS-04 · 24h Prototype</div>
       </div>
 
       <div class="console-wrapper">
@@ -864,10 +893,10 @@
 
           <div class="c-alert-box">
             <div class="c-alert-title">P-03: COLOR CONTRADICTION DETECTED</div>
-            <div class="c-alert-desc">P-04 Return Window: PASS (Day 4 of 7)  |  P-03 Manifest Match: CONTRADICTION FLAGGED</div>
+            <div class="c-alert-desc">P-04 Return Window: PASS (Day 4 of 7)  |  P-03 Manifest: CONTRADICTION FLAGGED</div>
           </div>
 
-          <div class="c-status-bar">STATUS: ESCALATED FOR SELLER DECISION (HUMAN GATE)</div>
+          <div class="c-status-bar">SELLER REVIEW REQUIRED (HUMAN GATE)</div>
           <div class="c-button">Review Evidence & Authorize Draft</div>
         </div>
       </div>
@@ -911,7 +940,8 @@
         <div class="gap-tag">THE MISSING LINK</div>
         <div class="gap-title">NO SHARED EVIDENCE RECORD</div>
         <div class="gap-quote">“What evidence supports this return decision?”</div>
-        <div class="gap-body">Today the seller opens 4 tabs and guesses. An erroneous refund burns inventory margin; an unfair denial destroys repeat customer trust.<br><br><strong>The gap is not a missing return portal — it is the lack of an immutable trace linking order truth, video keyframes, and policy terms before money moves.</strong></div>
+        <div class="gap-statement">Four disconnected sources. One seller making the call.</div>
+        <div class="gap-note">The gap is the absence of an auditable artifact linking order truth, video keyframes, and policy before money moves.</div>
       </div>
     </div>
 
@@ -940,38 +970,35 @@
           </div>
         </div>
         <div class="arena-caption">
-          Visual Grounding Honesty: Keyframe resolution proves black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Black · Exact SKU: Not verified' and cites frame 00:07.
+          Visual Grounding: Keyframe 00:07 confirms black casing. Exact SKU barcode is unverified in this frame.<br>
+          <span style="font-size: 11px; color: var(--text-subtle);">Frame citation provides a traceable timestamped reference, not absolute proof of video authenticity.</span>
         </div>
       </div>
 
       <div class="decision-panel-card">
         <div>
           <div class="dec-tag">POLICY GATE EVALUATION</div>
-          <div class="dec-title">P-03: COLOR CONTRADICTION</div>
-          <div class="dec-action">STATUS: SELLER REVIEW REQUIRED</div>
+          <div class="dec-title">COLOR CONTRADICTION</div>
 
-          <div class="dec-section-head">Key Findings:</div>
-          <ul class="dec-list">
-            <li>OBSERVED: Midnight Black</li>
-            <li>UNVERIFIED: Exact SKU barcode</li>
+          <ul class="dec-items-list">
+            <li>ORDERED — Matte White</li>
+            <li>OBSERVED — Midnight Black</li>
+            <li>EXACT SKU — Not verified</li>
           </ul>
 
-          <div class="dec-section-head">Seller Resolution Options:</div>
-          <ul class="dec-list">
-            <li>1. Request unboxing box label photo</li>
-            <li>2. Reject return (item does not match order)</li>
-            <li>3. Override & approve (warehouse error)</li>
-          </ul>
+          <div class="dec-action-pill">SELLER REVIEW REQUIRED</div>
+          <div class="dec-supporting">No automatic denial or refund without seller authorization.</div>
         </div>
 
-        <div class="dec-guardrail-note">
-          No auto-denial · No refund without seller click
+        <div class="dec-ceiling-note">
+          Financial safety ceiling:<br>
+          0 &lt; amount &le; min(₹4,999, remaining, paid)
         </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Illustrative staged evidence · Mock Shopify &amp; Shippo APIs</span>
+      <span>Illustrative staged evidence · Exact SKU: Not verified · Mock Shopify &amp; Shippo APIs</span>
       <span>Slide 3 / 6</span>
     </div>
   </section>
@@ -985,48 +1012,48 @@
     <div class="arch-container">
       <div class="zones-row">
         <div class="zone-card">
-          <div class="zone-num">01 MODEL ZONE</div>
-          <div class="zone-title">Plan &amp; Observe</div>
-          <div class="zone-desc">Planner validates JSON schema · Vision extracts keyframes &amp; non-binding visual metadata.</div>
+          <div class="zone-name">MODEL</div>
+          <div class="zone-role">Plan and observe</div>
+          <div class="zone-desc">Planner proposes typed actions · Vision model generates cited observations.</div>
         </div>
         <div class="zone-card code-zone">
-          <div class="zone-num">02 CODE ZONE</div>
-          <div class="zone-title">Retrieve &amp; Enforce Policy</div>
-          <div class="zone-desc">Deterministic Python rules P-01 to P-08 · Shippo &amp; Shopify mock APIs enforce hard rules.</div>
+          <div class="zone-name">CODE</div>
+          <div class="zone-role">Retrieve, validate and enforce rules</div>
+          <div class="zone-desc">Backend code validates schemas · FFmpeg extracts frames · Python code evaluates rules P-01 to P-08.</div>
         </div>
         <div class="zone-card gate-zone">
-          <div class="zone-num">03 HUMAN SELLER GATE</div>
-          <div class="zone-title">Authorize Consequential Action</div>
-          <div class="zone-desc">Fail-closed authorization gate · 1-click human merchant confirmation for refund release.</div>
+          <div class="zone-name">SELLER</div>
+          <div class="zone-role">Approve consequential actions</div>
+          <div class="zone-desc">Fail-closed authorization gate · 1-click human merchant confirmation before refund release.</div>
         </div>
       </div>
 
       <div class="stateful-box">
-        <div class="stateful-head">HERO AGENTIC INTERACTION: DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)</div>
+        <div class="stateful-head">DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)</div>
         <div class="nodes-row">
-          <div class="state-node">Dark Frames (brightness 28)</div>
+          <div class="state-node">DARK EVIDENCE</div>
           <div class="state-arrow">→</div>
-          <div class="state-node">ask_for_evidence()</div>
+          <div class="state-node">ASK FOR PHOTO</div>
           <div class="state-arrow">→</div>
           <div class="state-node highlight">WAITING_FOR_EVIDENCE</div>
           <div class="state-arrow">→</div>
-          <div class="state-node highlight">Customer Uploads</div>
+          <div class="state-node highlight">CUSTOMER UPLOAD</div>
           <div class="state-arrow">→</div>
           <div class="state-node highlight">RESUME CASE</div>
           <div class="state-arrow">→</div>
-          <div class="state-node">Seller Review</div>
+          <div class="state-node">SELLER REVIEW</div>
         </div>
-        <div class="stateful-desc">Why an agent? When video quality is insufficient, ReturnLens halts execution, issues a targeted re-film checklist, serializes case state into WAITING_FOR_EVIDENCE, and automatically resumes the exact case upon upload (1 retry limit prevents customer lock-out).</div>
+        <div class="stateful-sublabel">Agent calls ask_for_evidence() on low-light frames, serializes context, and resumes execution upon customer upload.</div>
       </div>
 
       <div class="bottom-traces">
-        <div class="trace-fast-path">SECONDARY PS-04 ROUTE: Query store & courier tracking for "Where is my order?" without calling multimodal vision models.</div>
-        <div class="trace-audit">SYSTEM OUTPUT: Immutable JSON Audit Trail recorded at every state transition</div>
+        <div class="trace-fast-path">SECONDARY PS-04 ROUTE ("Where is my order?"): Store API → Courier API → Customer Reply (Zero vision overhead)</div>
+        <div class="trace-audit">Structured JSON Audit Log recorded at every state transition.</div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Structured audit log recorded at every state transition · Decision priority: Contradiction &gt; Hard fail &gt; Unclear only &gt; All pass</span>
+      <span>Structured JSON Audit Log recorded at every state transition · Decision priority: Contradiction &gt; Hard fail &gt; Unclear only &gt; All pass</span>
       <span>Slide 4 / 6</span>
     </div>
   </section>
@@ -1044,7 +1071,7 @@
         <div class="sc-arr">→</div>
         <div class="sc-act">
           <div class="sc-act-head">PREPARE SELLER REVIEW</div>
-          <div class="sc-act-desc">Drafts mock shipping label and refund draft in pending_return_receipt. Money releases only on physical receipt.</div>
+          <div class="sc-act-desc">Drafts mock return label and refund draft in pending_return_receipt. Money releases only on physical receipt.</div>
         </div>
       </div>
 
@@ -1060,7 +1087,7 @@
 
       <div class="sc-lane">
         <div class="sc-badge badge-03">03 · UNCLEAR</div>
-        <div class="sc-obs">Dark or Unreadable Evidence · 4s low-light video (brightness 28/255), barcode obscured</div>
+        <div class="sc-obs">Insufficient Visual Evidence · 4s low-light video (brightness 28/255), barcode obscured</div>
         <div class="sc-arr">→</div>
         <div class="sc-act">
           <div class="sc-act-head">ASK AND RESUME</div>
@@ -1074,7 +1101,7 @@
         <div class="sc-arr">→</div>
         <div class="sc-act">
           <div class="sc-act-head">INSPECT SEQUENCE CONTINUITY</div>
-          <div class="sc-act-desc">Expected prototype behavior: inspects sequence continuity and flags cutaways for seller review.</div>
+          <div class="sc-act-desc">Expected prototype behavior: inspect sequence continuity and flag cutaways for seller review.</div>
         </div>
       </div>
     </div>
@@ -1094,25 +1121,25 @@
     <div class="plan-container">
       <div class="timeline-flow">
         <div class="t-step-box">
-          <div class="t-time-tag">00–06h · FOUNDATION</div>
+          <div class="t-time-tag">00–06h</div>
           <div class="t-title">Mock APIs & Agent State</div>
-          <div class="t-owner">Person A (Backend)</div>
-          <div class="t-desc">LangGraph state machine, mock store & courier fixtures, order status route.</div>
+          <div class="t-owner">Person A (Agent / Backend / Policy)</div>
+          <div class="t-desc">LangGraph state machine, mock store & courier fixtures, order status fast path.</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">06–12h · EVIDENCE</div>
+          <div class="t-time-tag">06–12h</div>
           <div class="t-title">Evidence Pipeline & Policy</div>
-          <div class="t-owner">Person B (Vision & UI)</div>
-          <div class="t-desc">FFmpeg keyframe indexer, vision prompt schema, rules P-01 to P-08, critic prompt.</div>
+          <div class="t-owner">Person B (Vision / Evidence / UI)</div>
+          <div class="t-desc">FFmpeg keyframe indexer, vision prompt schema, critic prompt, seller console UI.</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">12–18h · INTEGRATION</div>
+          <div class="t-time-tag">12–18h</div>
           <div class="t-title">State Flow & Scenarios</div>
-          <div class="t-owner">Person C (Integration with A/B)</div>
-          <div class="t-desc">Clarification/resume loop, seller review console UI, wiring 4 staged demo cases.</div>
+          <div class="t-owner">Person C (Fixtures / Integration / QA)</div>
+          <div class="t-desc">Clarification/resume loop, wiring 4 staged demo cases, end-to-end event bus.</div>
         </div>
         <div class="t-step-box">
-          <div class="t-time-tag">18–24h · VALIDATION</div>
+          <div class="t-time-tag">18–24h</div>
           <div class="t-title">Testing & Submission</div>
           <div class="t-owner">All 3 Members</div>
           <div class="t-desc">Authorization safety tests, edge cases, fallback validation, demo video recording.</div>
@@ -1123,22 +1150,21 @@
         <div class="scope-block must-deliver">
           <div class="scope-head">MUST DELIVER (CORE PROTOTYPE)</div>
           <ul class="scope-items">
-            <li>Deterministic policy engine (P-01 to P-08)</li>
-            <li>Evidence-pack keyframe citations</li>
-            <li>Fail-closed seller authorization gate</li>
+            <li>Mock store & courier APIs</li>
+            <li>Deterministic policy & seller gate</li>
+            <li>Color-mismatch contradiction scenario</li>
+            <li>Clarification / resume scenario (Case C)</li>
             <li>Structured JSON audit trail log</li>
-            <li>Stateful clarification/resume loop</li>
-            <li>4 reproducible demo scenarios</li>
+            <li>Order-status fast path lookup</li>
           </ul>
         </div>
 
         <div class="scope-block cut-first">
           <div class="scope-head">CUT FIRST IF BEHIND (DEFERRED EXPANSION)</div>
           <ul class="scope-items">
-            <li>Live carrier webhooks (keep mock courier)</li>
-            <li>Multi-item return parsing (keep 1 item/return)</li>
-            <li>Video OCR barcode scanner (keep visual color)</li>
-            <li>Live payment gateways (keep draft refunds)</li>
+            <li>Advanced continuity checks (Case D stretch)</li>
+            <li>Live external carrier & store integrations</li>
+            <li>Video OCR barcode scanner</li>
             <li>Merchant analytics dashboard</li>
           </ul>
         </div>
