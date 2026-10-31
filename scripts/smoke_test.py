@@ -17,7 +17,10 @@ if hasattr(sys.stderr, 'reconfigure'):
 
 def file_hash(p):
     with open(p, 'rb') as f:
-        return hashlib.sha256(f.read()).hexdigest()
+        data = f.read()
+    if str(p).endswith('.html'):
+        data = data.replace(b'\r\n', b'\n')
+    return hashlib.sha256(data).hexdigest()
 
 def run_tests():
     print("=== STARTING RETURNLENS EXTENDED SMOKE & QA SUITE (V7.1 SUBMISSION FREEZE CANDIDATE) ===")
@@ -402,17 +405,17 @@ def run_tests():
     print("\n[TEST 10] Validating Historical V5, V6 & V7 Preservation (Zero Regression)...")
     baseline_hashes = {
         # V5
-        "ReturnLens_v5.html": "201bc1a4ea9b7c8a03c282bdc645d69120ce24aa41454798cc14c20b8697d8af",
+        "ReturnLens_v5.html": "ad4c421b6f0950b8afe3dfeae6976aafb1b2c1227da72881f82cdaeb368425be",
         "ReturnLens_v5.pdf": "a290d3e589d4bee66bbdc05e0e10485f856b47ced584fee20d9098c8b3af37a0",
         "ReturnLens_v5.pptx": "960b37af5a8ef15af6b618693355c330d8c953cc3de62ad8f5caa2854bc6da2f",
         "ReturnLens_v5_preview.png": "f18f943cc432921e0f21b7b208a86c41095d6407883d5131d0949de51d4d4312",
         # V6
-        "ReturnLens_v6.html": "c6ee4d37d7185f5662798d28d0d79f59d1d1aae63355b7ee25eab9991fb9adfa",
+        "ReturnLens_v6.html": "a62ef784754320b00b4b83f9d7085e858ec3b68546ae3574556af84e41bf7eb5",
         "ReturnLens_v6.pdf": "471d36afcf83e41c9b3a09b9251d8a4f77a5c0189260dfec464994e821a5a371",
         "ReturnLens_v6.pptx": "0232f36e803d4b0d4180d6adfee533355e66cd9daa88693f17fbbde69438fec2",
         "ReturnLens_v6_preview.png": "1483430d8b7595cbbff1bac32fc78f6de920ef5ebb295416939fa4c254c5296f",
         # V7
-        "ReturnLens_v7.html": "6fd0a3fd972ac61c7be182c4e349cff206080798eea254692c6b26bfaee5fcb8",
+        "ReturnLens_v7.html": "bc5ebf29a05a7c38e370f6811137b49533488c69a8682ebc000f1599bfec7618",
         "ReturnLens_v7.pdf": "515510de313a6a0aec6188a88b8c76032bba5016bbad3e3a007c2ac6a09cf0b0",
         "ReturnLens_v7.pptx": "ccbadb3ca46baa7b30aa4699fb8908e1d7fbfadec19095f64ad911b5b810c498",
         "ReturnLens_v7_preview.png": "cb49029f872b614075b63cbe723882dde19191201bd2d05aa8756cc5206e10ea",

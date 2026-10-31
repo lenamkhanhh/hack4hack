@@ -1818,7 +1818,7 @@ def generate_v7_1():
     root_target = base_dir / "ReturnLens_v7_1.html"
     index_target = base_dir / "index.html"
 
-    with open(html_target, "w", encoding="utf-8") as f:
+    with open(html_target, "w", encoding="utf-8", newline="\n") as f:
         f.write(html_content)
     shutil.copy2(html_target, root_target)
     shutil.copy2(html_target, index_target)

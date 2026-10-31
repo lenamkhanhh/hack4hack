@@ -537,7 +537,7 @@ def build_v7_1_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL_DARK
     p = tf.add_paragraph()
-    p.text = "• 9.0% — Return Fraud (NRF 2025): Strict criminal fraud only (unboxing swaps, empty boxes).\n• 15.14% — Fraud + Policy Abuse (Appriss/Deloitte 2024): Criminal fraud combined with policy abuse."
+    p.text = "• 9.0% — Return Fraud (NRF 2025: criminal only): Strict criminal fraud (unboxing swaps, empty boxes).\n• 15.14% — Fraud + Policy Abuse (Appriss/Deloitte 2024: criminal + abuse): Criminal fraud combined with policy abuse (wardrobing)."
     p.font.name = FONT_HEAD
     p.font.size = Pt(11)
     p.font.color.rgb = C_INK_LIGHT
@@ -1354,6 +1354,7 @@ def build_v7_1_pptx():
                 new_info = zipfile.ZipInfo(item.filename, date_time=fixed_time)
                 new_info.compress_type = item.compress_type
                 new_info.external_attr = 0o644 << 16
+                new_info.create_system = 0
                 zout.writestr(new_info, data)
 
     if temp_raw.exists():
