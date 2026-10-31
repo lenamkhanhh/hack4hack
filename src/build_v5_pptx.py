@@ -155,8 +155,8 @@ def build_v5_pptx():
     p.font.size = Pt(11)
     p.font.color.rgb = C_INK_LIGHT
 
-    # Right Column: Hero Console Window (Tightened card height to eliminate empty space)
-    c_x, c_y, c_w, c_h = Inches(5.2), Inches(0.85), Inches(7.67), Inches(5.85)
+    # Right Column: Hero Console Window (Tightened card geometry to eliminate empty space)
+    c_x, c_y, c_w, c_h = Inches(5.2), Inches(0.85), Inches(7.67), Inches(4.95)
     c_card = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x, c_y, c_w, c_h)
     c_card.fill.solid()
     c_card.fill.fore_color.rgb = C_WHITE
@@ -164,68 +164,68 @@ def build_v5_pptx():
     c_card.line.width = Pt(1)
 
     # Console Title Bar
-    bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_x, c_y, c_w, Inches(0.52))
+    bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_x, c_y, c_w, Inches(0.48))
     bar.fill.solid()
     bar.fill.fore_color.rgb = C_INK
     bar.line.width = 0
 
-    tb_bar = s1.shapes.add_textbox(c_x + Inches(0.2), c_y + Inches(0.08), c_w - Inches(0.4), Inches(0.36))
+    tb_bar = s1.shapes.add_textbox(c_x + Inches(0.2), c_y + Inches(0.06), c_w - Inches(0.4), Inches(0.36))
     tf_b = tb_bar.text_frame
     tf_b.margin_left = tf_b.margin_top = 0
     p = tf_b.paragraphs[0]
     p.text = "RETURNLENS SELLER CONSOLE — CASE #RT-8821               [ MOCK EVIDENCE PACK ]"
     p.font.name = FONT_MONO
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0xFD, 0xF2, 0xD0)
 
     # Subbar
-    subbar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_x, c_y + Inches(0.52), c_w, Inches(0.42))
+    subbar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_x, c_y + Inches(0.48), c_w, Inches(0.38))
     subbar.fill.solid()
     subbar.fill.fore_color.rgb = C_PAPER_TINT
     subbar.line.color.rgb = C_BORDER
     subbar.line.width = Pt(1)
 
-    tb_sub = s1.shapes.add_textbox(c_x + Inches(0.2), c_y + Inches(0.56), c_w - Inches(0.4), Inches(0.32))
+    tb_sub = s1.shapes.add_textbox(c_x + Inches(0.2), c_y + Inches(0.52), c_w - Inches(0.4), Inches(0.30))
     tf_s = tb_sub.text_frame
     tf_s.margin_left = tf_s.margin_top = 0
     p = tf_s.paragraphs[0]
     p.text = "CASE: #RT-8821 · ORDER: #ORD-7729 · SKU: HEAD-WHT-02      DELIVERED: 4d ago (Window: Day 4/7 PASS)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.color.rgb = C_INK
 
     # Visual Comparison Left (White) & Right (Black)
     bx_w = Inches(3.55)
-    b_y = c_y + Inches(1.1)
-    b_h = Inches(2.4)
+    b_y = c_y + Inches(0.96)
+    b_h = Inches(2.20)
 
-    # Left Box
+    # Left Box - Store Truth
     box_l = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(0.2), b_y, bx_w, b_h)
     box_l.fill.solid()
     box_l.fill.fore_color.rgb = C_PAPER
     box_l.line.color.rgb = C_BORDER
     box_l.line.width = Pt(1)
 
-    tb_l = s1.shapes.add_textbox(c_x + Inches(0.35), b_y + Inches(0.2), bx_w - Inches(0.3), b_h - Inches(0.3))
+    tb_l = s1.shapes.add_textbox(c_x + Inches(0.32), b_y + Inches(0.10), bx_w - Inches(0.24), b_h - Inches(0.18))
     tf_l = tb_l.text_frame
     tf_l.word_wrap = True
     p = tf_l.paragraphs[0]
     p.text = "STORE TRUTH · SHOPIFY"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(9)
     p.font.bold = True
     p.font.color.rgb = C_MUTED
     p = tf_l.add_paragraph()
     p.text = "HEAD-WHT-02 (White)"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(16)
+    p.font.size = Pt(15)
     p.font.bold = True
     p.font.color.rgb = C_INK
     p = tf_l.add_paragraph()
-    p.text = "₹1,499 · Studio Catalog Spec\nTag Required: Present in manifest\nStatus: Verified against order"
+    p.text = "₹1,499 · Studio Catalog Spec\nTag Required: Present in manifest\nDelivered: 4d ago (Shippo #SH-9012)\nReturn Window: Day 4/7 (P-04 PASS)"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_MUTED
 
     # Right Box - Grounded: Black casing, color-consistent with HEAD-BLK-09, SKU not verified
@@ -235,13 +235,13 @@ def build_v5_pptx():
     box_r.line.color.rgb = C_CORAL_BORDER
     box_r.line.width = Pt(1.5)
 
-    tb_r = s1.shapes.add_textbox(c_x + Inches(4.07), b_y + Inches(0.2), bx_w - Inches(0.3), b_h - Inches(0.3))
+    tb_r = s1.shapes.add_textbox(c_x + Inches(4.04), b_y + Inches(0.10), bx_w - Inches(0.24), b_h - Inches(0.18))
     tf_r = tb_r.text_frame
     tf_r.word_wrap = True
     p = tf_r.paragraphs[0]
     p.text = "OBSERVED · VIDEO FRAME 00:07"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(9)
     p.font.bold = True
     p.font.color.rgb = C_CORAL
     p = tf_r.add_paragraph()
@@ -251,41 +251,59 @@ def build_v5_pptx():
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
     p = tf_r.add_paragraph()
-    p.text = "Color-consistent with HEAD-BLK-09\nBarcode: Unverified (SKU not verified)\nLighting: Optimal (142/255)"
+    p.text = "Color-consistent with HEAD-BLK-09\nBarcode: Unverified (SKU not verified)\nLighting: Optimal (142/255) · 1080p\nPolicy Check: P-03 Color Match FAIL"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
 
     # Conflict Strip
-    conf_y = b_y + b_h + Inches(0.2)
-    conf = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(0.2), conf_y, c_w - Inches(0.4), Inches(0.75))
+    conf_y = b_y + b_h + Inches(0.10)
+    conf_h = Inches(0.54)
+    conf = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(0.2), conf_y, c_w - Inches(0.4), conf_h)
     conf.fill.solid()
     conf.fill.fore_color.rgb = C_CORAL_LIGHT
     conf.line.color.rgb = C_CORAL_BORDER
     conf.line.width = Pt(1)
 
-    tb_c = s1.shapes.add_textbox(c_x + Inches(0.35), conf_y + Inches(0.12), c_w - Inches(0.7), Inches(0.5))
+    tb_c = s1.shapes.add_textbox(c_x + Inches(0.32), conf_y + Inches(0.08), c_w - Inches(0.64), conf_h - Inches(0.12))
     tf_c = tb_c.text_frame
     tf_c.word_wrap = True
     p = tf_c.paragraphs[0]
     p.text = "P-03 CONTRADICTION: Item in parcel does not match ordered SKU · Citation: Keyframe 00:07"
     p.font.name = FONT_MONO
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
 
-    # Bottom Actions Bar (Includes both Request Box Label & Review Evidence buttons)
-    act_y = conf_y + Inches(0.92)
-    tb_act = s1.shapes.add_textbox(c_x + Inches(0.2), act_y, Inches(3.2), Inches(0.4))
+    # Audit & Ledger Strip (Fills middle gap and reinforces cryptographic integrity)
+    aud_y = conf_y + conf_h + Inches(0.08)
+    aud_h = Inches(0.36)
+    aud_box = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(0.2), aud_y, c_w - Inches(0.4), aud_h)
+    aud_box.fill.solid()
+    aud_box.fill.fore_color.rgb = C_PAPER_TINT
+    aud_box.line.color.rgb = C_BORDER
+    aud_box.line.width = Pt(1)
+
+    tb_aud = s1.shapes.add_textbox(c_x + Inches(0.32), aud_y + Inches(0.06), c_w - Inches(0.64), aud_h - Inches(0.10))
+    tf_aud = tb_aud.text_frame
+    p = tf_aud.paragraphs[0]
+    p.text = "AUDIT LEDGER: Logged to SQLite · SHA256:7f8a2c · Server refund cap: ≤ min(₹4,999, rem, paid)"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(8.5)
+    p.font.color.rgb = C_MUTED
+
+    # Bottom Actions Bar
+    act_y = aud_y + aud_h + Inches(0.10)
+    tb_act = s1.shapes.add_textbox(c_x + Inches(0.2), act_y + Inches(0.04), Inches(3.2), Inches(0.36))
     tf_a = tb_act.text_frame
     p = tf_a.paragraphs[0]
     p.text = "● SELLER GATE (FAIL-CLOSED)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_AMBER_DARK
 
-    btn_sec = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(3.45), act_y - Inches(0.05), Inches(1.85), Inches(0.45))
+    btn_sec = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(3.45), act_y, Inches(1.85), Inches(0.38))
     btn_sec.fill.solid()
     btn_sec.fill.fore_color.rgb = C_PAPER_TINT
     btn_sec.line.color.rgb = C_BORDER_STRONG
@@ -294,11 +312,11 @@ def build_v5_pptx():
     p.alignment = PP_ALIGN.CENTER
     p.text = "Request Box Label"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_INK
 
-    btn_pri = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(5.4), act_y - Inches(0.05), Inches(2.05), Inches(0.45))
+    btn_pri = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, c_x + Inches(5.4), act_y, Inches(2.05), Inches(0.38))
     btn_pri.fill.solid()
     btn_pri.fill.fore_color.rgb = C_TEAL
     btn_pri.line.width = 0
@@ -306,7 +324,7 @@ def build_v5_pptx():
     p.alignment = PP_ALIGN.CENTER
     p.text = "Review & Authorize"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_WHITE
 
@@ -732,7 +750,7 @@ def build_v5_pptx():
     p.font.color.rgb = C_DARK_INK
     p.space_after = Pt(8)
     p = tf.add_paragraph()
-    p.text = "When video is too dark (brightness 28, 2 frames), agent calls ask_for_evidence() with a re-film checklist.\n\nCase state saved to WAITING_FOR_EVIDENCE and resumes on upload (1 retry limit)."
+    p.text = "When video is too dark (brightness 28, 2 frames), agent calls ask_for_evidence() with a re-film checklist.\n\nCase state saved to WAITING_FOR_EVIDENCE and resumes on upload. After 1 retry, escalates with both attempts logged (never auto-denies)."
     p.font.name = FONT_HEAD
     p.font.size = Pt(11)
     p.font.color.rgb = C_DARK_MUTED
@@ -820,7 +838,7 @@ def build_v5_pptx():
     p.font.size = Pt(14)
     p.font.color.rgb = C_MUTED
 
-    # Left: Case B Hero Card (Tightened and rich content)
+    # Left: Case B Hero Card (Multi-module structured presentation eliminating empty space)
     b_x, b_y, b_w, b_h = Inches(0.46), Inches(1.65), Inches(5.4), Inches(5.1)
     bc = s5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, b_x, b_y, b_w, b_h)
     bc.fill.solid()
@@ -828,35 +846,129 @@ def build_v5_pptx():
     bc.line.color.rgb = C_CORAL_BORDER
     bc.line.width = Pt(2)
 
-    tb_bc = s5.shapes.add_textbox(b_x + Inches(0.3), b_y + Inches(0.25), b_w - Inches(0.6), b_h - Inches(0.5))
-    tf = tb_bc.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = "CORE BENCHMARK SCENARIO · ESCALATE"
+    # 1. Title Block
+    tb_title = s5.shapes.add_textbox(b_x + Inches(0.24), b_y + Inches(0.14), b_w - Inches(0.48), Inches(0.74))
+    tf_t = tb_title.text_frame
+    tf_t.word_wrap = True
+    tf_t.margin_left = tf_t.margin_top = tf_t.margin_right = tf_t.margin_bottom = 0
+    p = tf_t.paragraphs[0]
+    p.text = "CORE BENCHMARK SCENARIO · P-03 CONTRADICTION"
     p.font.name = FONT_MONO
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_CORAL
-    p = tf.add_paragraph()
+    p = tf_t.add_paragraph()
     p.text = "Case B: Color Contradiction"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(20)
+    p.font.size = Pt(19)
     p.font.bold = True
     p.font.color.rgb = C_INK
-    p.space_after = Pt(10)
-
-    p = tf.add_paragraph()
-    p.text = "Order Record: HEAD-WHT-02 (White, ₹1,499)\nObserved Frame 00:07: Black casing\nColor Match: Consistent with HEAD-BLK-09\nBarcode: Unverified (SKU not verified)\nPolicy Evaluation: P-03 Color Match: FAIL\nAutomated Action: No label · No refund draft · No denial"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10.5)
-    p.font.color.rgb = C_CORAL_DARK
-    p.space_after = Pt(14)
-
-    p = tf.add_paragraph()
-    p.text = "PRESERVED SELLER OPTIONS IN MOCK EVIDENCE PACK:\n• Accept as warehouse mis-shipment\n• Request customer photo of outer box shipping barcode\n• Hold case for physical receipt inspection at depot"
+    p = tf_t.add_paragraph()
+    p.text = "The order says White. Unboxing video frame 00:07 shows Black."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11.5)
-    p.font.color.rgb = C_INK_LIGHT
+    p.font.size = Pt(10)
+    p.font.color.rgb = C_MUTED
+
+    # 2. Keyframe Evidence Citation Box (Coral tint)
+    ev_y = b_y + Inches(0.96)
+    ev_h = Inches(1.50)
+    ev_w = b_w - Inches(0.48)
+    ev_box = s5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, b_x + Inches(0.24), ev_y, ev_w, ev_h)
+    ev_box.fill.solid()
+    ev_box.fill.fore_color.rgb = C_CORAL_LIGHT
+    ev_box.line.color.rgb = C_CORAL_BORDER
+    ev_box.line.width = Pt(1)
+
+    tb_ev = s5.shapes.add_textbox(b_x + Inches(0.36), ev_y + Inches(0.08), ev_w - Inches(0.24), ev_h - Inches(0.14))
+    tf_ev = tb_ev.text_frame
+    tf_ev.word_wrap = True
+    tf_ev.margin_left = tf_ev.margin_top = tf_ev.margin_right = tf_ev.margin_bottom = 0
+    p = tf_ev.paragraphs[0]
+    p.text = "MOCK EVIDENCE PACK · KEYFRAME 00:07 CITATION"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(9)
+    p.font.bold = True
+    p.font.color.rgb = C_CORAL
+    p = tf_ev.add_paragraph()
+    p.text = "Manifest Record: HEAD-WHT-02 (Matte White) · ₹1,499 paid · Shippo #SH-9012"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(9.5)
+    p.font.color.rgb = C_INK
+    p = tf_ev.add_paragraph()
+    p.text = "Observed Keyframe: Black casing (color-consistent with HEAD-BLK-09)"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(10)
+    p.font.bold = True
+    p.font.color.rgb = C_CORAL_DARK
+    p = tf_ev.add_paragraph()
+    p.text = "Barcode / SKU: Unverified · Optimal Lighting (142/255) · REC 00:07 / 00:24"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(8.5)
+    p.font.color.rgb = C_MUTED
+    p = tf_ev.add_paragraph()
+    p.text = "P-03 Policy Check: FAIL → Blocks automatic approval (no label, no draft)"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(9.5)
+    p.font.bold = True
+    p.font.color.rgb = C_CORAL_DARK
+
+    # 3. Policy Action Strip
+    dec_y = ev_y + ev_h + Inches(0.08)
+    dec_h = Inches(0.42)
+    dec_box = s5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, b_x + Inches(0.24), dec_y, ev_w, dec_h)
+    dec_box.fill.solid()
+    dec_box.fill.fore_color.rgb = C_INK
+    dec_box.line.width = 0
+
+    tb_dec = s5.shapes.add_textbox(b_x + Inches(0.36), dec_y + Inches(0.08), ev_w - Inches(0.24), dec_h - Inches(0.14))
+    tf_dec = tb_dec.text_frame
+    tf_dec.margin_left = tf_dec.margin_top = 0
+    p = tf_dec.paragraphs[0]
+    p.text = "POLICY ACTION: ESCALATE TO SELLER GATE (FAIL-CLOSED)"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(9.5)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(0xFF, 0xD4, 0x85)
+
+    # 4. Preserved Seller Options Box
+    opt_y = dec_y + dec_h + Inches(0.08)
+    opt_h = Inches(1.85)
+    opt_box = s5.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, b_x + Inches(0.24), opt_y, ev_w, opt_h)
+    opt_box.fill.solid()
+    opt_box.fill.fore_color.rgb = C_PAPER_TINT
+    opt_box.line.color.rgb = C_BORDER
+    opt_box.line.width = Pt(1)
+
+    tb_opt = s5.shapes.add_textbox(b_x + Inches(0.36), opt_y + Inches(0.10), ev_w - Inches(0.24), opt_h - Inches(0.16))
+    tf_opt = tb_opt.text_frame
+    tf_opt.word_wrap = True
+    tf_opt.margin_left = tf_opt.margin_top = tf_opt.margin_right = tf_opt.margin_bottom = 0
+    p = tf_opt.paragraphs[0]
+    p.text = "PRESERVED SELLER OPTIONS IN DECISION CONSOLE:"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(9)
+    p.font.bold = True
+    p.font.color.rgb = C_TEAL_DARK
+    p = tf_opt.add_paragraph()
+    p.text = "① Accept as warehouse mis-shipment (seller acknowledges error)"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(9.5)
+    p.font.color.rgb = C_INK
+    p = tf_opt.add_paragraph()
+    p.text = "② Request customer photo of outer box shipping barcode"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(9.5)
+    p.font.color.rgb = C_INK
+    p = tf_opt.add_paragraph()
+    p.text = "③ Hold case for physical parcel inspection at returns depot"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(9.5)
+    p.font.color.rgb = C_INK
+    p = tf_opt.add_paragraph()
+    p.text = "Financial Guardrail: 0 < amount ≤ min(₹4,999, rem, paid) · Binds evidence hash"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(8.5)
+    p.font.color.rgb = C_MUTED
 
     # Right: Compact Stack of Cases A, C, D
     rw_x = Inches(6.08)
@@ -968,21 +1080,39 @@ def build_v5_pptx():
         p.font.size = Pt(9.5)
         p.font.color.rgb = C_MUTED
 
-    # People 3-Column Strip
+    # People 3-Column Strip (Enriched with concrete deliverables & tech stack to eliminate empty space)
     p_y = Inches(3.05)
     p_w = Inches(3.95)
     p_h = Inches(2.35)
 
     people = [
-        ("PERSON A", "Backend, Policy & Audit",
-         "LangGraph state machine, policy engine P-01 to P-08, Critic validation, append-only JSON audit trail, server-side refund cap calculation."),
-        ("PERSON B", "Video & Seller Console",
-         "FFmpeg keyframe pipeline (~1fps sampling), vision model structured citation prompt, interactive 1-click Seller Console mockup."),
-        ("PERSON C", "Integration, Scenarios & QA",
-         "Test fixtures for Cases A–D, Case C pause/resume lifecycle, fail-closed human gate testing, benchmark runner, video capture.")
+        ("PERSON A · BACKEND, POLICY & AUDIT", "State Machine & Policy Engine",
+         "Stack: LangGraph · Pydantic · SQLite · SHA256",
+         [
+             "• Policy P-01 to P-08: Deterministic code rules (window, SKU, tag, refund cap)",
+             "• Critic Agent: Adversarial check against cited keyframe timestamps",
+             "• Audit Ledger: Append-only JSON log & cryptographic approval binding",
+             "• Financial Cap: Server calculation min(₹4,999, remaining, paid)"
+         ]),
+        ("PERSON B · VISION & CONSOLE", "Video Pipeline & Seller UI",
+         "Stack: FFmpeg · Gemini 2.5 Flash · HTML/CSS/SVG",
+         [
+             "• Keyframe Pipeline: Uniform ~1fps sampling & brightness scoring (avg 28)",
+             "• Structured Vision: Observation schema with timestamp citation metadata",
+             "• Seller Console: 1-click decision console with mock evidence pack",
+             "• Grounding Guard: Enforces unverified barcode vs color distinction"
+         ]),
+        ("PERSON C · INTEGRATION & QA", "Scenarios, Lifecycle & QA",
+         "Stack: Pytest · Mock Fixtures · Automated Smoke QA",
+         [
+             "• Benchmark Cases: Staged data for Cases A–C + Case D sequence test",
+             "• Case C Lifecycle: Re-film loop in WAITING_FOR_EVIDENCE (1 retry)",
+             "• Fail-Closed Testing: Verifies zero automated refunds & approval gates",
+             "• Automated QA: 9-test smoke runner, end-to-end event bus & demo recording"
+         ])
     ]
 
-    for idx, (role, name, tasks) in enumerate(people):
+    for idx, (role, name, stack, deliverables) in enumerate(people):
         px = Inches(0.46 + idx * 4.23)
         pc = s6.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, px, p_y, p_w, p_h)
         pc.fill.solid()
@@ -990,27 +1120,35 @@ def build_v5_pptx():
         pc.line.color.rgb = C_BORDER
         pc.line.width = Pt(1)
 
-        tb = s6.shapes.add_textbox(px + Inches(0.2), p_y + Inches(0.18), p_w - Inches(0.4), p_h - Inches(0.35))
+        tb = s6.shapes.add_textbox(px + Inches(0.18), p_y + Inches(0.14), p_w - Inches(0.36), p_h - Inches(0.24))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
         p = tf.paragraphs[0]
         p.text = role
         p.font.name = FONT_MONO
-        p.font.size = Pt(11)
+        p.font.size = Pt(9.5)
         p.font.bold = True
         p.font.color.rgb = C_TEAL
         p = tf.add_paragraph()
         p.text = name
         p.font.name = FONT_HEAD
-        p.font.size = Pt(14)
+        p.font.size = Pt(13)
         p.font.bold = True
         p.font.color.rgb = C_INK
-        p.space_after = Pt(8)
         p = tf.add_paragraph()
-        p.text = tasks
-        p.font.name = FONT_HEAD
-        p.font.size = Pt(11)
+        p.text = stack
+        p.font.name = FONT_MONO
+        p.font.size = Pt(8.5)
         p.font.color.rgb = C_MUTED
+        p.space_after = Pt(4)
+        for item in deliverables:
+            p = tf.add_paragraph()
+            p.text = item
+            p.font.name = FONT_HEAD
+            p.font.size = Pt(9.5)
+            p.font.color.rgb = C_INK_LIGHT
+            p.space_after = Pt(2)
 
     # Bottom Scope Discipline Band - Enlarged typography for skimming
     sc_y = Inches(5.55)

@@ -1711,7 +1711,7 @@ def generate_v5():
           <div class="g-tag">STATEFUL RESUMPTION</div>
           <div class="g-title">Case C: Re-Film Loop</div>
           <p class="g-text">
-            When video is too dark (brightness 28, 2 frames), agent calls <code>ask_for_evidence()</code> with a re-film checklist. Case state saved to <code>WAITING_FOR_EVIDENCE</code> and resumes on upload (1 retry limit).
+            When video is too dark (brightness 28, 2 frames), agent calls <code>ask_for_evidence()</code> with a re-film checklist. Case state saved to <code>WAITING_FOR_EVIDENCE</code> and resumes on upload. After 1 retry, escalates to seller with both attempts logged (never auto-denies).
           </p>
         </div>
 

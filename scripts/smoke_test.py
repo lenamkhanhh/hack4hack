@@ -197,6 +197,50 @@ def run_tests():
     else:
         print("PASSED: Seller options clean of exchange contradiction.")
 
+    # Grounding check 6: Cryptographic approval binding on Slide 4
+    if "approval binds" not in pdf_lower or "evidence hash" not in pdf_lower:
+        print("FAILED: Cryptographic approval binding missing from Slide 4 PDF.")
+        all_passed = False
+    else:
+        print("PASSED: Approval binding (case ID + evidence hash + policy version) verified on Slide 4.")
+
+    # Grounding check 7: Case C termination rule on both Slide 4 and Slide 5
+    slide4_text = " ".join(doc_v5[3].get_text().lower().split())
+    slide5_text = " ".join(doc_v5[4].get_text().lower().split())
+    if "after 1 retry" not in slide4_text or "never auto-denies" not in slide4_text:
+        print("FAILED: Case C termination rule ('after 1 retry... never auto-denies') missing from Slide 4.")
+        all_passed = False
+    else:
+        print("PASSED: Case C termination rule verified on Slide 4.")
+
+    if "after 1 retry" not in slide5_text or "never auto-denies" not in slide5_text:
+        print("FAILED: Case C termination rule missing from Slide 5.")
+        all_passed = False
+    else:
+        print("PASSED: Case C termination rule verified on Slide 5.")
+
+    # Grounding check 8: Scope boundaries alignment on Slide 6
+    slide6_text = " ".join(doc_v5[5].get_text().lower().split())
+    if "case d sequence test" not in slide6_text and "case d test" not in slide6_text:
+        print("FAILED: Case D sequence test missing from Slide 6 Must Deliver.")
+        all_passed = False
+    else:
+        print("PASSED: Slide 6 Must Deliver correctly distinguishes Case D sequence test.")
+
+    if "advanced video forensic" not in slide6_text:
+        print("FAILED: 'Advanced video forensics' missing from Slide 6 Cut First.")
+        all_passed = False
+    else:
+        print("PASSED: Slide 6 Cut First correctly lists Advanced video forensics (Case D stretch).")
+
+    # Grounding check 9: Speaker Notes alignment on Slide 6
+    s6_notes = prs_v5.slides[5].notes_slide.notes_text_frame.text.lower()
+    if "3 core demo cases" not in s6_notes or "advanced video forensic" not in s6_notes:
+        print("FAILED: Slide 6 speaker notes not aligned with refined scope boundaries.")
+        all_passed = False
+    else:
+        print("PASSED: Slide 6 speaker notes strictly aligned with Must Deliver & Cut First.")
+
     # 9. Test Visual Geometry in V5 PPTX
     print("\n[TEST 9] Validating Visual Geometry & Bounds in V5 PPTX...")
     geom_passed = True
