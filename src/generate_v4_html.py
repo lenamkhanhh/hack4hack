@@ -78,7 +78,7 @@ html_content = f"""<!DOCTYPE html>
     height: 720px;
     background-color: var(--cream);
     position: relative;
-    padding: 50px 64px 40px 64px;
+    padding: 46px 64px 38px 64px;
     box-shadow: 0 16px 48px rgba(0,0,0,0.12);
     overflow: hidden;
     display: flex;
@@ -97,7 +97,7 @@ html_content = f"""<!DOCTYPE html>
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--primary-teal);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }}
 
   .slide.dark .tag-label {{
@@ -122,7 +122,7 @@ html_content = f"""<!DOCTYPE html>
     font-weight: 400;
     line-height: 1.35;
     color: var(--text-muted);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }}
 
   .slide.dark .slide-sub {{
@@ -131,7 +131,7 @@ html_content = f"""<!DOCTYPE html>
 
   .slide-footer {{
     position: absolute;
-    bottom: 18px;
+    bottom: 16px;
     left: 64px;
     right: 64px;
     display: flex;
@@ -140,7 +140,7 @@ html_content = f"""<!DOCTYPE html>
     font-size: 10px;
     color: var(--text-subtle);
     border-top: 1px solid var(--border-light);
-    padding-top: 10px;
+    padding-top: 8px;
   }}
 
   .slide.dark .slide-footer {{
@@ -161,7 +161,7 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 24px;
+    padding-bottom: 20px;
   }}
 
   .hero-title {{
@@ -170,7 +170,7 @@ html_content = f"""<!DOCTYPE html>
     letter-spacing: -2px;
     color: var(--dark-green);
     line-height: 1;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }}
 
   .hero-statement {{
@@ -300,7 +300,7 @@ html_content = f"""<!DOCTYPE html>
     text-align: center;
   }}
 
-  /* SLIDE 2 STYLES (RECOMPOSED 3-COLUMN LAYOUT: NO OVERLAP) */
+  /* SLIDE 2 STYLES (3-COLUMN ZERO-OVERLAP LAYOUT) */
   .problem-layout-3col {{
     display: grid;
     grid-template-columns: 1fr 1.05fr 1fr;
@@ -353,7 +353,7 @@ html_content = f"""<!DOCTYPE html>
     background: var(--dark-green);
     color: #F5F3EF;
     border: 2px solid var(--coral);
-    padding: 28px 24px;
+    padding: 26px 22px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -368,14 +368,14 @@ html_content = f"""<!DOCTYPE html>
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--coral);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }}
 
   .gap-title {{
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.3px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     line-height: 1.25;
     color: #FFFFFF;
   }}
@@ -475,7 +475,7 @@ html_content = f"""<!DOCTYPE html>
     background: var(--coral-light);
     border: 1px solid #F87171;
     padding: 10px 14px;
-    margin-top: 10px;
+    margin-top: 8px;
   }}
 
   .decision-finding .status-txt {{
@@ -494,11 +494,11 @@ html_content = f"""<!DOCTYPE html>
     line-height: 1.45;
   }}
 
-  /* SLIDE 4 STYLES (DARK) */
+  /* SLIDE 4 STYLES (DARK ARCHITECTURE WITH AGENTIC TRACE) */
   .arch-pipeline {{
     display: flex;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 8px;
     align-items: center;
   }}
 
@@ -506,11 +506,11 @@ html_content = f"""<!DOCTYPE html>
     flex: 1;
     background: #172621;
     border: 1px solid var(--border-dark);
-    padding: 12px 10px;
+    padding: 10px 8px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 98px;
+    height: 84px;
   }}
 
   .pipe-step.model-step {{ border-top: 3px solid #00D1A7; }}
@@ -520,31 +520,31 @@ html_content = f"""<!DOCTYPE html>
   .pipe-arrow {{
     font-family: 'IBM Plex Mono', monospace;
     color: #00D1A7;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
     flex-shrink: 0;
   }}
 
   .pipe-num {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
+    font-size: 8.5px;
     color: #6C8279;
     margin-bottom: 2px;
   }}
 
   .pipe-title {{
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     color: #F5F3EF;
     line-height: 1.2;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }}
 
   .pipe-role-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: 700;
-    padding: 2px 5px;
+    padding: 2px 4px;
     display: inline-block;
     text-align: center;
     letter-spacing: 0.5px;
@@ -554,46 +554,87 @@ html_content = f"""<!DOCTYPE html>
   .tag-model {{ background: rgba(0,209,167,0.18); color: #00D1A7; }}
   .tag-human {{ background: rgba(251,191,36,0.18); color: #FBBF24; }}
 
-  /* Order status sub-bar */
-  .ps04-route-strip {{
-    margin-top: 12px;
-    background: #14221D;
-    border: 1px solid var(--border-dark);
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+  /* Dual Execution Paths: Stateful Loop vs Zero-Vision Route */
+  .agent-paths-grid {{
+    display: grid;
+    grid-template-columns: 1.65fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
   }}
 
-  .ps04-pill {{
-    background: var(--primary-teal);
-    color: #FFFFFF;
-    padding: 3px 8px;
+  .agent-path-card {{
+    background: #121F1B;
+    border: 1px solid var(--border-dark);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+
+  .path-header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }}
+
+  .path-title {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
     font-weight: 700;
-    font-size: 9px;
+    letter-spacing: 0.5px;
+  }}
+
+  .path-title.loop {{ color: #60A5FA; }}
+  .path-title.fast {{ color: #00D1A7; }}
+
+  .trace-steps {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    color: #D1D5DB;
+    flex-wrap: wrap;
+    line-height: 1.4;
+  }}
+
+  .trace-node {{
+    background: #1A2B24;
+    border: 1px solid var(--border-dark);
+    padding: 3px 6px;
+  }}
+
+  .trace-node.wait {{
+    background: rgba(96,165,250,0.15);
+    border-color: #60A5FA;
+    color: #93C5FD;
+  }}
+
+  .trace-arrow {{
+    color: #6C8279;
+    font-weight: 700;
   }}
 
   .arch-branches {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 14px;
+    gap: 10px;
+    margin-top: 10px;
   }}
 
   .branch-card {{
     background: #121F1B;
     border: 1px solid var(--border-dark);
-    padding: 12px 14px;
+    padding: 10px 12px;
   }}
 
   .branch-head {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }}
 
   .head-unclear {{ color: #60A5FA; }}
@@ -602,21 +643,21 @@ html_content = f"""<!DOCTYPE html>
   .head-pass {{ color: #34D399; }}
 
   .branch-desc {{
-    font-size: 11px;
+    font-size: 10.5px;
     color: #A3B8B0;
-    line-height: 1.4;
+    line-height: 1.35;
   }}
 
   .arch-legend {{
     display: flex;
     flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 14px;
-    padding: 10px 14px;
+    gap: 16px;
+    margin-top: 10px;
+    padding: 8px 12px;
     background: #121F1B;
     border: 1px solid var(--border-dark);
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9.5px;
     color: #A3B8B0;
     line-height: 1.4;
   }}
@@ -806,8 +847,8 @@ html_content = f"""<!DOCTYPE html>
     <div class="hero-layout">
       <div class="hero-left">
         <div>
-          <h1 class="hero-title">RETURNLENS</h1>
-          <div class="hero-statement">“Review returns with cited video evidence.”</div>
+          <h1 class="hero-title">ReturnLens</h1>
+          <div class="hero-statement">“Every return decision, backed by evidence.”</div>
           <p class="hero-desc">An evidence-backed return triage agent for small direct-to-consumer sellers.</p>
         </div>
         <div class="hero-meta-box">
@@ -864,7 +905,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 2: THE PROBLEM (RECOMPOSED 3-COLUMN NO-OVERLAP) -->
+  <!-- SLIDE 2: THE PROBLEM (3-COLUMN ZERO-OVERLAP LAYOUT) -->
   <section class="slide" id="slide-2">
     <div class="tag-label">The Problem · Solo Seller Bottleneck</div>
     <h2 class="slide-title">One return decision. Four disconnected sources.</h2>
@@ -885,13 +926,16 @@ html_content = f"""<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Center Pillar: Critical Gap (Zero Overlap) -->
+      <!-- Center Pillar: Critical Gap (Four Systems. No Traceable Decision.) -->
       <div class="gap-pillar">
         <div class="gap-tag">CRITICAL INFORMATION GAP</div>
-        <div class="gap-title">NO SHARED EVIDENCE RECORD</div>
+        <div class="gap-title">Four systems.<br>No traceable decision.</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--coral); font-weight: 700; margin-bottom: 10px;">
+          NO SHARED EVIDENCE RECORD
+        </div>
         <div class="gap-text">
-          Today the seller opens 4 tabs, then decides alone. A wrong refund loses inventory; an unfair denial loses a customer.<br><br>
-          The gap is that no single record ties order truth, video frames, policy clauses, and decisions together.
+          Order facts, video evidence and return policies are disconnected — leaving one solo seller to make high-stakes refund judgments from memory.<br><br>
+          A wrong refund loses inventory; an unfair denial loses a customer.
         </div>
       </div>
 
@@ -916,7 +960,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 3: THE STAR DEMO (EVIDENCE BENCHMARK) -->
+  <!-- SLIDE 3: THE STAR DEMO (VISUAL PEAK) -->
   <section class="slide" id="slide-3">
     <div class="tag-label">Visual Evidence Benchmark · Core Demonstration</div>
     <h2 class="slide-title">The order says white. The video shows black.</h2>
@@ -932,7 +976,7 @@ html_content = f"""<!DOCTYPE html>
           </div>
           <div class="ev-footer">
             <strong>HEAD-WHT-02</strong> · Matte White · ₹1,499<br>
-            Delivered 4 days ago · Original tag present
+            Delivered 4 days ago · Original retail tag present
           </div>
         </div>
 
@@ -954,7 +998,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="demo-decision">
         <div>
           <div class="tag-label" style="color: var(--coral);">Deterministic Policy Gate</div>
-          <div style="font-size: 17px; font-weight: 800; color: var(--dark-green); margin-top: 4px;">P-03 Check: COLOR MISMATCH</div>
+          <div style="font-size: 17px; font-weight: 800; color: var(--dark-green); margin-top: 4px;">P-03 Check: COLOR CONTRADICTION</div>
           <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px;">
             Specification contradiction flagged against Shopify order manifest.
           </p>
@@ -982,7 +1026,7 @@ html_content = f"""<!DOCTYPE html>
 
         <div class="safety-box">
           <strong>Deterministic Guardrails:</strong><br>
-          • Cap: 0 &lt; amount &le; min(₹4,999, remaining refundable amount, order paid amount)<br>
+          • Refund ceiling: 0 &lt; amount &le; min(₹4,999, remaining refundable, paid amount)<br>
           • No automatic customer denial · No refund released without seller click
         </div>
       </div>
@@ -994,11 +1038,11 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 4: SYSTEM ARCHITECTURE (DARK) -->
+  <!-- SLIDE 4: SYSTEM ARCHITECTURE (DARK + AGENTIC STATEFUL LOOP) -->
   <section class="slide dark" id="slide-4">
-    <div class="tag-label">System Architecture · Deterministic Pipeline</div>
+    <div class="tag-label">System Architecture · Dynamic Agentic Governance</div>
     <h2 class="slide-title">Models observe. Code verifies. Seller authorizes.</h2>
-    <p class="slide-sub">Policy checks and seller approval control actions.</p>
+    <p class="slide-sub">Dynamic action selection and stateful resumption under deterministic human authorization.</p>
 
     <!-- 6-Step Horizontal Pipeline with Directional Arrows -->
     <div class="arch-pipeline">
@@ -1056,14 +1100,43 @@ html_content = f"""<!DOCTYPE html>
       </div>
     </div>
 
-    <!-- Secondary PS-04 Order Status Route -->
-    <div class="ps04-route-strip">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="ps04-pill">SECONDARY PS-04 ROUTE</span>
-        <span style="color: #F5F3EF; font-weight: 600;">Order Status Inquiry:</span>
-        <span style="color: #A3B8B0;">Customer: “Where is my order?” → Mock Store API → Courier Scan → Instant Delivery Timestamp</span>
+    <!-- Dual Operational Branches: Agentic Trace vs Order Status Fast Path -->
+    <div class="agent-paths-grid">
+      <!-- Path 1: Dynamic Stateful Clarification Loop (Case C) -->
+      <div class="agent-path-card">
+        <div class="path-header">
+          <span class="path-title loop">DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)</span>
+          <span style="font-size: 8.5px; color: #93C5FD; font-family: 'IBM Plex Mono', monospace;">Observe → Decide → Act → Wait → Resume</span>
+        </div>
+        <div class="trace-steps">
+          <span class="trace-node">Dark Frames</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">ask_for_evidence()</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node wait">WAITING_FOR_EVIDENCE</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">Customer Uploads</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">Resume Case</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">Seller Review</span>
+        </div>
       </div>
-      <span style="color: #00D1A7;">Zero-Vision Fast Path</span>
+
+      <!-- Path 2: Secondary Zero-Vision Order Status Route (PS-04 Fit) -->
+      <div class="agent-path-card">
+        <div class="path-header">
+          <span class="path-title fast">SECONDARY PS-04 ROUTE: ORDER STATUS FAST PATH</span>
+          <span style="font-size: 8.5px; color: #34D399; font-family: 'IBM Plex Mono', monospace;">Zero-Vision Direct Route</span>
+        </div>
+        <div class="trace-steps">
+          <span class="trace-node">“Where is my order?”</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">Query Store &amp; Shippo APIs</span>
+          <span class="trace-arrow">→</span>
+          <span class="trace-node">Delivery Scan &amp; Time</span>
+        </div>
+      </div>
     </div>
 
     <!-- 4 Decision Function Outcomes (Strict Priority Order) -->
@@ -1091,10 +1164,10 @@ html_content = f"""<!DOCTYPE html>
 
     <!-- Architecture Guarantees & Critic -->
     <div class="arch-legend">
-      <span><strong style="color: #00D1A7;">■ Model Calls:</strong> Exactly 3 base calls per case: planner, vision, critic, plus retries</span>
-      <span><strong style="color: #F5F3EF;">■ Policy Clauses:</strong> Deterministic Python code rules P-01 to P-08, never prompts</span>
-      <span><strong style="color: #60A5FA;">■ Critic Duty:</strong> The critic reviews cited frames and flags unsupported observations</span>
-      <span><strong style="color: #FBBF24;">■ Safety Boundary:</strong> Prompt injection cannot alter policy code or bypass human gate</span>
+      <span><strong style="color: #00D1A7;">■ Model Calls:</strong> Bounded design estimate (3 base calls: planner, vision, critic + retries)</span>
+      <span><strong style="color: #F5F3EF;">■ Policy Rules:</strong> Deterministic Python code rules P-01 to P-08, never prompts</span>
+      <span><strong style="color: #60A5FA;">■ Critic Duty:</strong> Reviews cited frames, flags unsupported observations (correlated error limits noted)</span>
+      <span><strong style="color: #FBBF24;">■ Safety Boundary:</strong> Backend authorization boundary — LLMs cannot execute financial refund tools</span>
     </div>
 
     <div class="slide-footer">
@@ -1103,18 +1176,18 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 5: FOUR DEMO BENCHMARK SCENARIOS -->
+  <!-- SLIDE 5: FOUR CONTROLLED PROTOTYPE BEHAVIORS -->
   <section class="slide" id="slide-5">
     <div class="tag-label">Demo Scenarios · Grounded Verification</div>
     <h2 class="slide-title">Four scenarios. Four predictable behaviors.</h2>
-    <p class="slide-sub">Every decision can be clicked back to a frame, a clause, and a log entry.</p>
+    <p class="slide-sub">Different evidence conditions produce different controlled agent actions.</p>
 
     <div class="scenarios-grid">
       <!-- Case A -->
       <div class="scenario-lane">
         <div class="sc-badge badge-ready">CASE A · READY</div>
         <div class="sc-evidence">
-          <strong>ORD-1042</strong> (₹1,499) · SKU matches manifest, tag visible, defect confirmed within 7-day window.
+          <strong>Consistent Evidence</strong> · ORD-1042 (₹1,499) · SKU matches manifest, tag visible, defect confirmed within 7d.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
@@ -1126,7 +1199,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="scenario-lane">
         <div class="sc-badge badge-mismatch">CASE B · MISMATCH</div>
         <div class="sc-evidence">
-          <strong>HEAD-WHT-02</strong> (White) ordered vs Frame 00:07 showing Black item · SKU unverified.
+          <strong>Color Contradiction</strong> · HEAD-WHT-02 (White) ordered vs Frame 00:07 Black item · SKU unverified.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
@@ -1138,11 +1211,11 @@ html_content = f"""<!DOCTYPE html>
       <div class="scenario-lane">
         <div class="sc-badge badge-unclear">CASE C · UNCLEAR</div>
         <div class="sc-evidence">
-          <strong>4-second dark video</strong>, brightness 28, only 2 usable frames · Unclear evidence check.
+          <strong>Insufficient Visibility</strong> · 4-second dark video, brightness 28, only 2 usable frames.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
-          Case stays open with exact re-film checklist. One retry limit prevents customer lock-out.
+          Agent requests targeted photo; enters <strong>WAITING_FOR_EVIDENCE</strong>; resumes case on upload (1 retry limit).
         </div>
       </div>
 
@@ -1150,7 +1223,7 @@ html_content = f"""<!DOCTYPE html>
       <div class="scenario-lane">
         <div class="sc-badge badge-continuity">CASE D · CONTEXT</div>
         <div class="sc-evidence">
-          <strong>Parcel-to-product take</strong>: opening sealed parcel to product reveal in one continuous take.
+          <strong>Sequence Continuity</strong> · Staged parcel-to-product take: opening sealed parcel to product reveal.
         </div>
         <div class="sc-arrow">→</div>
         <div class="sc-action">
@@ -1160,7 +1233,7 @@ html_content = f"""<!DOCTYPE html>
     </div>
 
     <div class="slide-footer">
-      <span>Staged benchmark scenarios · Expected prototype behaviors, not measured production metrics · Cap: min(₹4,999, remaining refundable amount, order paid amount)</span>
+      <span>Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining refundable amount, order paid amount)</span>
       <span>Slide 5 / 6</span>
     </div>
   </section>
@@ -1174,27 +1247,27 @@ html_content = f"""<!DOCTYPE html>
     <div class="timeline-container">
       <div class="timeline-table-grid">
         <div class="t-cell">
-          <div class="t-time">00h – 06h</div>
+          <div class="t-time">00h – 06h · Foundation</div>
           <div class="t-title">Mock APIs &amp; Agent Core</div>
-          <div class="t-owner">Person A (Backend)<br>LangGraph skeleton, mock store/courier fixtures, order status route</div>
+          <div class="t-owner">Person A (Backend), supported by C<br>LangGraph skeleton, mock store/courier fixtures, order status route</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">06h – 12h</div>
+          <div class="t-time">06h – 12h · Evidence</div>
           <div class="t-title">Evidence Pipeline &amp; Policy</div>
           <div class="t-owner">Person B (Video &amp; UI)<br>FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">12h – 18h</div>
-          <div class="t-title">Integration &amp; 4 Scenarios</div>
-          <div class="t-owner">Person C (Integration)<br>End-to-end wiring, 4 staged demo cases (A–D), seller console UI</div>
+          <div class="t-time">12h – 18h · Integration</div>
+          <div class="t-title">State Flow &amp; Scenarios</div>
+          <div class="t-owner">Person C (Integration), supported by A/B<br>End-to-end wiring, clarification/resume loop, seller console UI</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">18h – 24h</div>
-          <div class="t-title">Testing, Polish &amp; Submission</div>
-          <div class="t-owner">All 3 Members<br>Fallback testing, edge cases, video walkthrough recording, README</div>
+          <div class="t-time">18h – 24h · Validation</div>
+          <div class="t-title">Testing &amp; Submission</div>
+          <div class="t-owner">All 3 Members<br>Fallback testing, authorization tests, demo video recording, README</div>
         </div>
       </div>
 
@@ -1202,7 +1275,7 @@ html_content = f"""<!DOCTYPE html>
         <div class="scope-card scope-in">
           <div class="scope-head">NEVER CUT (CORE ENGINE)</div>
           <div class="scope-text">
-            Deterministic policy engine (P-01 to P-08) · Evidence-pack frame citation · Fail-closed seller approval gate · Structured JSON audit log · 4 reproducible demo cases.
+            Deterministic policy engine (P-01 to P-08) · Evidence-pack frame citation · Fail-closed seller approval gate · Structured JSON audit log · Clarification/resume loop · 4 demo cases.
           </div>
         </div>
 
