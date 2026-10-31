@@ -24,7 +24,7 @@
       "authorization": "Requires 1-click human seller confirmation"
     },
     "fraud_metrics": {
-      "nrf_2025": "9.0% Return Fraud (NRF 2025, fraud only)",
+      "nrf_2025": "9.0% Return Fraud (NRF 2025, criminal fraud only)",
       "deloitte_2024": "15.14% Fraud + Policy Abuse (Appriss/Deloitte 2024)",
       "distinction": "Definitions differ: strict criminal fraud vs fraud combined with policy abuse."
     }
@@ -51,16 +51,16 @@
           "source": "Unboxing Video Keyframe",
           "timestamp": "Frame 00:07 (Staged)",
           "observation": "Observed item casing is Midnight Black. Exact barcode unverified.",
-          "status_badge": "COLOR CONTRADICTION DETECTED"
+          "status_badge": "P-03: COLOR CONTRADICTION DETECTED"
         },
         "policy_check": {
           "window_check": "P-04 Return Window: PASS (Day 4 of 7)",
           "color_check": "P-03 Manifest Match: CONTRADICTION FLAGGED"
         },
-        "action_prompt": "STATUS: ESCALATED FOR SELLER DECISION",
-        "button_text": "Review Evidence & Authorize"
+        "action_prompt": "STATUS: ESCALATED FOR SELLER DECISION (HUMAN GATE)",
+        "button_text": "Review Evidence & Authorize Draft"
       },
-      "speaker_notes": "Slide 1 — Product Hero & Executive Summary:\n- Track & Fit: AgentX Hackathon 2026, Problem Statement PS-04 (Autonomous Support Agent for Online Sellers).\n- Team: Team Rookie (3 members).\n- Target User: Solo direct-to-consumer (D2C) online merchant managing customer support, shipping, and returns alone.\n- Core Insight: Solo sellers lose 15–20 minutes per return navigating fragmented tabs (chat, Shopify, Shippo, return policy), making memory-based decisions without traceable proof.\n- Core Thesis: 'Models observe. Code verifies. Seller authorizes.'\n- The Console Mockup showcases our core benchmark (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 reveals a Black item. The agent flags the contradiction and presents actionable choices to the seller.\n- Safety Boundary: The system never autonomously issues a refund or denies a customer. Financial release strictly requires 1-click merchant authorization."
+      "speaker_notes": "Slide 1 — Product Hero & Executive Summary:\n- Problem Statement Fit: PS-04 (Autonomous Support Agent for Online Sellers).\n- Target User: Solo direct-to-consumer (D2C) online merchants managing customer support, shipping, and returns alone.\n- Core Friction: Solo sellers spend 15–20 minutes per return opening fragmented tabs (buyer chat, Shopify, Shippo tracking, store return policy). Return decisions are currently made from memory without unified evidence.\n- Core Thesis: 'Models observe. Code verifies. Seller authorizes.'\n- The Console Mockup showcases our core benchmark (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 reveals a Black item. The agent flags the contradiction and presents actionable choices to the seller.\n- Safety Boundary: The system never autonomously issues a refund or denies a customer. Financial release strictly requires 1-click merchant authorization."
     },
     {
       "slide_number": 2,
@@ -72,35 +72,38 @@
       "sources": [
         {
           "number": "01",
-          "name": "Buyer Video & Claim",
-          "detail": "Customer submits short unboxing clip and subjective text via chat."
+          "name": "Buyer Message",
+          "detail": "Subjective text & unindexed video claim in chat"
         },
         {
           "number": "02",
-          "name": "Store Order Truth",
-          "detail": "Shopify store catalog specifies SKU HEAD-WHT-02 (White, ₹1,499)."
+          "name": "Order Record",
+          "detail": "Shopify manifest: HEAD-WHT-02, Matte White, ₹1,499"
         },
         {
           "number": "03",
-          "name": "Courier Tracking Scan",
-          "detail": "Shippo courier API records delivery scan 4 days ago."
+          "name": "Courier Status",
+          "detail": "Shippo scan: delivered 4 days ago (Day 4 of 7)"
         },
         {
           "number": "04",
-          "name": "Store Return Policy",
-          "detail": "7-day defect window and tag condition in store terms."
+          "name": "Return Policy",
+          "detail": "7-day defect window; security packaging tag rule"
         }
       ],
       "gap_card": {
+        "tag": "THE MISSING LINK",
         "title": "NO SHARED EVIDENCE RECORD",
-        "description": "Today the seller opens 4 browser tabs and guesses. An erroneous refund burns inventory margin; an unfair denial destroys repeat customer trust. The gap is the absence of an auditable artifact tying order truth, video keyframes, and policy clauses together before money moves."
+        "question": "What evidence supports this return decision?",
+        "body": "Today the seller opens 4 tabs and guesses. An erroneous refund burns inventory margin; an unfair denial destroys repeat customer trust.",
+        "callout": "The gap is not a missing return portal — it is the lack of an immutable trace linking order truth, video keyframes, and policy terms before money moves."
       },
       "speaker_notes": "Slide 2 — Problem Space & The Four Disconnected Sources:\n- The returns bottleneck for solo sellers is not an absent returns portal; it is fragmented, unverified context.\n- The four disconnected sources:\n  1. Buyer claim in chat (unverified claims, emotional text).\n  2. Store truth in Shopify (SKU HEAD-WHT-02, ₹1,499).\n  3. Courier tracking in Shippo (delivered 4 days ago).\n  4. Store return policy document (7-day defect window, security tag).\n- Central Gap: Four systems, but no traceable decision. The merchant makes memory-based decisions across multiple tabs.\n- Fraud Context (Sourced definitions): NRF 2025 reports 9% for strictly criminal return fraud, whereas Appriss/Deloitte 2024 reports 15.14% when combining fraud and policy abuse (wardrobing, unboxing swaps). These measure distinct scopes and must never be merged.\n- Asymmetric Merchant Risk: Wrong refund loses inventory and gross margin; unfair denial destroys customer lifetime value (LTV)."
     },
     {
       "slide_number": 3,
       "id": "star_demo",
-      "tag": "VISUAL EVIDENCE BENCHMARK · STAR DEMO",
+      "tag": "STAR DEMO · CORE BENCHMARK SCENARIO",
       "headline": "The order says white. The video shows black.",
       "subheadline": "ReturnLens flags the contradiction — the seller decides.",
       "ordered_evidence": {
@@ -118,17 +121,20 @@
         "image_file": "unboxing_black_headphones.jpg"
       },
       "decision_panel": {
-        "title": "EVIDENCE ANALYSIS",
-        "observed_color": "Midnight Black",
-        "exact_sku": "Not verified in frame",
-        "tag_visibility": "Not readable in cited frame",
-        "next_action": "SELLER REVIEW REQUIRED",
-        "seller_options": [
-          "1. Request unboxing video with packaging label / serial visible",
-          "2. Reject return under policy (item does not match order record)",
-          "3. Override & approve if seller acknowledges known warehouse mis-shipment"
+        "tag": "POLICY GATE EVALUATION",
+        "title": "P-03: COLOR CONTRADICTION",
+        "next_action": "STATUS: SELLER REVIEW REQUIRED",
+        "observations": [
+          "OBSERVED: Midnight Black",
+          "UNVERIFIED: Exact SKU barcode",
+          "NEXT ACTION: Seller review"
         ],
-        "guardrail_note": "Automated payout inhibited · Cap: min(₹4,999, remaining, paid) · No autonomous denial"
+        "seller_options": [
+          "1. Request unboxing box label photo",
+          "2. Reject return (item does not match order)",
+          "3. Override & approve (warehouse error)"
+        ],
+        "guardrail_note": "No auto-denial · No refund without seller click"
       },
       "speaker_notes": "Slide 3 — The Star Demo & Technical Honesty in Vision Citation:\n- Core Benchmark Scenario (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 shows black headphones.\n- Visual Grounding Honesty: The agent does NOT claim to read an unreadable SKU barcode from frame 00:07. It factually observes: 'Observed Color: Midnight Black · Exact SKU: Not verified · Tag: Not visible in cited frame'.\n- Decision Logic: Seeing a black item when white was ordered is an undeniable visual contradiction against the manifest. Instead of auto-denying the customer (which might alienate an honest buyer if the warehouse mis-shipped), the policy engine triggers ESCALATE.\n- Three Clear Merchant Options:\n  1. Request unboxing video with packaging label / serial number visible.\n  2. Reject return under policy (item does not match order record).\n  3. Override & approve if seller acknowledges known warehouse fulfillment error.\n- Financial Guardrail: min(₹4,999, remaining refundable amount, order paid amount). No money moves without seller click."
     },
@@ -138,77 +144,80 @@
       "tag": "SYSTEM ARCHITECTURE · DYNAMIC AGENTIC GOVERNANCE",
       "headline": "Models observe. Code verifies. Seller authorizes.",
       "subheadline": "Dynamic action selection and stateful resumption under deterministic human authorization.",
-      "pipeline_steps": [
-        { "num": "01", "name": "Plan", "role": "MODEL", "desc": "Typed plan schema" },
-        { "num": "02", "name": "Retrieve", "role": "CODE", "desc": "FFmpeg & mock APIs" },
-        { "num": "03", "name": "Evaluate", "role": "CODE", "desc": "Rules P-01 to P-08" },
-        { "num": "04", "name": "Audit", "role": "MODEL", "desc": "Adversarial critic" },
-        { "num": "05", "name": "Authorize", "role": "HUMAN", "desc": "Fail-closed gate" },
-        { "num": "06", "name": "Record", "role": "CODE", "desc": "Audit trace log" }
+      "authority_zones": [
+        {
+          "num": "01",
+          "zone": "MODEL ZONE",
+          "role": "Plan & Observe",
+          "desc": "Planner validates JSON schema · Vision extracts keyframes & non-binding visual metadata."
+        },
+        {
+          "num": "02",
+          "zone": "CODE ZONE",
+          "role": "Retrieve & Enforce Policy",
+          "desc": "Deterministic Python rules P-01 to P-08 · Shippo & Shopify mock APIs enforce hard rules."
+        },
+        {
+          "num": "03",
+          "zone": "HUMAN SELLER GATE",
+          "role": "Authorize Consequential Action",
+          "desc": "Fail-closed authorization gate · 1-click human merchant confirmation for refund release."
+        }
       ],
       "case_c_flow": {
-        "title": "CASE C · DYNAMIC STATEFUL CLARIFICATION LOOP",
+        "title": "HERO AGENTIC INTERACTION: DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)",
         "steps": [
-          { "node": "Dark Frames", "sub": "Avg brightness 28" },
-          { "node": "ask_for_evidence()", "sub": "Targeted checklist" },
-          { "node": "WAITING_FOR_EVIDENCE", "sub": "Execution paused" },
-          { "node": "Customer Uploads", "sub": "1 retry limit" },
-          { "node": "Resume Same Case", "sub": "Context retained" },
-          { "node": "Seller Review", "sub": "Evidence verified" }
-        ]
+          "Dark Frames (brightness 28)",
+          "ask_for_evidence()",
+          "WAITING_FOR_EVIDENCE",
+          "Customer Uploads",
+          "RESUME CASE",
+          "Seller Review"
+        ],
+        "desc": "Why an agent? When video quality is insufficient, ReturnLens halts execution, issues a targeted re-film checklist, serializes case state into WAITING_FOR_EVIDENCE, and automatically resumes the exact case upon upload (1 retry limit prevents customer lock-out)."
       },
-      "fast_path": {
-        "title": "SECONDARY PS-04 ROUTE · ORDER STATUS FAST PATH",
-        "query": "“Where is my order?”",
-        "action": "Direct mock Store & Shippo API call",
-        "outcome": "Instant delivery timestamp & scan (Zero-vision overhead)"
+      "secondary_route": {
+        "text": "SECONDARY PS-04 ROUTE: Query store & courier tracking for \"Where is my order?\" without calling multimodal vision models."
       },
-      "governance_rules": [
-        { "label": "Model Calls", "text": "3 base LLM calls per triage case (Planner, Vision, Critic) plus retries." },
-        { "label": "Deterministic Policy", "text": "Rules P-01 to P-08 executed in pure Python code, never prompts." },
-        { "label": "Critic Duty", "text": "Independent prompt audits cited frames; notes correlated vision limits." },
-        { "label": "Safety Ceiling", "text": "Backend checks block payment tools; 1-click human authorization strictly enforced." }
-      ],
+      "audit_output": {
+        "text": "SYSTEM OUTPUT: Immutable JSON Audit Trail recorded at every state transition"
+      },
       "speaker_notes": "Slide 4 — System Architecture, Agentic Governance & Technical Q&A Defense:\n- Philosophy: 'Models observe. Code verifies. Seller authorizes.'\n- DEFENSE QUESTION 1: Why is this an agent rather than a hardcoded workflow?\n  ReturnLens is an autonomous state machine with dynamic action selection, multi-modal observation, and stateful lifecycle management. In Case C, when a customer submits a dark/blurry video (average brightness 28), the agent does NOT simply fail or run a static linear chain. It inspects the frames, determines evidence is insufficient under Policy P-05, dynamically decides to invoke ask_for_evidence() with specific re-filming guidance, transitions the ticket to WAITING_FOR_EVIDENCE, pauses execution while retaining state and order context, and resumes the exact triage session when new media arrives. Conversely, for routine order status requests, the agent selects the zero-vision fast path directly querying mock APIs.\n- DEFENSE QUESTION 2: What happens if vision or critic models hallucinate?\n  Vision models produce non-binding observation metadata, never authoritative decisions. Hard business rules (return windows from carrier delivery timestamps, SKU comparisons) are executed in deterministic Python code (P-01 to P-08). The critic provides an adversarial sanity check against cited timestamps. If both vision and critic experience correlated hallucinations, the fail-closed human seller gate guarantees that no refund or return label can ever be issued without seller review.\n- DEFENSE QUESTION 3: How do you prevent duplicate or incorrect refunds?\n  1. Idempotency keys (hash(order_id, return_id, transaction_type)) prevent double-execution.\n  2. Ledgers track cumulative refunded amounts against total order value: 0 < amount <= min(₹4,999, remaining_refundable_amount, order_paid_amount).\n  3. LLMs possess zero capability to call payment gateways directly; all actions produce draft state objects awaiting merchant authorization."
     },
     {
       "slide_number": 5,
       "id": "scenarios",
-      "tag": "DEMO SCENARIOS · CONTROLLED PROTOTYPE BEHAVIORS",
-      "headline": "Four evidence conditions. Four controlled actions.",
-      "subheadline": "Expected prototype behaviors across staged benchmark cases. Not measured production metrics.",
+      "tag": "DEMO SCENARIOS · BEHAVIORAL MATRIX",
+      "headline": "Different evidence. Different action.",
+      "subheadline": "Predictable, controlled prototype responses across four distinct evidence conditions.",
       "cases": [
         {
           "number": "01",
           "name": "CONSISTENT",
-          "subtitle": "Clear Defect",
-          "observation": "Staged casing crack verified in unboxing frame 00:04 · Manifest & return window match.",
-          "state_action": "PREPARE SELLER REVIEW",
-          "action_detail": "Agent prepares mock shipping label & drafts refund in pending_return_receipt. Money releases only upon warehouse receipt."
+          "observation": "Evidence Supported · Manifest matches, packaging tag present, cosmetic defect observed",
+          "action": "PREPARE SELLER REVIEW",
+          "detail": "Drafts mock shipping label and refund draft in pending_return_receipt. Money releases only on physical receipt."
         },
         {
           "number": "02",
           "name": "CONTRADICTION",
-          "subtitle": "Color Mismatch",
-          "observation": "White ordered (HEAD-WHT-02) vs Black unboxed in Frame 00:07 · Exact SKU unverified.",
-          "state_action": "ESCALATE TO SELLER",
-          "action_detail": "Policy P-03 blocks automation. Inhibits label and refund. Seller selects 1 of 3 concrete resolution options."
+          "observation": "Ordered White, Observed Black · HEAD-WHT-02 ordered vs Frame 00:07 Black item",
+          "action": "ESCALATE TO SELLER",
+          "detail": "Policy P-03 blocks automation. Inhibits label and refund. Seller selects: mis-shipment / box label / warehouse inspection."
         },
         {
           "number": "03",
           "name": "UNCLEAR",
-          "subtitle": "Low Lighting",
-          "observation": "4-second dark video, brightness 28/255, barcode obscured · Insufficient visual evidence.",
-          "state_action": "ASK AND RESUME",
-          "action_detail": "Agent calls ask_for_evidence(); transitions ticket to WAITING_FOR_EVIDENCE; resumes context on upload (1 retry limit)."
+          "observation": "Dark or Unreadable Evidence · 4s low-light video (brightness 28/255), barcode obscured",
+          "action": "ASK AND RESUME",
+          "detail": "Calls ask_for_evidence(); transitions to WAITING_FOR_EVIDENCE; resumes context on upload (1 retry limit)."
         },
         {
           "number": "04",
           "name": "SEQUENCE",
-          "subtitle": "Continuity Check",
-          "observation": "Staged continuous take from sealed parcel opening to product reveal · Sequence inspected.",
-          "state_action": "INSPECT CONTINUITY",
-          "action_detail": "Expected prototype behavior: inspect sequence continuity and flag missing transitions for seller review."
+          "observation": "Continuity Uncertain · Staged take from sealed parcel opening to product reveal",
+          "action": "INSPECT SEQUENCE CONTINUITY",
+          "detail": "Expected prototype behavior: inspects sequence continuity and flags cutaways for seller review."
         }
       ],
       "speaker_notes": "Slide 5 — Four Reproducible Benchmark Scenarios:\n- Grounding Note: These four scenarios represent staged prototype test suites and deterministic expected behaviors, NOT ungrounded production field metrics.\n- Case 01 (Consistent Claim): All rules pass (within 7d, SKU matches manifest, tag visible, physical crack observed). System drafts return shipping label and refund draft in 'pending_return_receipt' state. No refund money is transferred until physical warehouse receipt.\n- Case 02 (Contradiction): Color mismatch detected (ordered white, unboxed black). System prevents auto-rejection and routes to seller review with 3 concrete resolution options.\n- Case 03 (Unclear / Agentic Loop): Dark video (28/255 avg brightness). Instead of auto-denying, the agent provides a clear checklist, transitions to WAITING_FOR_EVIDENCE, and resumes on upload (1 retry limit protects customers from infinite loops).\n- Case 04 (Continuity): Expected prototype behavior: inspect parcel-to-product sequence to flag suspicious cut-aways or missing transitions.\n- Financial Cap Formula: min(₹4,999, remaining refundable amount, order paid amount) strictly prevents over-refunding."
@@ -218,43 +227,36 @@
       "id": "execution",
       "tag": "24-HOUR PROTOTYPE PLAN · FEASIBILITY & SCOPE",
       "headline": "A credible prototype in 24 hours.",
-      "subheadline": "Strict scope boundaries and single-threaded ownership make the prototype fully buildable in one day.",
+      "subheadline": "Strict scope boundaries and single-threaded ownership make the prototype buildable in one day.",
       "timeline": [
         {
-          "hours": "00h – 06h",
+          "hours": "00–06h",
           "phase": "FOUNDATION",
           "title": "Mock APIs & Agent State",
           "owner": "Person A (Backend)",
-          "deliverables": "LangGraph state machine, mock Shopify/Shippo fixtures, order status route, state serialization."
+          "desc": "LangGraph state machine, mock store & courier fixtures, order status route."
         },
         {
-          "hours": "06h – 12h",
+          "hours": "06–12h",
           "phase": "EVIDENCE",
           "title": "Evidence Pipeline & Policy",
           "owner": "Person B (Vision & UI)",
-          "deliverables": "FFmpeg keyframe extraction, vision schema, deterministic rules P-01 to P-08, critic prompt."
+          "desc": "FFmpeg keyframe indexer, vision prompt schema, rules P-01 to P-08, critic prompt."
         },
         {
-          "hours": "12h – 18h",
+          "hours": "12–18h",
           "phase": "INTEGRATION",
           "title": "State Flow & Scenarios",
-          "owner": "Person C (Integration) with A/B",
-          "deliverables": "Clarification/resume loop, seller console UI, wiring 4 staged demo cases (A–D)."
+          "owner": "Person C (Integration with A/B)",
+          "desc": "Clarification/resume loop, seller review console UI, wiring 4 staged demo cases."
         },
         {
-          "hours": "18h – 24h",
+          "hours": "18–24h",
           "phase": "VALIDATION",
           "title": "Testing & Submission",
           "owner": "All 3 Members",
-          "deliverables": "Authorization boundary tests, edge cases, fallback validation, demo recording, README."
+          "desc": "Authorization safety tests, edge cases, fallback validation, demo video recording."
         }
-      ],
-      "definition_of_done": [
-        "1. Working mock order-status lookup route",
-        "2. One clean return triage flow (Case 01)",
-        "3. One color mismatch contradiction flow (Case 02)",
-        "4. One insufficient evidence clarification & resume loop (Case 03)",
-        "5. Enforced fail-closed seller authorization boundary"
       ],
       "scope_boundaries": {
         "must_deliver": [

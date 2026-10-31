@@ -93,14 +93,17 @@ def build_pptx():
     slides_data = {s["slide_number"]: s for s in data["slides"]}
 
     # =========================================================================
-    # SLIDE 1: PRODUCT HERO & CONSOLE (EDITORIAL SWISS)
+    # SLIDE 1: PRODUCT HERO & CONSOLE (RESCUED ARTWORK: ZERO CLIPPING)
     # =========================================================================
     d1 = slides_data[1]
     s1 = prs.slides.add_slide(blank_layout)
     set_bg(s1, C_CREAM)
 
-    # Left Column (38% width)
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(0.65), Inches(4.5), Inches(0.4))
+    # Left Column: x = 0.8", w = 4.4" (leaves 0.45" gap before console at x = 5.65"!)
+    left_x = Inches(0.8)
+    left_w = Inches(4.4)
+
+    tb = s1.shapes.add_textbox(left_x, Inches(0.8), left_w, Inches(0.4))
     p = tb.text_frame.paragraphs[0]
     p.text = d1["tag"]
     p.font.name = FONT_MONO
@@ -108,61 +111,52 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(1.15), Inches(4.5), Inches(1.1))
+    tb = s1.shapes.add_textbox(left_x, Inches(1.3), left_w, Inches(1.0))
     p = tb.text_frame.paragraphs[0]
     p.text = d1["headline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(56)
+    p.font.size = Pt(54)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(2.35), Inches(4.5), Inches(0.85))
-    p = tb.text_frame.paragraphs[0]
+    tb = s1.shapes.add_textbox(left_x, Inches(2.4), left_w, Inches(1.1))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
     p.text = d1["subheadline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(24)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(3.3), Inches(4.5), Inches(1.2))
-    p = tb.text_frame.paragraphs[0]
-    p.text = d1["summary"] + "\n\nWhen a buyer submits an unboxing video, ReturnLens links video keyframes to store truth and courier scans, evaluates deterministic policy rules, and presents a 1-click decision console to the solo merchant."
+    tb = s1.shapes.add_textbox(left_x, Inches(3.6), left_w, Inches(1.8))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.text = d1["summary"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(13)
+    p.font.size = Pt(14)
     p.font.color.rgb = C_MUTED
 
-    # Metrics row
-    metrics = [
-        ("15–20m", "Manual triage eliminated"),
-        ("1-Click", "Merchant verification"),
-        ("24h", "Prototype feasibility")
-    ]
-    for i, (m_val, m_lbl) in enumerate(metrics):
-        mx = Inches(0.8) + i * Inches(1.5)
-        m_box = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, mx, Inches(5.1), Inches(1.4), Inches(1.4))
-        m_box.fill.solid()
-        m_box.fill.fore_color.rgb = C_WHITE
-        m_box.line.color.rgb = C_BORDER_LIGHT
-        m_box.line.width = Pt(1)
-        tf = m_box.text_frame
-        tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.text = m_val
-        p.font.name = FONT_HEAD
-        p.font.size = Pt(20)
-        p.font.bold = True
-        p.font.color.rgb = C_TEAL if i == 1 else (C_CORAL if i == 0 else C_DARK)
-        p2 = tf.add_paragraph()
-        p2.text = m_lbl
-        p2.font.name = FONT_HEAD
-        p2.font.size = Pt(9.5)
-        p2.font.color.rgb = C_MUTED
+    p2 = tf.add_paragraph()
+    p2.text = "\nWhen a customer submits an unboxing video, ReturnLens cross-references store truth, verifies deterministic code policies, and gives the solo seller a 1-click decision console."
+    p2.font.name = FONT_HEAD
+    p2.font.size = Pt(13)
+    p2.font.color.rgb = C_MUTED
 
-    # Right Column: Dominant Seller Review Console (60% width)
-    c_left = Inches(5.6)
+    tb_team = s1.shapes.add_textbox(left_x, Inches(5.8), left_w, Inches(0.5))
+    p = tb_team.text_frame.paragraphs[0]
+    p.text = f"{data['meta']['team']} · 24-Hour Prototype Feasibility"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(10)
+    p.font.bold = True
+    p.font.color.rgb = C_SUBTLE
+
+    # Right Column: Dominant Seller Review Console (x = 5.65", w = 6.883", h = 5.85")
+    c_left = Inches(5.65)
     c_top = Inches(0.75)
-    c_w = Inches(6.933)
-    c_h = Inches(5.9)
+    c_w = Inches(6.883)
+    c_h = Inches(5.85)
 
     con_bg = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, c_h)
     con_bg.fill.solid()
@@ -170,7 +164,7 @@ def build_pptx():
     con_bg.line.color.rgb = C_BORDER_LIGHT
     con_bg.line.width = Pt(1)
 
-    c_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, Inches(0.55))
+    c_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, Inches(0.5))
     c_bar.fill.solid()
     c_bar.fill.fore_color.rgb = RGBColor(0x1F, 0x30, 0x2A)
     c_bar.line.fill.background()
@@ -182,45 +176,42 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL_ACCENT
 
-    # Embedded product image inside Console!
-    s1.shapes.add_picture(str(img_white), c_left + Inches(0.3), c_top + Inches(0.8), Inches(2.7), Inches(2.3))
+    # Side-by-side images inside Console (Visibly connecting White vs Black!)
+    pic_w = Inches(3.15)
+    pic_h = Inches(2.1)
+    pic_y = c_top + Inches(0.65)
 
-    # Console Details (Right side of console)
-    det_left = c_left + Inches(3.2)
-    det_w = c_w - Inches(3.5)
-    tb_det = s1.shapes.add_textbox(det_left, c_top + Inches(0.75), det_w, Inches(2.4))
-    tf = tb_det.text_frame
-    tf.word_wrap = True
-
-    p = tf.paragraphs[0]
-    p.text = "ORDER INFORMATION"
+    # Left: White Ordered
+    s1.shapes.add_picture(str(img_white), c_left + Inches(0.2), pic_y, pic_w, pic_h)
+    b_wht = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), pic_y + pic_h + Inches(0.05), pic_w, Inches(0.32))
+    b_wht.fill.solid()
+    b_wht.fill.fore_color.rgb = C_TEAL_LIGHT
+    b_wht.line.fill.background()
+    p = b_wht.text_frame.paragraphs[0]
+    p.text = f"ORDERED: {d1['console_mockup']['order_info']['sku']} (WHITE)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(8.5)
     p.font.bold = True
-    p.font.color.rgb = C_SUBTLE
+    p.font.color.rgb = C_TEAL
+    p.alignment = PP_ALIGN.CENTER
 
-    p2 = tf.add_paragraph()
-    p2.text = f"{d1['console_mockup']['order_info']['order_id']}  ·  {d1['console_mockup']['order_info']['sku']}\n{d1['console_mockup']['order_info']['color']}  ·  Price: {d1['console_mockup']['order_info']['price']}\n{d1['console_mockup']['order_info']['delivery']}"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(11)
-    p2.font.bold = True
-    p2.font.color.rgb = C_DARK
+    # Right: Black Observed
+    s1.shapes.add_picture(str(img_black), c_left + Inches(3.533), pic_y, pic_w, pic_h)
+    b_blk = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(3.533), pic_y + pic_h + Inches(0.05), pic_w, Inches(0.32))
+    b_blk.fill.solid()
+    b_blk.fill.fore_color.rgb = C_CORAL_LIGHT
+    b_blk.line.fill.background()
+    p = b_blk.text_frame.paragraphs[0]
+    p.text = "OBSERVED: BLACK ITEM · FRAME 00:07"
+    p.font.name = FONT_MONO
+    p.font.size = Pt(8.5)
+    p.font.bold = True
+    p.font.color.rgb = C_CORAL_DARK
+    p.alignment = PP_ALIGN.CENTER
 
-    p3 = tf.add_paragraph()
-    p3.text = "\nEVIDENCE CITATION (STAGED)"
-    p3.font.name = FONT_MONO
-    p3.font.size = Pt(9.5)
-    p3.font.bold = True
-    p3.font.color.rgb = C_SUBTLE
-
-    p4 = tf.add_paragraph()
-    p4.text = f"{d1['console_mockup']['evidence_citation']['timestamp']}\n{d1['console_mockup']['evidence_citation']['observation']}"
-    p4.font.name = FONT_HEAD
-    p4.font.size = Pt(10.5)
-    p4.font.color.rgb = C_MUTED
-
-    # Contradiction Alert Box inside Console
-    alert_box = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(3.3), c_w - Inches(0.6), Inches(0.85))
+    # Policy Alert Box inside Console
+    alert_y = pic_y + pic_h + Inches(0.48)
+    alert_box = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), alert_y, c_w - Inches(0.4), Inches(0.72))
     alert_box.fill.solid()
     alert_box.fill.fore_color.rgb = C_CORAL_LIGHT
     alert_box.line.color.rgb = C_CORAL
@@ -228,38 +219,42 @@ def build_pptx():
     tf = alert_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = f"POLICY GATE: {d1['console_mockup']['evidence_citation']['status_badge']}"
+    p.text = d1['console_mockup']['evidence_citation']['status_badge']
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
+
     p2 = tf.add_paragraph()
     p2.text = f"{d1['console_mockup']['policy_check']['window_check']}  |  {d1['console_mockup']['policy_check']['color_check']}"
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(10.5)
+    p2.font.size = Pt(9.5)
     p2.font.color.rgb = C_CORAL_DARK
 
-    # Status & 1-Click Action Button
-    status_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(4.35), c_w - Inches(0.6), Inches(0.45))
+    # Status Pill
+    status_y = alert_y + Inches(0.8)
+    status_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), status_y, c_w - Inches(0.4), Inches(0.4))
     status_bar.fill.solid()
     status_bar.fill.fore_color.rgb = C_AMBER_LIGHT
     status_bar.line.fill.background()
     p = status_bar.text_frame.paragraphs[0]
     p.text = d1['console_mockup']['action_prompt']
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0x92, 0x40, 0x0E)
     p.alignment = PP_ALIGN.CENTER
 
-    btn = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(4.95), c_w - Inches(0.6), Inches(0.65))
+    # 1-Click Action Button
+    btn_y = status_y + Inches(0.48)
+    btn = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), btn_y, c_w - Inches(0.4), Inches(0.55))
     btn.fill.solid()
     btn.fill.fore_color.rgb = C_TEAL
     btn.line.fill.background()
     p = btn.text_frame.paragraphs[0]
     p.text = d1['console_mockup']['button_text']
     p.font.name = FONT_HEAD
-    p.font.size = Pt(14)
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = C_WHITE
     p.alignment = PP_ALIGN.CENTER
@@ -268,13 +263,13 @@ def build_pptx():
     set_speaker_notes(s1, d1["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 2: THE PROBLEM (FOUR DISCONNECTED SOURCES & MISSING RECORD)
+    # SLIDE 2: THE PROBLEM (FRAGMENTATION AS A VISUAL STORY)
     # =========================================================================
     d2 = slides_data[2]
     s2 = prs.slides.add_slide(blank_layout)
     set_bg(s2, C_CREAM)
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(8.0), Inches(0.4))
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(8.0), Inches(0.35))
     p = tb.text_frame.paragraphs[0]
     p.text = d2["tag"]
     p.font.name = FONT_MONO
@@ -282,7 +277,7 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.0), Inches(11.7), Inches(0.75))
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.733), Inches(0.65))
     p = tb.text_frame.paragraphs[0]
     p.text = d2["headline"]
     p.font.name = FONT_HEAD
@@ -290,86 +285,66 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.75), Inches(11.7), Inches(0.5))
-    p = tb.text_frame.paragraphs[0]
-    p.text = d2["subheadline"] + "  ·  " + d2["supporting_statement"]
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.6), Inches(11.733), Inches(0.45))
+    tf = tb.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.text = f"{d2['subheadline']}  {d2['supporting_statement']}"
     p.font.name = FONT_HEAD
     p.font.size = Pt(18)
     p.font.color.rgb = C_MUTED
 
-    # 3-Column Layout without overlap:
-    # Left: Sources 01 & 03 (Buyer Claim, Courier Tracking)
-    # Center: Giant Critical Gap Card (NO SHARED EVIDENCE RECORD)
-    # Right: Sources 02 & 04 (Store Truth, Return Policy)
-    col_w = Inches(3.5)
-    gap_w = Inches(4.333)
-    card_h = Inches(1.95)
+    # LEFT: 4 Compact Source Strips (x = 0.8", w = 5.3", y = 2.25")
+    src_top = Inches(2.25)
+    src_w = Inches(5.3)
+    src_h = Inches(0.95)
+    src_gap = Inches(0.12)
 
-    # Source 01
-    s1_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(2.45), col_w, card_h)
-    s1_box.fill.solid()
-    s1_box.fill.fore_color.rgb = C_WHITE
-    s1_box.line.color.rgb = C_BORDER_LIGHT
-    s1_box.line.width = Pt(1)
-    tf = s1_box.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = f"{d2['sources'][0]['number']} {d2['sources'][0]['name'].upper()}"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = d2['sources'][0]['name']
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(14)
-    p2.font.bold = True
-    p2.font.color.rgb = C_DARK
-    p3 = tf.add_paragraph()
-    p3.text = d2['sources'][0]['detail']
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(11)
-    p3.font.color.rgb = C_MUTED
+    for i, src in enumerate(d2["sources"]):
+        sy = src_top + i * (src_h + src_gap)
+        box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), sy, src_w, src_h)
+        box.fill.solid()
+        box.fill.fore_color.rgb = C_WHITE
+        box.line.color.rgb = C_BORDER_LIGHT
+        box.line.width = Pt(1)
 
-    # Source 03
-    s3_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(4.6), col_w, card_h)
-    s3_box.fill.solid()
-    s3_box.fill.fore_color.rgb = C_WHITE
-    s3_box.line.color.rgb = C_BORDER_LIGHT
-    s3_box.line.width = Pt(1)
-    tf = s3_box.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = f"{d2['sources'][2]['number']} {d2['sources'][2]['name'].upper()}"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = d2['sources'][2]['name']
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(14)
-    p2.font.bold = True
-    p2.font.color.rgb = C_DARK
-    p3 = tf.add_paragraph()
-    p3.text = d2['sources'][2]['detail']
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(11)
-    p3.font.color.rgb = C_MUTED
+        tf = box.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = f"{src['number']}  {src['name'].upper()}"
+        p.font.name = FONT_MONO
+        p.font.size = Pt(9.5)
+        p.font.bold = True
+        p.font.color.rgb = C_TEAL
 
-    # Center Gap Anchor
-    c_gap = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.5), Inches(2.45), gap_w, Inches(4.1))
-    c_gap.fill.solid()
-    c_gap.fill.fore_color.rgb = C_DARK
-    c_gap.line.color.rgb = C_CORAL
-    c_gap.line.width = Pt(2)
-    tf = c_gap.text_frame
+        p2 = tf.add_paragraph()
+        p2.text = src['detail']
+        p2.font.name = FONT_HEAD
+        p2.font.size = Pt(11)
+        p2.font.color.rgb = C_DARK
+
+    # Arrow connector pointing right
+    arr_box = s2.shapes.add_textbox(Inches(6.25), Inches(3.8), Inches(0.4), Inches(0.6))
+    p_arr = arr_box.text_frame.paragraphs[0]
+    p_arr.text = "→"
+    p_arr.font.name = FONT_MONO
+    p_arr.font.size = Pt(28)
+    p_arr.font.bold = True
+    p_arr.font.color.rgb = C_CORAL
+
+    # RIGHT: Prominent Unanswered Decision Focal Card (x = 6.8", w = 5.733", y = 2.25", h = 4.16")
+    gap_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.8), src_top, Inches(5.733), Inches(4.16))
+    gap_box.fill.solid()
+    gap_box.fill.fore_color.rgb = C_DARK
+    gap_box.line.color.rgb = C_CORAL
+    gap_box.line.width = Pt(2)
+    tf = gap_box.text_frame
     tf.word_wrap = True
 
     p = tf.paragraphs[0]
-    p.text = "CRITICAL INFORMATION GAP"
+    p.text = d2["gap_card"]["tag"]
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_CORAL
     p.alignment = PP_ALIGN.CENTER
@@ -377,95 +352,38 @@ def build_pptx():
     p2 = tf.add_paragraph()
     p2.text = d2["gap_card"]["title"]
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(18)
+    p2.font.size = Pt(22)
     p2.font.bold = True
     p2.font.color.rgb = C_CREAM
     p2.alignment = PP_ALIGN.CENTER
 
     p3 = tf.add_paragraph()
-    p3.text = "\n" + d2["gap_card"]["description"]
+    p3.text = f"\n“{d2['gap_card']['question']}”"
     p3.font.name = FONT_HEAD
-    p3.font.size = Pt(11.5)
-    p3.font.color.rgb = RGBColor(0xD1, 0xD5, 0xDB)
+    p3.font.size = Pt(15)
+    p3.font.bold = True
+    p3.font.italic = True
+    p3.font.color.rgb = RGBColor(0xFB, 0xBF, 0x24)
     p3.alignment = PP_ALIGN.CENTER
 
     p4 = tf.add_paragraph()
-    p4.text = "\n9.0% vs 15.14%"
+    p4.text = f"\n{d2['gap_card']['body']}\n\n{d2['gap_card']['callout']}"
     p4.font.name = FONT_HEAD
-    p4.font.size = Pt(16)
-    p4.font.bold = True
-    p4.font.color.rgb = C_CORAL
+    p4.font.size = Pt(11.5)
+    p4.font.color.rgb = RGBColor(0xD1, 0xD5, 0xDB)
     p4.alignment = PP_ALIGN.CENTER
 
-    p5 = tf.add_paragraph()
-    p5.text = f"{data['meta']['fraud_metrics']['nrf_2025']}  |  {data['meta']['fraud_metrics']['deloitte_2024']}\n{data['meta']['fraud_metrics']['distinction']}"
-    p5.font.name = FONT_HEAD
-    p5.font.size = Pt(9)
-    p5.font.color.rgb = RGBColor(0x9C, 0xA3, 0xAF)
-    p5.alignment = PP_ALIGN.CENTER
-
-    # Right: Sources 02 & 04
-    s2_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(9.033), Inches(2.45), col_w, card_h)
-    s2_box.fill.solid()
-    s2_box.fill.fore_color.rgb = C_WHITE
-    s2_box.line.color.rgb = C_BORDER_LIGHT
-    s2_box.line.width = Pt(1)
-    tf = s2_box.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = f"{d2['sources'][1]['number']} {d2['sources'][1]['name'].upper()}"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = d2['sources'][1]['name']
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(14)
-    p2.font.bold = True
-    p2.font.color.rgb = C_DARK
-    p3 = tf.add_paragraph()
-    p3.text = d2['sources'][1]['detail']
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(11)
-    p3.font.color.rgb = C_MUTED
-
-    s4_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(9.033), Inches(4.6), col_w, card_h)
-    s4_box.fill.solid()
-    s4_box.fill.fore_color.rgb = C_WHITE
-    s4_box.line.color.rgb = C_BORDER_LIGHT
-    s4_box.line.width = Pt(1)
-    tf = s4_box.text_frame
-    tf.word_wrap = True
-    p = tf.paragraphs[0]
-    p.text = f"{d2['sources'][3]['number']} {d2['sources'][3]['name'].upper()}"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = d2['sources'][3]['name']
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(14)
-    p2.font.bold = True
-    p2.font.color.rgb = C_DARK
-    p3 = tf.add_paragraph()
-    p3.text = d2['sources'][3]['detail']
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(11)
-    p3.font.color.rgb = C_MUTED
-
-    add_footer(s2, "Fraud statistics note: 9.0% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse)", "Slide 2 / 6")
+    add_footer(s2, "Fraud research: 9% strict fraud (NRF 2025) vs 15.14% fraud + abuse (Appriss/Deloitte 2024). Details in notes.", "Slide 2 / 6")
     set_speaker_notes(s2, d2["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 3: STAR DEMO / EVIDENCE CONTRADICTION (LARGE PRODUCT PHOTOS)
+    # SLIDE 3: HERO EVIDENCE COMPARISON (RESCUED: ZERO FOOTER OVERLAP)
     # =========================================================================
     d3 = slides_data[3]
     s3 = prs.slides.add_slide(blank_layout)
     set_bg(s3, C_CREAM)
 
-    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
+    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.35))
     p = tb.text_frame.paragraphs[0]
     p.text = d3["tag"]
     p.font.name = FONT_MONO
@@ -473,7 +391,7 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
+    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.9), Inches(11.733), Inches(0.65))
     p = tb.text_frame.paragraphs[0]
     p.text = d3["headline"]
     p.font.name = FONT_HEAD
@@ -481,17 +399,18 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s3.shapes.add_textbox(Inches(0.8), Inches(1.7), Inches(11.7), Inches(0.45))
+    tb = s3.shapes.add_textbox(Inches(0.8), Inches(1.55), Inches(11.733), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
     p.text = d3["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(19)
+    p.font.size = Pt(20)
+    p.font.bold = True
     p.font.color.rgb = C_MUTED
 
-    # Left: Visual Evidence Arena (66% width = 7.7 inches)
+    # Primary Visual Area (68% width = 7.8", x = 0.8" to 8.6")
     ev_left = Inches(0.8)
-    ev_top = Inches(2.25)
-    ev_w = Inches(7.7)
+    ev_top = Inches(2.15)
+    ev_w = Inches(7.8)
     ev_h = Inches(4.45)
 
     ev_box = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left, ev_top, ev_w, ev_h)
@@ -500,15 +419,14 @@ def build_pptx():
     ev_box.line.color.rgb = C_BORDER_LIGHT
     ev_box.line.width = Pt(1)
 
-    # Two large pictures: White vs Black
-    pic_w = Inches(3.55)
-    pic_h = Inches(2.8)
+    # Photos
+    p_w = Inches(3.6)
+    p_h = Inches(2.9)
+    s3.shapes.add_picture(str(img_white), ev_left + Inches(0.2), ev_top + Inches(0.2), p_w, p_h)
+    s3.shapes.add_picture(str(img_black), ev_left + Inches(4.0), ev_top + Inches(0.2), p_w, p_h)
 
-    s3.shapes.add_picture(str(img_white), ev_left + Inches(0.2), ev_top + Inches(0.2), pic_w, pic_h)
-    s3.shapes.add_picture(str(img_black), ev_left + Inches(3.95), ev_top + Inches(0.2), pic_w, pic_h)
-
-    # Badges below pictures
-    b1 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(0.2), ev_top + Inches(3.1), pic_w, Inches(0.35))
+    # Badges below photos
+    b1 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(0.2), ev_top + Inches(3.18), p_w, Inches(0.35))
     b1.fill.solid()
     b1.fill.fore_color.rgb = C_TEAL_LIGHT
     b1.line.fill.background()
@@ -520,7 +438,7 @@ def build_pptx():
     p.font.color.rgb = C_TEAL
     p.alignment = PP_ALIGN.CENTER
 
-    b2 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(3.95), ev_top + Inches(3.1), pic_w, Inches(0.35))
+    b2 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(4.0), ev_top + Inches(3.18), p_w, Inches(0.35))
     b2.fill.solid()
     b2.fill.fore_color.rgb = C_CORAL_LIGHT
     b2.line.fill.background()
@@ -532,81 +450,96 @@ def build_pptx():
     p.font.color.rgb = C_CORAL_DARK
     p.alignment = PP_ALIGN.CENTER
 
-    # Caption / Footnote on Grounding
-    tb_c = s3.shapes.add_textbox(ev_left + Inches(0.2), ev_top + Inches(3.55), ev_w - Inches(0.4), Inches(0.8))
+    # Caption / Honest Grounding
+    tb_c = s3.shapes.add_textbox(ev_left + Inches(0.2), ev_top + Inches(3.6), ev_w - Inches(0.4), Inches(0.75))
     tf = tb_c.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "Visual Grounding Honesty: Keyframe resolution reveals black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Midnight Black · Exact SKU: Not verified' and cites frame 00:07."
+    p.text = "Visual Grounding Honesty: Keyframe resolution proves black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Black · Exact SKU: Not verified' and cites frame 00:07."
     p.font.name = FONT_HEAD
     p.font.size = Pt(10)
     p.font.color.rgb = C_MUTED
 
-    # Right: Decision & Action Console (33% width = 3.8 inches)
-    dec_left = Inches(8.75)
-    dec_w = Inches(3.783)
+    # Compact Right Decision Region (30% width = 3.65", stops at y = 6.6", well above footer!)
+    dec_left = Inches(8.88)
+    dec_w = Inches(3.653)
     dec_box = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, dec_left, ev_top, dec_w, ev_h)
     dec_box.fill.solid()
     dec_box.fill.fore_color.rgb = C_WHITE
     dec_box.line.color.rgb = C_BORDER_LIGHT
     dec_box.line.width = Pt(1)
 
-    tb = s3.shapes.add_textbox(dec_left + Inches(0.2), ev_top + Inches(0.15), dec_w - Inches(0.4), ev_h - Inches(0.3))
-    tf = tb.text_frame
+    tb_dec = s3.shapes.add_textbox(dec_left + Inches(0.2), ev_top + Inches(0.15), dec_w - Inches(0.4), ev_h - Inches(0.3))
+    tf = tb_dec.text_frame
     tf.word_wrap = True
 
     p = tf.paragraphs[0]
-    p.text = "DETERMINISTIC POLICY GATE"
+    p.text = d3["decision_panel"]["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_CORAL
 
     p2 = tf.add_paragraph()
-    p2.text = "P-03: COLOR CONTRADICTION"
+    p2.text = d3["decision_panel"]["title"]
     p2.font.name = FONT_HEAD
     p2.font.size = Pt(16)
     p2.font.bold = True
     p2.font.color.rgb = C_CORAL_DARK
 
     p3 = tf.add_paragraph()
-    p3.text = f"{d3['decision_panel']['next_action']}\nObserved: {d3['decision_panel']['observed_color']} · Exact SKU: {d3['decision_panel']['exact_sku']}"
+    p3.text = d3["decision_panel"]["next_action"]
     p3.font.name = FONT_MONO
-    p3.font.size = Pt(9)
+    p3.font.size = Pt(9.5)
     p3.font.bold = True
     p3.font.color.rgb = C_CORAL_DARK
 
     p4 = tf.add_paragraph()
-    p4.text = "\nSeller Resolution Options:"
+    p4.text = "\nKey Findings:"
     p4.font.name = FONT_HEAD
     p4.font.size = Pt(11)
     p4.font.bold = True
     p4.font.color.rgb = C_DARK
 
-    for opt in d3['decision_panel']['seller_options']:
+    for obs in d3["decision_panel"]["observations"]:
+        p_o = tf.add_paragraph()
+        p_o.text = f"• {obs}"
+        p_o.font.name = FONT_HEAD
+        p_o.font.size = Pt(10)
+        p_o.font.color.rgb = C_MUTED
+
+    p5 = tf.add_paragraph()
+    p5.text = "\nSeller Resolution Options:"
+    p5.font.name = FONT_HEAD
+    p5.font.size = Pt(11)
+    p5.font.bold = True
+    p5.font.color.rgb = C_DARK
+
+    for opt in d3["decision_panel"]["seller_options"]:
         p_opt = tf.add_paragraph()
         p_opt.text = opt
         p_opt.font.name = FONT_HEAD
         p_opt.font.size = Pt(9.5)
         p_opt.font.color.rgb = C_MUTED
 
-    p5 = tf.add_paragraph()
-    p5.text = f"\nFinancial Safety Ceiling:\n{data['meta']['refund_guardrail']['formula']}\nNo auto-denial · No refund released without seller click"
-    p5.font.name = FONT_MONO
-    p5.font.size = Pt(8.5)
-    p5.font.color.rgb = C_MUTED
+    p6 = tf.add_paragraph()
+    p6.text = f"\n{d3['decision_panel']['guardrail_note']}"
+    p6.font.name = FONT_MONO
+    p6.font.size = Pt(9)
+    p6.font.bold = True
+    p6.font.color.rgb = C_MUTED
 
     add_footer(s3, "Illustrative staged evidence · Mock Shopify & Shippo APIs", "Slide 3 / 6")
     set_speaker_notes(s3, d3["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE & STATEFUL LOOP)
+    # SLIDE 4: THE AGENTIC SYSTEM (RESCUED: ZERO DEAD SPACE, PROMINENT CASE C)
     # =========================================================================
     d4 = slides_data[4]
     s4 = prs.slides.add_slide(blank_layout)
     set_bg(s4, C_DARK_BG)
 
-    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
+    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.35))
     p = tb.text_frame.paragraphs[0]
     p.text = d4["tag"]
     p.font.name = FONT_MONO
@@ -614,7 +547,7 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL_ACCENT
 
-    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
+    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.9), Inches(11.733), Inches(0.65))
     p = tb.text_frame.paragraphs[0]
     p.text = d4["headline"]
     p.font.name = FONT_HEAD
@@ -622,162 +555,142 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_CREAM
 
-    tb = s4.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
+    tb = s4.shapes.add_textbox(Inches(0.8), Inches(1.55), Inches(11.733), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
     p.text = d4["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(18)
+    p.font.size = Pt(19)
     p.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
-    # 1. Main Horizontal Pipeline (6 Steps with Arrows) - y = 2.25", h = 1.35"
-    p_w = Inches(1.75)
-    p_gap = Inches(0.24)
-    p_top = Inches(2.25)
-    p_h = Inches(1.35)
+    # Level 1: Three Clear Authority Zones (y = 2.15", h = 1.35", w = 11.733")
+    z_top = Inches(2.15)
+    z_h = Inches(1.35)
+    zones = [
+        ("01 MODEL ZONE", "Plan & Observe", "Planner validates JSON schema · Vision extracts keyframes & non-binding visual metadata.", C_TEAL_ACCENT, RGBColor(0x00, 0x38, 0x2B), Inches(3.6)),
+        ("02 CODE ZONE", "Retrieve & Enforce Policy", "Deterministic Python rules P-01 to P-08 · Shippo & Shopify mock APIs enforce hard rules.", C_CREAM, RGBColor(0x26, 0x38, 0x31), Inches(4.2)),
+        ("03 HUMAN SELLER GATE", "Authorize Consequential Action", "Fail-closed authorization gate · 1-click human merchant confirmation for refund release.", RGBColor(0xFB, 0xBF, 0x24), RGBColor(0x45, 0x26, 0x0A), Inches(3.453))
+    ]
 
-    pipe_colors = {
-        "MODEL": (RGBColor(0x00, 0x38, 0x2B), C_TEAL_ACCENT),
-        "CODE": (RGBColor(0x26, 0x38, 0x31), C_CREAM),
-        "HUMAN": (RGBColor(0x45, 0x26, 0x0A), RGBColor(0xFB, 0xBF, 0x24))
-    }
+    curr_x = Inches(0.8)
+    for z_num, z_role, z_desc, z_fg, z_bg, z_w in zones:
+        z_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, curr_x, z_top, z_w, z_h)
+        z_box.fill.solid()
+        z_box.fill.fore_color.rgb = C_CARD_DARK
+        z_box.line.color.rgb = C_BORDER_DARK
+        z_box.line.width = Pt(1)
 
-    for i, step in enumerate(d4["pipeline_steps"]):
-        px = Inches(0.8) + i * (p_w + p_gap)
-        tag_bg, tag_fg = pipe_colors.get(step["role"], (C_DARK, C_WHITE))
+        t_bar = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, curr_x, z_top, z_w, Inches(0.04))
+        t_bar.fill.solid()
+        t_bar.fill.fore_color.rgb = z_fg
+        t_bar.line.fill.background()
 
-        box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px, p_top, p_w, p_h)
-        box.fill.solid()
-        box.fill.fore_color.rgb = C_CARD_DARK
-        box.line.color.rgb = C_BORDER_DARK
-        box.line.width = Pt(1)
-
-        top_bar = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px, p_top, p_w, Inches(0.04))
-        top_bar.fill.solid()
-        top_bar.fill.fore_color.rgb = tag_fg
-        top_bar.line.fill.background()
-
-        tf = box.text_frame
+        tf = z_box.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = f"{step['num']} {step['name'].upper()}"
+        p.text = z_num
         p.font.name = FONT_MONO
-        p.font.size = Pt(9)
-        p.font.color.rgb = RGBColor(0x6C, 0x82, 0x79)
+        p.font.size = Pt(9.5)
+        p.font.bold = True
+        p.font.color.rgb = z_fg
 
         p2 = tf.add_paragraph()
-        p2.text = step['name']
+        p2.text = z_role
         p2.font.name = FONT_HEAD
         p2.font.size = Pt(13)
         p2.font.bold = True
         p2.font.color.rgb = C_CREAM
 
         p3 = tf.add_paragraph()
-        p3.text = step['desc']
+        p3.text = z_desc
         p3.font.name = FONT_HEAD
-        p3.font.size = Pt(9)
+        p3.font.size = Pt(9.5)
         p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
-        tb_tag = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px + Inches(0.1), p_top + Inches(0.95), p_w - Inches(0.2), Inches(0.26))
-        tb_tag.fill.solid()
-        tb_tag.fill.fore_color.rgb = tag_bg
-        tb_tag.line.fill.background()
-        p = tb_tag.text_frame.paragraphs[0]
-        p.text = step['role']
-        p.font.name = FONT_MONO
-        p.font.size = Pt(8.5)
-        p.font.bold = True
-        p.font.color.rgb = tag_fg
-        p.alignment = PP_ALIGN.CENTER
+        curr_x += z_w + Inches(0.24)
 
-        if i < len(d4["pipeline_steps"]) - 1:
-            arr_box = s4.shapes.add_textbox(px + p_w, p_top + Inches(0.4), p_gap, Inches(0.4))
-            p_arr = arr_box.text_frame.paragraphs[0]
-            p_arr.text = "→"
-            p_arr.font.name = FONT_MONO
-            p_arr.font.size = Pt(14)
-            p_arr.font.bold = True
-            p_arr.font.color.rgb = C_TEAL_ACCENT
-            p_arr.alignment = PP_ALIGN.CENTER
-
-    # 2. Dominant Center Section: Dual Operational Branches (y = 3.8", h = 1.7")
-    br_top = Inches(3.8)
-    br_h = Inches(1.7)
-
-    # Left: Case C Dynamic Stateful Clarification Loop (7.1" width)
-    c_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), br_top, Inches(7.1), br_h)
+    # Level 2: Hero Interaction — Case C Stateful Clarification Loop (y = 3.75", h = 2.05", w = 11.733")
+    c_top = Inches(3.75)
+    c_h = Inches(2.05)
+    c_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), c_top, Inches(11.733), c_h)
     c_box.fill.solid()
     c_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
     c_box.line.color.rgb = RGBColor(0x25, 0x63, 0xEB)
     c_box.line.width = Pt(1.5)
+
     tf = c_box.text_frame
     tf.word_wrap = True
-
     p = tf.paragraphs[0]
     p.text = d4["case_c_flow"]["title"]
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0x93, 0xC5, 0xFD)
 
-    p2 = tf.add_paragraph()
-    p2.text = "Dark Frames → ask_for_evidence() → WAITING_FOR_EVIDENCE → Customer Uploads → Resume Case"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(11)
-    p2.font.bold = True
-    p2.font.color.rgb = C_CREAM
+    # Draw 6 connected state nodes
+    nodes = d4["case_c_flow"]["steps"]
+    n_w = Inches(1.68)
+    n_gap = Inches(0.28)
+    n_y = c_top + Inches(0.52)
+    n_h = Inches(0.55)
 
-    p3 = tf.add_paragraph()
-    p3.text = "Agentic State Machine: When lighting is insufficient, the agent halts standard execution, prompts a targeted checklist, pauses state in WAITING_FOR_EVIDENCE, and seamlessly resumes context upon media receipt (1 retry limit protects customer experience)."
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(9.5)
-    p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
+    for i, node_txt in enumerate(nodes):
+        nx = Inches(1.0) + i * (n_w + n_gap)
+        is_highlight = "WAITING" in node_txt or "RESUME" in node_txt
+        n_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, nx, n_y, n_w, n_h)
+        n_box.fill.solid()
+        n_box.fill.fore_color.rgb = RGBColor(0x1E, 0x3A, 0x8A) if is_highlight else RGBColor(0x1F, 0x30, 0x2A)
+        n_box.line.color.rgb = RGBColor(0x60, 0xA5, 0xFA) if is_highlight else C_BORDER_DARK
+        n_box.line.width = Pt(1.2) if is_highlight else Pt(1)
 
-    # Right: Secondary Fast Path (4.4" width)
-    f_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(8.133), br_top, Inches(4.4), br_h)
-    f_box.fill.solid()
-    f_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
-    f_box.line.color.rgb = RGBColor(0x05, 0x96, 0x69)
-    f_box.line.width = Pt(1.5)
-    tf = f_box.text_frame
+        tf_n = n_box.text_frame
+        tf_n.word_wrap = True
+        p_n = tf_n.paragraphs[0]
+        p_n.text = node_txt
+        p_n.font.name = FONT_MONO
+        p_n.font.size = Pt(8.5)
+        p_n.font.bold = True
+        p_n.font.color.rgb = RGBColor(0xDB, 0xEA, 0xFE) if is_highlight else C_CREAM
+        p_n.alignment = PP_ALIGN.CENTER
+
+        if i < len(nodes) - 1:
+            arr = s4.shapes.add_textbox(nx + n_w, n_y + Inches(0.08), n_gap, Inches(0.4))
+            p_a = arr.text_frame.paragraphs[0]
+            p_a.text = "→"
+            p_a.font.name = FONT_MONO
+            p_a.font.size = Pt(13)
+            p_a.font.bold = True
+            p_a.font.color.rgb = RGBColor(0x93, 0xC5, 0xFD)
+            p_a.alignment = PP_ALIGN.CENTER
+
+    # Descriptive subtext under nodes inside Case C container
+    tb_c_desc = s4.shapes.add_textbox(Inches(1.0), c_top + Inches(1.25), Inches(11.333), Inches(0.7))
+    tf = tb_c_desc.text_frame
     tf.word_wrap = True
-
     p = tf.paragraphs[0]
-    p.text = d4["fast_path"]["title"]
-    p.font.name = FONT_MONO
-    p.font.size = Pt(10)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL_ACCENT
-
-    p2 = tf.add_paragraph()
-    p2.text = f"{d4['fast_path']['query']} → Direct Mock Store & Courier Scan"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(11)
-    p2.font.bold = True
-    p2.font.color.rgb = C_CREAM
-
-    p3 = tf.add_paragraph()
-    p3.text = f"{d4['fast_path']['outcome']}\nRoutine order queries take a direct tool route without calling heavy multimodal models. Escalates to human seller only if courier scan shows abnormal transit delay."
-    p3.font.name = FONT_HEAD
-    p3.font.size = Pt(9.5)
-    p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
-
-    # 3. Bottom Governance Bar: Fill Space (y = 5.7", h = 1.05")
-    gov_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(5.7), Inches(11.733), Inches(1.05))
-    gov_box.fill.solid()
-    gov_box.fill.fore_color.rgb = RGBColor(0x12, 0x1F, 0x1B)
-    gov_box.line.color.rgb = C_BORDER_DARK
-    gov_box.line.width = Pt(1)
-    tf = gov_box.text_frame
-    tf.word_wrap = True
-
-    p = tf.paragraphs[0]
-    p.text = f"■ {d4['governance_rules'][0]['label']}: {d4['governance_rules'][0]['text']}   |   ■ {d4['governance_rules'][1]['label']}: {d4['governance_rules'][1]['text']}"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(9)
+    p.text = d4["case_c_flow"]["desc"]
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(10.5)
     p.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
+    # Level 3: Secondary Fast Path & Output Trace (y = 6.0", h = 0.75", w = 11.733")
+    bot_y = Inches(6.0)
+    bot_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), bot_y, Inches(11.733), Inches(0.72))
+    bot_box.fill.solid()
+    bot_box.fill.fore_color.rgb = RGBColor(0x12, 0x1F, 0x1B)
+    bot_box.line.color.rgb = C_BORDER_DARK
+    bot_box.line.width = Pt(1)
+
+    tf = bot_box.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.text = d4["secondary_route"]["text"]
+    p.font.name = FONT_MONO
+    p.font.size = Pt(9)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(0x34, 0xD3, 0x99)
+
     p2 = tf.add_paragraph()
-    p2.text = f"■ {d4['governance_rules'][2]['label']}: {d4['governance_rules'][2]['text']}   |   ■ {d4['governance_rules'][3]['label']}: {d4['governance_rules'][3]['text']}"
+    p2.text = d4["audit_output"]["text"]
     p2.font.name = FONT_MONO
     p2.font.size = Pt(9)
     p2.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
@@ -786,13 +699,13 @@ def build_pptx():
     set_speaker_notes(s4, d4["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 5: FOUR DEMO BENCHMARK SCENARIOS (EXPANDED TO FILL CANVAS)
+    # SLIDE 5: AGENT BEHAVIOR MATRIX (RESCUED: HIGH CONTRAST, BOLD ACTION WORDS)
     # =========================================================================
     d5 = slides_data[5]
     s5 = prs.slides.add_slide(blank_layout)
     set_bg(s5, C_CREAM)
 
-    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
+    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.35))
     p = tb.text_frame.paragraphs[0]
     p.text = d5["tag"]
     p.font.name = FONT_MONO
@@ -800,7 +713,7 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
+    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.9), Inches(11.733), Inches(0.65))
     p = tb.text_frame.paragraphs[0]
     p.text = d5["headline"]
     p.font.name = FONT_HEAD
@@ -808,19 +721,19 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s5.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
+    tb = s5.shapes.add_textbox(Inches(0.8), Inches(1.55), Inches(11.733), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
     p.text = d5["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(18)
+    p.font.size = Pt(19)
     p.font.color.rgb = C_MUTED
 
-    # 4 Expanded Scenario Rows: Fills from y = 2.25" to 6.8" (h = 1.05", gap = 0.12")
-    row_top = Inches(2.25)
-    row_h = Inches(1.02)
-    row_gap = Inches(0.12)
+    # 4 Expanded Scenario Lanes: y = 2.25" to 6.55" (h = 0.95", gap = 0.12")
+    lane_top = Inches(2.25)
+    lane_h = Inches(0.95)
+    lane_gap = Inches(0.12)
 
-    case_styles = [
+    case_colors = [
         (C_TEAL_LIGHT, C_TEAL),
         (C_CORAL_LIGHT, C_CORAL_DARK),
         (C_BLUE_LIGHT, C_BLUE_TEXT),
@@ -828,37 +741,30 @@ def build_pptx():
     ]
 
     for i, cs in enumerate(d5["cases"]):
-        ry = row_top + i * (row_h + row_gap)
-        bg_col, fg_col = case_styles[i]
+        ly = lane_top + i * (lane_h + lane_gap)
+        bg_col, fg_col = case_colors[i]
 
-        row_box = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), ry, Inches(11.733), row_h)
-        row_box.fill.solid()
-        row_box.fill.fore_color.rgb = C_WHITE
-        row_box.line.color.rgb = C_BORDER_LIGHT
-        row_box.line.width = Pt(1)
+        lane_box = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), ly, Inches(11.733), lane_h)
+        lane_box.fill.solid()
+        lane_box.fill.fore_color.rgb = C_WHITE
+        lane_box.line.color.rgb = C_BORDER_LIGHT
+        lane_box.line.width = Pt(1)
 
         # Badge
-        badge = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), ry + Inches(0.22), Inches(2.2), Inches(0.55))
+        badge = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), ly + Inches(0.24), Inches(2.1), Inches(0.47))
         badge.fill.solid()
         badge.fill.fore_color.rgb = bg_col
         badge.line.fill.background()
-        tf = badge.text_frame
-        p = tf.paragraphs[0]
-        p.text = f"CASE {cs['number']} · {cs['name']}"
+        p = badge.text_frame.paragraphs[0]
+        p.text = f"{cs['number']} · {cs['name']}"
         p.font.name = FONT_MONO
-        p.font.size = Pt(10)
+        p.font.size = Pt(10.5)
         p.font.bold = True
         p.font.color.rgb = fg_col
         p.alignment = PP_ALIGN.CENTER
-        p2 = tf.add_paragraph()
-        p2.text = cs['subtitle']
-        p2.font.name = FONT_HEAD
-        p2.font.size = Pt(9)
-        p2.font.color.rgb = fg_col
-        p2.alignment = PP_ALIGN.CENTER
 
         # Observation
-        tb_ob = s5.shapes.add_textbox(Inches(3.35), ry + Inches(0.12), Inches(3.9), Inches(0.8))
+        tb_ob = s5.shapes.add_textbox(Inches(3.25), ly + Inches(0.12), Inches(4.1), Inches(0.7))
         tf = tb_ob.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
@@ -869,41 +775,42 @@ def build_pptx():
         p.font.color.rgb = C_DARK
 
         # Arrow
-        tb_arr = s5.shapes.add_textbox(Inches(7.35), ry + Inches(0.24), Inches(0.3), Inches(0.5))
-        p = tb_arr.text_frame.paragraphs[0]
+        tb_a = s5.shapes.add_textbox(Inches(7.45), ly + Inches(0.22), Inches(0.3), Inches(0.5))
+        p = tb_a.text_frame.paragraphs[0]
         p.text = "→"
         p.font.name = FONT_MONO
         p.font.size = Pt(16)
         p.font.bold = True
         p.font.color.rgb = C_TEAL
 
-        # Action & Outcome
-        tb_act = s5.shapes.add_textbox(Inches(7.75), ry + Inches(0.12), Inches(4.6), Inches(0.8))
-        tf = tb_act.text_frame
+        # Action (Action keyword is BOLD and large!)
+        tb_ac = s5.shapes.add_textbox(Inches(7.85), ly + Inches(0.12), Inches(4.5), Inches(0.7))
+        tf = tb_ac.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = cs['state_action']
+        p.text = cs['action']
         p.font.name = FONT_MONO
-        p.font.size = Pt(10.5)
+        p.font.size = Pt(11)
         p.font.bold = True
         p.font.color.rgb = fg_col
+
         p2 = tf.add_paragraph()
-        p2.text = cs['action_detail']
+        p2.text = cs['detail']
         p2.font.name = FONT_HEAD
         p2.font.size = Pt(10)
         p2.font.color.rgb = C_MUTED
 
-    add_footer(s5, "Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining, paid)", "Slide 5 / 6")
+    add_footer(s5, "Staged prototype scenarios · Expected agent behaviors, not measured production metrics", "Slide 5 / 6")
     set_speaker_notes(s5, d5["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 6: 24-HOUR BUILD PLAN & STRICT SCOPE (RECOMPOSED & EXPANDED)
+    # SLIDE 6: 24-HOUR PROTOTYPE PLAN (RESCUED: CONTINUOUS TIMELINE FLOW)
     # =========================================================================
     d6 = slides_data[6]
     s6 = prs.slides.add_slide(blank_layout)
     set_bg(s6, C_CREAM)
 
-    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
+    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.35))
     p = tb.text_frame.paragraphs[0]
     p.text = d6["tag"]
     p.font.name = FONT_MONO
@@ -911,7 +818,7 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
+    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.9), Inches(11.733), Inches(0.65))
     p = tb.text_frame.paragraphs[0]
     p.text = d6["headline"]
     p.font.name = FONT_HEAD
@@ -919,31 +826,32 @@ def build_pptx():
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s6.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
+    tb = s6.shapes.add_textbox(Inches(0.8), Inches(1.55), Inches(11.733), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
     p.text = d6["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(18)
+    p.font.size = Pt(19)
     p.font.color.rgb = C_MUTED
 
-    # 4-Phase Timeline Grid (y = 2.25", h = 1.8")
-    t_top = Inches(2.25)
-    t_h = Inches(1.8)
+    # Continuous Visual Timeline (y = 2.2", h = 1.9", w = 11.733")
+    t_top = Inches(2.2)
+    t_h = Inches(1.9)
     t_w = Inches(2.8)
     t_gap = Inches(0.17)
 
+    # Continuous horizontal connection line across the 4 milestones
+    conn_line = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), t_top, Inches(11.733), Inches(0.04))
+    conn_line.fill.solid()
+    conn_line.fill.fore_color.rgb = C_TEAL
+    conn_line.line.fill.background()
+
     for i, phase in enumerate(d6["timeline"]):
         tx = Inches(0.8) + i * (t_w + t_gap)
-        box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, tx, t_top, t_w, t_h)
+        box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, tx, t_top + Inches(0.04), t_w, t_h - Inches(0.04))
         box.fill.solid()
         box.fill.fore_color.rgb = C_WHITE
         box.line.color.rgb = C_BORDER_LIGHT
         box.line.width = Pt(1)
-
-        top_bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, tx, t_top, t_w, Inches(0.04))
-        top_bar.fill.solid()
-        top_bar.fill.fore_color.rgb = C_TEAL
-        top_bar.line.fill.background()
 
         tf = box.text_frame
         tf.word_wrap = True
@@ -969,17 +877,17 @@ def build_pptx():
         p3.font.color.rgb = C_TEAL
 
         p4 = tf.add_paragraph()
-        p4.text = phase['deliverables']
+        p4.text = phase['desc']
         p4.font.name = FONT_HEAD
         p4.font.size = Pt(9.5)
         p4.font.color.rgb = C_MUTED
 
-    # Bottom Scope Grid: Generously filling y = 4.25" to 6.8" (h = 2.45")
-    sc_top = Inches(4.25)
-    sc_h = Inches(2.45)
+    # Disciplined Scope Split (y = 4.35", h = 2.3", w = 11.733")
+    sc_top = Inches(4.35)
+    sc_h = Inches(2.3)
     sc_w = Inches(5.75)
 
-    # In Scope: MUST DELIVER
+    # Must Deliver
     in_box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), sc_top, sc_w, sc_h)
     in_box.fill.solid()
     in_box.fill.fore_color.rgb = C_WHITE
@@ -991,7 +899,7 @@ def build_pptx():
     in_bar.fill.fore_color.rgb = C_TEAL
     in_bar.line.fill.background()
 
-    tb = s6.shapes.add_textbox(Inches(1.05), sc_top + Inches(0.15), sc_w - Inches(0.35), sc_h - Inches(0.3))
+    tb = s6.shapes.add_textbox(Inches(1.05), sc_top + Inches(0.12), sc_w - Inches(0.35), sc_h - Inches(0.24))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
@@ -1008,7 +916,7 @@ def build_pptx():
         p_item.font.size = Pt(10.5)
         p_item.font.color.rgb = C_DARK
 
-    # Out of Scope: CUT FIRST IF BEHIND
+    # Cut First If Behind
     out_box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.783), sc_top, sc_w, sc_h)
     out_box.fill.solid()
     out_box.fill.fore_color.rgb = C_WHITE
@@ -1020,7 +928,7 @@ def build_pptx():
     out_bar.fill.fore_color.rgb = C_CORAL
     out_bar.line.fill.background()
 
-    tb = s6.shapes.add_textbox(Inches(7.033), sc_top + Inches(0.15), sc_w - Inches(0.35), sc_h - Inches(0.3))
+    tb = s6.shapes.add_textbox(Inches(7.033), sc_top + Inches(0.12), sc_w - Inches(0.35), sc_h - Inches(0.24))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
