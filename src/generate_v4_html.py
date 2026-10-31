@@ -1,26 +1,43 @@
 import os
 import sys
-import shutil
+import json
 import base64
+import shutil
 import subprocess
 from pathlib import Path
 import fitz
 from PIL import Image
 
-# Robust path derivation (works anywhere, cross-platform)
+# Robust path derivation
 base_dir = Path(__file__).resolve().parent.parent
+data_path = base_dir / "content" / "deck_data.json"
 assets_dir = base_dir / "src" / "assets"
+
+if not data_path.exists():
+    raise FileNotFoundError(f"Canonical data file missing: {data_path}")
+
+with open(data_path, "r", encoding="utf-8") as f:
+    data = json.load(f)
 
 def get_b64(fname):
     p = assets_dir / fname
     if not p.exists():
         raise FileNotFoundError(f"Required asset not found: {p}")
     with open(p, 'rb') as f:
-        return 'data:image/jpeg;base64,' + base64.b64encode(f.read()).decode('utf-8')
+        mime = "image/jpeg" if fname.endswith(".jpg") else "image/png"
+        return f"data:{mime};base64," + base64.b64encode(f.read()).decode('utf-8')
 
-hero_b64 = get_b64('hero_video_frame.jpg')
-white_b64 = get_b64('demo_white_order.jpg')
-black_b64 = get_b64('demo_black_frame.jpg')
+# Ensure required assets exist
+white_b64 = get_b64('studio_white_headphones.jpg')
+black_b64 = get_b64('unboxing_black_headphones.jpg')
+
+slides_data = {s["slide_number"]: s for s in data["slides"]}
+d1 = slides_data[1]
+d2 = slides_data[2]
+d3 = slides_data[3]
+d4 = slides_data[4]
+d5 = slides_data[5]
+d6 = slides_data[6]
 
 html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -36,8 +53,6 @@ html_content = f"""<!DOCTYPE html>
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    -webkit-font-smoothing: antialiased;
-    border-radius: 0 !important;
   }}
 
   :root {{
@@ -45,32 +60,51 @@ html_content = f"""<!DOCTYPE html>
     --dark-green: #172621;
     --primary-teal: #006B55;
     --teal-light: #E1F2EC;
+    --teal-accent: #00D1A7;
     --coral: #D95D39;
     --coral-light: #FCECE8;
+    --coral-dark: #991B1B;
     --amber: #D97706;
     --amber-light: #FEF3C7;
-    --border-light: #E2DED4;
+    --blue-light: #EFF6FF;
+    --blue-dark: #1E40AF;
     --text-muted: #596E64;
     --text-subtle: #7A8E85;
-    --dark-bg: #0F1A16;
+    --border-light: #E2DED4;
     --border-dark: #223830;
+    --card-dark: #172621;
+    --card-dark-alt: #121F1B;
+    --dark-bg: #0F1A16;
   }}
 
   body {{
-    background-color: #E5E1D8;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #2E3A35;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     color: var(--dark-green);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 40px 0;
     gap: 40px;
+    -webkit-font-smoothing: antialiased;
   }}
 
-  .deck-container {{
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+  @page {{
+    size: 1280px 720px;
+    margin: 0;
+  }}
+
+  @media print {{
+    body {{
+      background: none;
+      padding: 0;
+      gap: 0;
+    }}
+    .slide {{
+      box-shadow: none !important;
+      page-break-after: always;
+      break-after: page;
+    }}
   }}
 
   .slide {{
@@ -101,14 +135,14 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide.dark .tag-label {{
-    color: #00D1A7;
+    color: var(--teal-accent);
   }}
 
   .slide-title {{
-    font-size: 34px;
+    font-size: 38px;
     font-weight: 800;
+    letter-spacing: -1px;
     line-height: 1.15;
-    letter-spacing: -0.5px;
     color: var(--dark-green);
     margin-bottom: 6px;
   }}
@@ -118,7 +152,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide-sub {{
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.35;
     color: var(--text-muted);
@@ -144,16 +178,16 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .slide.dark .slide-footer {{
-    border-top: 1px solid var(--border-dark);
+    border-top-color: var(--border-dark);
     color: #5C786E;
   }}
 
   /* SLIDE 1 STYLES */
   .hero-layout {{
     display: grid;
-    grid-template-columns: 1fr 1.35fr;
-    gap: 44px;
-    height: 100%;
+    grid-template-columns: 38% 62%;
+    gap: 36px;
+    flex: 1;
     align-items: stretch;
   }}
 
@@ -165,186 +199,216 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .hero-title {{
-    font-size: 60px;
+    font-size: 58px;
     font-weight: 900;
     letter-spacing: -2px;
     color: var(--dark-green);
     line-height: 1;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }}
 
   .hero-statement {{
-    font-size: 19px;
+    font-size: 24px;
     font-weight: 700;
-    color: var(--primary-teal);
-    line-height: 1.3;
-    margin-bottom: 8px;
+    color: var(--dark-green);
+    line-height: 1.25;
+    margin-bottom: 14px;
   }}
 
-  .hero-desc {{
-    font-size: 15px;
+  .hero-summary {{
+    font-size: 13.5px;
+    line-height: 1.5;
     color: var(--text-muted);
-    line-height: 1.45;
+    margin-bottom: 20px;
   }}
 
-  .hero-meta-box {{
+  .hero-metrics-row {{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }}
+
+  .metric-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    border-left: 4px solid var(--primary-teal);
-    padding: 14px 18px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--dark-green);
-    line-height: 1.55;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }}
 
-  .console-window {{
+  .metric-val {{
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--dark-green);
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }}
+
+  .metric-lbl {{
+    font-size: 9.5px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }}
+
+  .console-wrapper {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
     display: flex;
     flex-direction: column;
-    height: 520px;
-    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.06);
   }}
 
   .console-header {{
-    background: var(--dark-green);
-    color: #F5F3EF;
-    padding: 12px 18px;
+    background: #1F302A;
+    color: var(--teal-accent);
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 12px 18px;
+    letter-spacing: 1px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }}
 
   .console-body {{
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     flex: 1;
+    justify-content: space-between;
+  }}
+
+  .console-split {{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 18px;
+    align-items: center;
+  }}
+
+  .console-img-box {{
+    width: 200px;
+    height: 160px;
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+    position: relative;
     background: #FAFAFA;
   }}
 
-  .console-video {{
-    background: #000000;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }}
-
-  .console-video img {{
+  .console-img-box img {{
     width: 100%;
     height: 100%;
     object-fit: cover;
   }}
 
-  .console-panel {{
-    padding: 20px;
+  .console-data-col {{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    border-left: 1px solid var(--border-light);
-    background: #FFFFFF;
+    gap: 8px;
   }}
 
-  .info-group {{
-    margin-bottom: 12px;
-  }}
-
-  .info-group .label {{
+  .c-label {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 9.5px;
     color: var(--text-subtle);
-    text-transform: uppercase;
-    margin-bottom: 3px;
-  }}
-
-  .info-group .val {{
-    font-size: 13px;
     font-weight: 700;
-    color: var(--dark-green);
-  }}
-
-  .info-group .val-sub {{
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }}
-
-  .status-badge {{
-    background: var(--amber-light);
-    color: #92400E;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 8px 10px;
-    text-align: center;
-    margin-bottom: 8px;
     letter-spacing: 0.5px;
   }}
 
-  .btn-cta {{
-    width: 100%;
-    background: var(--primary-teal);
-    color: #FFFFFF;
-    border: none;
-    padding: 11px;
+  .c-val {{
     font-size: 12px;
     font-weight: 700;
-    cursor: default;
+    color: var(--dark-green);
+    line-height: 1.35;
+  }}
+
+  .c-alert-box {{
+    background: var(--coral-light);
+    border: 1px solid var(--coral);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }}
+
+  .c-alert-title {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--coral-dark);
+  }}
+
+  .c-alert-desc {{
+    font-size: 11px;
+    color: var(--coral-dark);
+    line-height: 1.35;
+  }}
+
+  .c-status-bar {{
+    background: var(--amber-light);
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #92400E;
     text-align: center;
   }}
 
-  /* SLIDE 2 STYLES (3-COLUMN ZERO-OVERLAP LAYOUT) */
-  .problem-layout-3col {{
-    display: grid;
-    grid-template-columns: 1fr 1.05fr 1fr;
-    gap: 20px;
-    height: 450px;
-    align-items: stretch;
+  .c-button {{
+    background: var(--primary-teal);
+    color: #FFFFFF;
+    text-align: center;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 13.5px;
+    letter-spacing: 0.5px;
   }}
 
-  .source-col {{
+  /* SLIDE 2 STYLES */
+  .problem-layout {{
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 1fr;
+    gap: 18px;
+    flex: 1;
+    align-items: stretch;
+    padding-bottom: 24px;
+  }}
+
+  .prob-col {{
     display: flex;
     flex-direction: column;
     gap: 16px;
-    justify-content: space-between;
   }}
 
   .source-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 20px;
+    padding: 18px 20px;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
   }}
 
-  .s-label {{
+  .s-num {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
     font-weight: 700;
     color: var(--primary-teal);
-    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-bottom: 6px;
   }}
 
-  .s-val {{
-    font-size: 16px;
+  .s-title {{
+    font-size: 14px;
     font-weight: 700;
     color: var(--dark-green);
     margin-bottom: 4px;
-    line-height: 1.3;
   }}
 
-  .s-sub {{
-    font-size: 11px;
+  .s-desc {{
+    font-size: 11.5px;
     color: var(--text-muted);
     line-height: 1.4;
   }}
@@ -353,18 +417,16 @@ html_content = f"""<!DOCTYPE html>
     background: var(--dark-green);
     color: #F5F3EF;
     border: 2px solid var(--coral);
-    padding: 26px 22px;
+    padding: 24px 22px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.14);
   }}
 
   .gap-tag {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 1.5px;
     color: var(--coral);
@@ -380,131 +442,177 @@ html_content = f"""<!DOCTYPE html>
     color: #FFFFFF;
   }}
 
-  .gap-text {{
+  .gap-body {{
     font-size: 12px;
+    line-height: 1.5;
     color: #D1D5DB;
-    line-height: 1.55;
+    margin-bottom: 16px;
+  }}
+
+  .gap-stat-box {{
+    border-top: 1px solid #2B4239;
+    padding-top: 12px;
+  }}
+
+  .gap-stat-num {{
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--coral);
+    margin-bottom: 4px;
+  }}
+
+  .gap-stat-txt {{
+    font-size: 9px;
+    color: #9CA3AF;
+    line-height: 1.35;
   }}
 
   /* SLIDE 3 STYLES */
   .demo-layout {{
     display: grid;
-    grid-template-columns: 2fr 1.05fr;
-    gap: 32px;
-    height: 480px;
-  }}
-
-  .demo-evidence {{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    position: relative;
-  }}
-
-  .evidence-card {{
-    background: #FFFFFF;
-    border: 1px solid var(--border-light);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }}
-
-  .ev-header {{
-    background: #FAF8F5;
-    padding: 10px 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border-light);
-  }}
-
-  .ev-img {{
+    grid-template-columns: 66% 34%;
+    gap: 24px;
     flex: 1;
-    background: #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    max-height: 330px;
+    align-items: stretch;
+    padding-bottom: 24px;
   }}
 
-  .ev-img img {{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }}
-
-  .ev-footer {{
-    padding: 12px 14px;
-    font-size: 11px;
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--dark-green);
-    background: #FFFFFF;
-    border-top: 1px solid var(--border-light);
-    line-height: 1.5;
-  }}
-
-  .ev-callout {{
-    position: absolute;
-    top: 42%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--coral);
-    color: #FFFFFF;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 800;
-    padding: 6px 14px;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 14px rgba(217,93,57,0.4);
-    z-index: 10;
-  }}
-
-  .demo-decision {{
+  .evidence-arena {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    border-left: 4px solid var(--coral);
-    padding: 22px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }}
 
-  .decision-finding {{
-    background: var(--coral-light);
-    border: 1px solid #F87171;
-    padding: 10px 14px;
-    margin-top: 8px;
+  .arena-pics {{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
   }}
 
-  .decision-finding .status-txt {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 800;
-    color: #991B1B;
+  .pic-wrapper {{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }}
 
-  .safety-box {{
-    background: #FAF8F5;
+  .pic-frame {{
+    flex: 1;
     border: 1px solid var(--border-light);
-    padding: 10px 12px;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+  }}
+
+  .pic-frame img {{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }}
+
+  .pic-badge {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 6px 8px;
+    text-align: center;
+  }}
+
+  .badge-ordered {{ background: var(--teal-light); color: var(--primary-teal); }}
+  .badge-observed {{ background: var(--coral-light); color: var(--coral-dark); }}
+
+  .arena-caption {{
     font-size: 11px;
     color: var(--text-muted);
     line-height: 1.45;
+    border-top: 1px solid var(--border-light);
+    padding-top: 10px;
+    margin-top: 10px;
   }}
 
-  /* SLIDE 4 STYLES (DARK ARCHITECTURE WITH AGENTIC TRACE) */
+  .decision-console {{
+    background: #FFFFFF;
+    border: 1px solid var(--border-light);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }}
+
+  .dec-tag {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--coral);
+    margin-bottom: 4px;
+  }}
+
+  .dec-title {{
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--coral-dark);
+    margin-bottom: 6px;
+  }}
+
+  .dec-sub {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--coral-dark);
+    margin-bottom: 12px;
+    line-height: 1.35;
+  }}
+
+  .dec-opt-title {{
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--dark-green);
+    margin-bottom: 6px;
+  }}
+
+  .dec-opt-list {{
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 14px;
+  }}
+
+  .dec-guardrail {{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text-subtle);
+    border-top: 1px solid var(--border-light);
+    padding-top: 10px;
+    line-height: 1.35;
+  }}
+
+  /* SLIDE 4 STYLES (DARK ARCHITECTURE) */
+  .arch-layout {{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    padding-bottom: 24px;
+  }}
+
   .arch-pipeline {{
     display: flex;
     gap: 8px;
-    margin-top: 8px;
     align-items: center;
   }}
 
   .pipe-step {{
     flex: 1;
-    background: #172621;
+    background: var(--card-dark);
     border: 1px solid var(--border-dark);
     padding: 10px 8px;
     display: flex;
@@ -513,13 +621,13 @@ html_content = f"""<!DOCTYPE html>
     height: 84px;
   }}
 
-  .pipe-step.model-step {{ border-top: 3px solid #00D1A7; }}
-  .pipe-step.code-step {{ border-top: 3px solid #F5F3EF; }}
+  .pipe-step.model-step {{ border-top: 3px solid var(--teal-accent); }}
+  .pipe-step.code-step {{ border-top: 3px solid #E1F2EC; }}
   .pipe-step.human-step {{ border-top: 3px solid #FBBF24; }}
 
   .pipe-arrow {{
     font-family: 'IBM Plex Mono', monospace;
-    color: #00D1A7;
+    color: var(--teal-accent);
     font-size: 13px;
     font-weight: 800;
     flex-shrink: 0;
@@ -533,7 +641,7 @@ html_content = f"""<!DOCTYPE html>
   }}
 
   .pipe-title {{
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 700;
     color: #F5F3EF;
     line-height: 1.2;
@@ -546,120 +654,93 @@ html_content = f"""<!DOCTYPE html>
     font-weight: 700;
     padding: 2px 4px;
     display: inline-block;
-    text-align: center;
-    letter-spacing: 0.5px;
+    align-self: flex-start;
   }}
 
-  .tag-code {{ background: #223830; color: #F5F3EF; }}
-  .tag-model {{ background: rgba(0,209,167,0.18); color: #00D1A7; }}
-  .tag-human {{ background: rgba(251,191,36,0.18); color: #FBBF24; }}
+  .tag-model {{ background: #00382B; color: var(--teal-accent); }}
+  .tag-code {{ background: #263831; color: #F5F3EF; }}
+  .tag-human {{ background: #45260A; color: #FBBF24; }}
 
-  /* Dual Execution Paths: Stateful Loop vs Zero-Vision Route */
   .agent-paths-grid {{
     display: grid;
-    grid-template-columns: 1.65fr 1fr;
-    gap: 12px;
-    margin-top: 10px;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 14px;
   }}
 
   .agent-path-card {{
-    background: #121F1B;
-    border: 1px solid var(--border-dark);
-    padding: 10px 14px;
+    background: #14221D;
+    border: 1.5px solid #2563EB;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 8px;
+  }}
+
+  .agent-path-card.fast {{
+    border-color: #059669;
   }}
 
   .path-header {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
   }}
 
   .path-title {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.5px;
   }}
 
-  .path-title.loop {{ color: #60A5FA; }}
-  .path-title.fast {{ color: #00D1A7; }}
+  .path-title.loop {{ color: #93C5FD; }}
+  .path-title.fast {{ color: #34D399; }}
 
   .trace-steps {{
     display: flex;
     align-items: center;
     gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    color: #D1D5DB;
     flex-wrap: wrap;
-    line-height: 1.4;
   }}
 
   .trace-node {{
-    background: #1A2B24;
-    border: 1px solid var(--border-dark);
-    padding: 3px 6px;
+    background: #1F302A;
+    border: 1px solid #374151;
+    color: #F3F4F6;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8.5px;
+    padding: 4px 6px;
   }}
 
   .trace-node.wait {{
-    background: rgba(96,165,250,0.15);
+    background: #1E3A8A;
     border-color: #60A5FA;
-    color: #93C5FD;
+    color: #DBEAFE;
+    font-weight: 700;
   }}
 
   .trace-arrow {{
-    color: #6C8279;
-    font-weight: 700;
+    color: #9CA3AF;
+    font-size: 9px;
   }}
 
-  .arch-branches {{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-  }}
-
-  .branch-card {{
-    background: #121F1B;
-    border: 1px solid var(--border-dark);
-    padding: 10px 12px;
-  }}
-
-  .branch-head {{
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    margin-bottom: 3px;
-  }}
-
-  .head-unclear {{ color: #60A5FA; }}
-  .head-contradict {{ color: #F87171; }}
-  .head-hardfail {{ color: #FBBF24; }}
-  .head-pass {{ color: #34D399; }}
-
-  .branch-desc {{
-    font-size: 10.5px;
+  .path-desc {{
+    font-size: 10px;
     color: #A3B8B0;
     line-height: 1.35;
   }}
 
   .arch-legend {{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #121F1B;
+    background: var(--card-dark-alt);
     border: 1px solid var(--border-dark);
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 9.5px;
+    font-size: 9px;
     color: #A3B8B0;
-    line-height: 1.4;
+    line-height: 1.35;
   }}
 
   /* SLIDE 5 STYLES */
@@ -667,130 +748,128 @@ html_content = f"""<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 12px;
+    flex: 1;
+    padding-bottom: 24px;
   }}
 
   .scenario-lane {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
     padding: 12px 18px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 160px 1fr 24px 1.15fr;
+    gap: 16px;
     align-items: center;
-    gap: 18px;
+    flex: 1;
   }}
 
   .sc-badge {{
-    width: 140px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    padding: 6px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 8px 10px;
     text-align: center;
-    flex-shrink: 0;
   }}
 
-  .badge-ready {{ background: var(--teal-light); color: var(--primary-teal); }}
-  .badge-mismatch {{ background: var(--coral-light); color: #991B1B; }}
-  .badge-unclear {{ background: #EFF6FF; color: #1E40AF; }}
+  .badge-match {{ background: var(--teal-light); color: var(--primary-teal); }}
+  .badge-mismatch {{ background: var(--coral-light); color: var(--coral-dark); }}
+  .badge-unclear {{ background: var(--blue-light); color: var(--blue-dark); }}
   .badge-continuity {{ background: #ECFDF5; color: #065F46; }}
 
   .sc-evidence {{
-    flex: 1.1;
-    font-size: 12.5px;
+    font-size: 12px;
+    font-weight: 600;
     color: var(--dark-green);
-    line-height: 1.4;
-  }}
-
-  .sc-evidence strong {{
-    color: var(--dark-green);
-    font-weight: 700;
+    line-height: 1.35;
   }}
 
   .sc-arrow {{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 16px;
-    font-weight: 800;
     color: var(--primary-teal);
-    flex-shrink: 0;
+    text-align: center;
   }}
 
   .sc-action {{
-    flex: 1.1;
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--text-muted);
-    line-height: 1.4;
+    line-height: 1.35;
   }}
 
-  .sc-action strong {{
-    color: var(--dark-green);
-  }}
-
-  /* SLIDE 6 STYLES (TIMELINE TABLE + SCOPE DISCIPLINE) */
+  /* SLIDE 6 STYLES */
   .timeline-container {{
-    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    padding-bottom: 24px;
   }}
 
   .timeline-table-grid {{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
-    border-bottom: 2px solid var(--primary-teal);
-    padding-bottom: 14px;
-    margin-bottom: 16px;
   }}
 
   .t-cell {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 12px 14px;
+    border-top: 4px solid var(--primary-teal);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }}
 
   .t-time {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 800;
+    font-size: 10.5px;
+    font-weight: 700;
     color: var(--primary-teal);
-    margin-bottom: 4px;
-    text-transform: uppercase;
   }}
 
   .t-title {{
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 700;
     color: var(--dark-green);
-    margin-bottom: 4px;
-    line-height: 1.25;
   }}
 
   .t-owner {{
-    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-teal);
+    margin-bottom: 2px;
+  }}
+
+  .t-desc {{
     font-size: 10px;
     color: var(--text-muted);
     line-height: 1.35;
   }}
 
-  .scope-split {{
+  .scope-grid {{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 16px;
+    flex: 1;
   }}
 
   .scope-card {{
     background: #FFFFFF;
     border: 1px solid var(--border-light);
-    padding: 14px 18px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }}
 
-  .scope-in {{ border-left: 4px solid var(--primary-teal); }}
-  .scope-out {{ border-left: 4px solid var(--coral); }}
+  .scope-card.scope-in {{ border-left: 5px solid var(--primary-teal); }}
+  .scope-card.scope-out {{ border-left: 5px solid var(--coral); }}
 
   .scope-head {{
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
   }}
 
   .scope-in .scope-head {{ color: var(--primary-teal); }}
@@ -798,236 +877,172 @@ html_content = f"""<!DOCTYPE html>
 
   .scope-text {{
     font-size: 11.5px;
-    color: var(--text-muted);
-    line-height: 1.45;
-  }}
-
-  .closing-quote {{
-    margin-top: 14px;
-    background: #FAF8F5;
-    border: 1px solid var(--border-light);
-    padding: 10px 16px;
-    font-size: 11.5px;
-    font-style: italic;
     color: var(--dark-green);
-    text-align: center;
-  }}
-
-  @page {{
-    size: 1280px 720px;
-    margin: 0;
-  }}
-
-  @media print {{
-    body {{
-      padding: 0;
-      background: none;
-      gap: 0;
-    }}
-    .deck-container {{
-      gap: 0;
-    }}
-    .slide {{
-      page-break-after: always;
-      box-shadow: none;
-      margin: 0;
-      width: 1280px;
-      height: 720px;
-    }}
+    line-height: 1.5;
   }}
 </style>
 </head>
 <body>
 
-<div class="deck-container">
-
-  <!-- SLIDE 1: PRODUCT LAUNCH & EXECUTIVE SUMMARY -->
+  <!-- SLIDE 1: PRODUCT HERO & CONSOLE -->
   <section class="slide" id="slide-1">
-    <div class="tag-label">AgentX Hackathon 2026 · Track PS-04</div>
     <div class="hero-layout">
       <div class="hero-left">
         <div>
-          <h1 class="hero-title">ReturnLens</h1>
-          <div class="hero-statement">“Every return decision, backed by evidence.”</div>
-          <p class="hero-desc">An evidence-backed return triage agent for small direct-to-consumer sellers.</p>
+          <div class="tag-label">{d1['tag']}</div>
+          <h1 class="hero-title">{d1['headline']}</h1>
+          <div class="hero-statement">{d1['subheadline']}</div>
+          <p class="hero-summary">{d1['summary']}<br><br>When a customer submits a return video, ReturnLens extracts keyframes, cross-references order truth and shipping timestamps, verifies deterministic code policies, and gives the solo seller a 1-click decision console.</p>
         </div>
-        <div class="hero-meta-box">
-          <strong>Team Rookie · 3 members · PS-04 Track</strong><br>
-          Target User: Solo D2C merchant managing orders and returns alone.<br>
-          Scope in 24h: Return triage core + 1 zero-vision order-status route.<br>
-          Guardrails: Fail-closed architecture · No autonomous refunds.
+
+        <div class="hero-metrics-row">
+          <div class="metric-card">
+            <div class="metric-val" style="color: var(--coral);">15–20m</div>
+            <div class="metric-lbl">Manual triage time eliminated</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val" style="color: var(--primary-teal);">1-Click</div>
+            <div class="metric-lbl">Merchant human verification</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-val">24h</div>
+            <div class="metric-lbl">Prototype build feasibility</div>
+          </div>
         </div>
       </div>
 
-      <div class="hero-right">
-        <div class="console-window">
-          <div class="console-header">
-            <span>RETURNLENS SELLER CONSOLE · CASE #RET-4082</span>
-            <span>ORDER #ORD-9021</span>
-          </div>
-          <div class="console-body">
-            <div class="console-video">
-              <img src="{hero_b64}" alt="Inspection Frame">
+      <div class="console-wrapper">
+        <div class="console-header">
+          <span>{d1['console_mockup']['title']}</span>
+          <span>{d1['console_mockup']['case_badge']}</span>
+        </div>
+        <div class="console-body">
+          <div class="console-split">
+            <div class="console-img-box">
+              <img src="{white_b64}" alt="White Headphones">
             </div>
-            <div class="console-panel">
+            <div class="console-data-col">
               <div>
-                <div class="info-group">
-                  <div class="label">Order Truth</div>
-                  <div class="val">HEAD-WHT-02 · White Headphones</div>
-                  <div class="val-sub">₹1,499 · Delivered Day 4 (Within 7d window)</div>
-                </div>
-                <div class="info-group">
-                  <div class="label">Visual Observation</div>
-                  <div class="val">Inspection Frame 00:14</div>
-                  <div class="val-sub">Potential casing damage flagged · Requires manual confirmation</div>
-                </div>
-                <div class="info-group">
-                  <div class="label">Policy Verification</div>
-                  <div class="val" style="color: #92400E;">P-01 Defect Check: FLAGGED FOR REVIEW</div>
-                  <div class="val-sub">P-04 Return Window: PASS (Day 4 of 7)</div>
-                </div>
+                <div class="c-label">ORDER INFORMATION</div>
+                <div class="c-val">{d1['console_mockup']['order_info']['order_id']} · {d1['console_mockup']['order_info']['sku']}<br>{d1['console_mockup']['order_info']['color']} · Price: {d1['console_mockup']['order_info']['price']}<br>{d1['console_mockup']['order_info']['delivery']}</div>
               </div>
               <div>
-                <div class="status-badge">READY FOR SELLER REVIEW (FLAGGED)</div>
-                <button class="btn-cta">Review Evidence &amp; Authorize Draft</button>
-                <div style="font-size: 10px; color: var(--text-subtle); text-align: center; margin-top: 6px; font-family: 'IBM Plex Mono', monospace;">
-                  Illustrative staged evidence · Mock store data
-                </div>
+                <div class="c-label">EVIDENCE CITATION (STAGED)</div>
+                <div class="c-val" style="color: var(--text-muted); font-size: 11px;">{d1['console_mockup']['evidence_citation']['timestamp']}<br>{d1['console_mockup']['evidence_citation']['observation']}</div>
               </div>
             </div>
           </div>
+
+          <div class="c-alert-box">
+            <div class="c-alert-title">POLICY GATE: {d1['console_mockup']['evidence_citation']['status_badge']}</div>
+            <div class="c-alert-desc">{d1['console_mockup']['policy_check']['window_check']} | {d1['console_mockup']['policy_check']['color_check']}</div>
+          </div>
+
+          <div class="c-status-bar">{d1['console_mockup']['action_prompt']}</div>
+          <div class="c-button">{d1['console_mockup']['button_text']}</div>
         </div>
       </div>
     </div>
+
     <div class="slide-footer">
-      <span>ReturnLens · Idea Pitch Deck · PS-04 · Team Rookie (3 members)</span>
+      <span>ReturnLens · Pitch Deck · PS-04 Track · Team Rookie (3 Members)</span>
       <span>Slide 1 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 2: THE PROBLEM (3-COLUMN ZERO-OVERLAP LAYOUT) -->
+  <!-- SLIDE 2: THE PROBLEM -->
   <section class="slide" id="slide-2">
-    <div class="tag-label">The Problem · Solo Seller Bottleneck</div>
-    <h2 class="slide-title">One return decision. Four disconnected sources.</h2>
-    <p class="slide-sub">The return decision is made from memory, before the evidence is checked.</p>
-    
-    <div class="problem-layout-3col">
-      <!-- Left Column: Sources 01 & 03 -->
-      <div class="source-col">
+    <div class="tag-label">{d2['tag']}</div>
+    <h2 class="slide-title">{d2['headline']}</h2>
+    <p class="slide-sub">{d2['subheadline']} · {d2['supporting_statement']}</p>
+
+    <div class="problem-layout">
+      <div class="prob-col">
         <div class="source-card">
-          <div class="s-label">01 Buyer Chat</div>
-          <div class="s-val">“Received damaged item”</div>
-          <div class="s-sub">Buyer upload: 30–60s unboxing video + reason in support message</div>
+          <div class="s-num">{d2['sources'][0]['number']} {d2['sources'][0]['name'].upper()}</div>
+          <div class="s-title">{d2['sources'][0]['name']}</div>
+          <div class="s-desc">{d2['sources'][0]['detail']}</div>
         </div>
         <div class="source-card">
-          <div class="s-label">03 Courier Tracking</div>
-          <div class="s-val">Delivered 4 days ago</div>
-          <div class="s-sub">Shippo mock tracking API scan timestamp verification</div>
+          <div class="s-num">{d2['sources'][2]['number']} {d2['sources'][2]['name'].upper()}</div>
+          <div class="s-title">{d2['sources'][2]['name']}</div>
+          <div class="s-desc">{d2['sources'][2]['detail']}</div>
         </div>
       </div>
 
-      <!-- Center Pillar: Critical Gap (Four Systems. No Traceable Decision.) -->
       <div class="gap-pillar">
         <div class="gap-tag">CRITICAL INFORMATION GAP</div>
-        <div class="gap-title">Four systems.<br>No traceable decision.</div>
-        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--coral); font-weight: 700; margin-bottom: 10px;">
-          NO SHARED EVIDENCE RECORD
-        </div>
-        <div class="gap-text">
-          Order facts, video evidence and return policies are disconnected — leaving one solo seller to make high-stakes refund judgments from memory.<br><br>
-          A wrong refund loses inventory; an unfair denial loses a customer.
+        <div class="gap-title">{d2['gap_card']['title']}</div>
+        <div class="gap-body">{d2['gap_card']['description']}</div>
+        <div class="gap-stat-box">
+          <div class="gap-stat-num">9.0% vs 15.14%</div>
+          <div class="gap-stat-txt">{data['meta']['fraud_metrics']['nrf_2025']} | {data['meta']['fraud_metrics']['deloitte_2024']}<br>{data['meta']['fraud_metrics']['distinction']}</div>
         </div>
       </div>
 
-      <!-- Right Column: Sources 02 & 04 -->
-      <div class="source-col">
+      <div class="prob-col">
         <div class="source-card">
-          <div class="s-label">02 Order Record</div>
-          <div class="s-val">White Headphones · ₹1,499</div>
-          <div class="s-sub">Shopify mock store API product inventory catalog</div>
+          <div class="s-num">{d2['sources'][1]['number']} {d2['sources'][1]['name'].upper()}</div>
+          <div class="s-title">{d2['sources'][1]['name']}</div>
+          <div class="s-desc">{d2['sources'][1]['detail']}</div>
         </div>
         <div class="source-card">
-          <div class="s-label">04 Return Policy</div>
-          <div class="s-val">7-Day Window · Sealed Tag</div>
-          <div class="s-sub">Deterministic code rules P-01 to P-08, never prompts</div>
+          <div class="s-num">{d2['sources'][3]['number']} {d2['sources'][3]['name'].upper()}</div>
+          <div class="s-title">{d2['sources'][3]['name']}</div>
+          <div class="s-desc">{d2['sources'][3]['detail']}</div>
         </div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Fraud estimates differ by definition: 9% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse).</span>
+      <span>Fraud statistics note: 9.0% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse)</span>
       <span>Slide 2 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 3: THE STAR DEMO (VISUAL PEAK) -->
+  <!-- SLIDE 3: STAR DEMO -->
   <section class="slide" id="slide-3">
-    <div class="tag-label">Visual Evidence Benchmark · Core Demonstration</div>
-    <h2 class="slide-title">The order says white. The video shows black.</h2>
-    <p class="slide-sub">ReturnLens surfaces the contradiction instead of auto-denying.</p>
+    <div class="tag-label">{d3['tag']}</div>
+    <h2 class="slide-title">{d3['headline']}</h2>
+    <p class="slide-sub">{d3['subheadline']}</p>
 
     <div class="demo-layout">
-      <div class="demo-evidence">
-        <!-- Order Record -->
-        <div class="evidence-card">
-          <div class="ev-header">ORDER RECORD · STORE GROUND TRUTH</div>
-          <div class="ev-img">
-            <img src="{white_b64}" alt="White Headphone Store Truth">
+      <div class="evidence-arena">
+        <div class="arena-pics">
+          <div class="pic-wrapper">
+            <div class="pic-frame">
+              <img src="{white_b64}" alt="White Headphones Ordered">
+            </div>
+            <div class="pic-badge badge-ordered">{d3['ordered_evidence']['label']}: {d3['ordered_evidence']['sku']} (WHITE)</div>
           </div>
-          <div class="ev-footer">
-            <strong>HEAD-WHT-02</strong> · Matte White · ₹1,499<br>
-            Delivered 4 days ago · Original retail tag present
-          </div>
-        </div>
-
-        <!-- Video Frame -->
-        <div class="evidence-card">
-          <div class="ev-header">VIDEO FRAME · INTAKE TIMESTAMP 00:07</div>
-          <div class="ev-img">
-            <img src="{black_b64}" alt="Black Headphone Video Evidence">
-          </div>
-          <div class="ev-footer">
-            <strong>Observed Color: Midnight Black</strong><br>
-            Exact SKU: Not verified · Tag: Not visible in cited frame
+          <div class="pic-wrapper">
+            <div class="pic-frame">
+              <img src="{black_b64}" alt="Black Headphones Unboxed">
+            </div>
+            <div class="pic-badge badge-observed">{d3['observed_evidence']['label']}: {d3['observed_evidence']['color'].upper()}</div>
           </div>
         </div>
-
-        <div class="ev-callout">COLOR MISMATCH</div>
+        <div class="arena-caption">
+          Visual Grounding Honesty: Keyframe resolution reveals black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Midnight Black · Exact SKU: Not verified' and cites frame 00:07.
+        </div>
       </div>
 
-      <div class="demo-decision">
+      <div class="decision-console">
         <div>
-          <div class="tag-label" style="color: var(--coral);">Deterministic Policy Gate</div>
-          <div style="font-size: 17px; font-weight: 800; color: var(--dark-green); margin-top: 4px;">P-03 Check: COLOR CONTRADICTION</div>
-          <p style="font-size: 11.5px; color: var(--text-muted); margin-top: 3px;">
-            Specification contradiction flagged against Shopify order manifest.
-          </p>
-
-          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; background: #FAF8F5; border: 1px solid var(--border-light); padding: 6px 10px; margin-top: 8px; color: var(--dark-green);">
-            typed JSON, requires_seller_approval: true
-          </div>
-
-          <div class="decision-finding">
-            <div class="status-txt">STATUS: ESCALATE (SELLER REVIEW REQUIRED)</div>
-            <div style="font-size: 10.5px; color: #991B1B; margin-top: 3px;">Color mismatch observed · Exact SKU unconfirmed · No auto-denial.</div>
-          </div>
-
-          <div style="margin-top: 10px;">
-            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase;">
-              Seller Action Options
-            </div>
-            <div style="font-size: 11.5px; color: var(--dark-green); margin-top: 3px; line-height: 1.4;">
-              1. Accept as merchant mis-shipment (seller mistake)<br>
-              2. Ask customer for outside-box shipping label (buyer mistake)<br>
-              3. Hold return for physical inspection at warehouse (potential swap)
-            </div>
+          <div class="dec-tag">DETERMINISTIC POLICY GATE</div>
+          <div class="dec-title">P-03: COLOR CONTRADICTION</div>
+          <div class="dec-sub">{d3['decision_panel']['next_action']}<br>Observed: {d3['decision_panel']['observed_color']} · Exact SKU: {d3['decision_panel']['exact_sku']}</div>
+          <div class="dec-opt-title">Seller Resolution Options:</div>
+          <div class="dec-opt-list">
+            <div>• {d3['decision_panel']['seller_options'][0]}</div>
+            <div>• {d3['decision_panel']['seller_options'][1]}</div>
+            <div>• {d3['decision_panel']['seller_options'][2]}</div>
           </div>
         </div>
-
-        <div class="safety-box">
-          <strong>Deterministic Guardrails:</strong><br>
-          • Refund ceiling: 0 &lt; amount &le; min(₹4,999, remaining refundable, paid amount)<br>
-          • No automatic customer denial · No refund released without seller click
+        <div class="dec-guardrail">
+          Financial Safety Ceiling:<br>
+          {data['meta']['refund_guardrail']['formula']}<br>
+          No auto-denial · No refund released without seller click
         </div>
       </div>
     </div>
@@ -1038,136 +1053,115 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 4: SYSTEM ARCHITECTURE (DARK + AGENTIC STATEFUL LOOP) -->
+  <!-- SLIDE 4: ARCHITECTURE -->
   <section class="slide dark" id="slide-4">
-    <div class="tag-label">System Architecture · Dynamic Agentic Governance</div>
-    <h2 class="slide-title">Models observe. Code verifies. Seller authorizes.</h2>
-    <p class="slide-sub">Dynamic action selection and stateful resumption under deterministic human authorization.</p>
+    <div class="tag-label">{d4['tag']}</div>
+    <h2 class="slide-title">{d4['headline']}</h2>
+    <p class="slide-sub">{d4['subheadline']}</p>
 
-    <!-- 6-Step Horizontal Pipeline with Directional Arrows -->
-    <div class="arch-pipeline">
-      <div class="pipe-step model-step">
-        <div>
-          <div class="pipe-num">01 PLAN</div>
-          <div class="pipe-title">Planner</div>
+    <div class="arch-layout">
+      <!-- 6-Step Pipeline -->
+      <div class="arch-pipeline">
+        <div class="pipe-step model-step">
+          <div>
+            <div class="pipe-num">01 PLAN</div>
+            <div class="pipe-title">Plan</div>
+          </div>
+          <span class="pipe-role-tag tag-model">MODEL</span>
         </div>
-        <span class="pipe-role-tag tag-model">MODEL</span>
-      </div>
-      <span class="pipe-arrow">→</span>
+        <span class="pipe-arrow">→</span>
 
-      <div class="pipe-step code-step">
-        <div>
-          <div class="pipe-num">02 RETRIEVE</div>
-          <div class="pipe-title">Tools &amp; Video</div>
+        <div class="pipe-step code-step">
+          <div>
+            <div class="pipe-num">02 RETRIEVE</div>
+            <div class="pipe-title">Retrieve</div>
+          </div>
+          <span class="pipe-role-tag tag-code">CODE</span>
         </div>
-        <span class="pipe-role-tag tag-code">CODE</span>
-      </div>
-      <span class="pipe-arrow">→</span>
+        <span class="pipe-arrow">→</span>
 
-      <div class="pipe-step code-step">
-        <div>
-          <div class="pipe-num">03 EVALUATE</div>
-          <div class="pipe-title">Policy Engine</div>
+        <div class="pipe-step code-step">
+          <div>
+            <div class="pipe-num">03 EVALUATE</div>
+            <div class="pipe-title">Evaluate</div>
+          </div>
+          <span class="pipe-role-tag tag-code">CODE</span>
         </div>
-        <span class="pipe-role-tag tag-code">CODE</span>
-      </div>
-      <span class="pipe-arrow">→</span>
+        <span class="pipe-arrow">→</span>
 
-      <div class="pipe-step model-step">
-        <div>
-          <div class="pipe-num">04 AUDIT</div>
-          <div class="pipe-title">Critic</div>
+        <div class="pipe-step model-step">
+          <div>
+            <div class="pipe-num">04 AUDIT</div>
+            <div class="pipe-title">Audit</div>
+          </div>
+          <span class="pipe-role-tag tag-model">MODEL</span>
         </div>
-        <span class="pipe-role-tag tag-model">MODEL</span>
-      </div>
-      <span class="pipe-arrow">→</span>
+        <span class="pipe-arrow">→</span>
 
-      <div class="pipe-step human-step">
-        <div>
-          <div class="pipe-num">05 AUTHORIZE</div>
-          <div class="pipe-title">Seller Gate</div>
+        <div class="pipe-step human-step">
+          <div>
+            <div class="pipe-num">05 AUTHORIZE</div>
+            <div class="pipe-title">Authorize</div>
+          </div>
+          <span class="pipe-role-tag tag-human">HUMAN</span>
         </div>
-        <span class="pipe-role-tag tag-human">HUMAN</span>
-      </div>
-      <span class="pipe-arrow">→</span>
+        <span class="pipe-arrow">→</span>
 
-      <div class="pipe-step code-step">
-        <div>
-          <div class="pipe-num">06 RECORD</div>
-          <div class="pipe-title">Audit Log</div>
-        </div>
-        <span class="pipe-role-tag tag-code">CODE</span>
-      </div>
-    </div>
-
-    <!-- Dual Operational Branches: Agentic Trace vs Order Status Fast Path -->
-    <div class="agent-paths-grid">
-      <!-- Path 1: Dynamic Stateful Clarification Loop (Case C) -->
-      <div class="agent-path-card">
-        <div class="path-header">
-          <span class="path-title loop">DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)</span>
-          <span style="font-size: 8.5px; color: #93C5FD; font-family: 'IBM Plex Mono', monospace;">Observe → Decide → Act → Wait → Resume</span>
-        </div>
-        <div class="trace-steps">
-          <span class="trace-node">Dark Frames</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">ask_for_evidence()</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node wait">WAITING_FOR_EVIDENCE</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">Customer Uploads</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">Resume Case</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">Seller Review</span>
+        <div class="pipe-step code-step">
+          <div>
+            <div class="pipe-num">06 RECORD</div>
+            <div class="pipe-title">Record</div>
+          </div>
+          <span class="pipe-role-tag tag-code">CODE</span>
         </div>
       </div>
 
-      <!-- Path 2: Secondary Zero-Vision Order Status Route (PS-04 Fit) -->
-      <div class="agent-path-card">
-        <div class="path-header">
-          <span class="path-title fast">SECONDARY PS-04 ROUTE: ORDER STATUS FAST PATH</span>
-          <span style="font-size: 8.5px; color: #34D399; font-family: 'IBM Plex Mono', monospace;">Zero-Vision Direct Route</span>
+      <!-- Dual Operational Branches -->
+      <div class="agent-paths-grid">
+        <div class="agent-path-card">
+          <div class="path-header">
+            <span class="path-title loop">{d4['case_c_flow']['title']}</span>
+            <span style="font-size: 8.5px; color: #93C5FD; font-family: 'IBM Plex Mono', monospace;">Observe → Decide → Act → Wait → Resume</span>
+          </div>
+          <div class="trace-steps">
+            <span class="trace-node">Dark Frames</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">ask_for_evidence()</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node wait">WAITING_FOR_EVIDENCE</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">Customer Uploads</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">Resume Case</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">Seller Review</span>
+          </div>
+          <div class="path-desc">When lighting is insufficient, the agent halts standard execution, prompts a targeted checklist, pauses state in WAITING_FOR_EVIDENCE, and seamlessly resumes context upon media receipt (1 retry limit protects customer experience).</div>
         </div>
-        <div class="trace-steps">
-          <span class="trace-node">“Where is my order?”</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">Query Store &amp; Shippo APIs</span>
-          <span class="trace-arrow">→</span>
-          <span class="trace-node">Delivery Scan &amp; Time</span>
+
+        <div class="agent-path-card fast">
+          <div class="path-header">
+            <span class="path-title fast">SECONDARY PS-04 ROUTE: ORDER STATUS FAST PATH</span>
+            <span style="font-size: 8.5px; color: #34D399; font-family: 'IBM Plex Mono', monospace;">Zero-Vision Direct Route</span>
+          </div>
+          <div class="trace-steps">
+            <span class="trace-node">“Where is my order?”</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">Query Store &amp; Shippo APIs</span>
+            <span class="trace-arrow">→</span>
+            <span class="trace-node">Delivery Scan &amp; Time</span>
+          </div>
+          <div class="path-desc">Routine order queries take a direct tool route without calling heavy multimodal models. Escalates to human seller only if courier scan shows abnormal transit delay.</div>
         </div>
       </div>
-    </div>
 
-    <!-- 4 Decision Function Outcomes (Strict Priority Order) -->
-    <div class="arch-branches">
-      <div class="branch-card">
-        <div class="branch-head head-contradict">1. CONTRADICTION → ESCALATE</div>
-        <div class="branch-desc">Discrepancy flagged (e.g. Case B). Inhibits automated label/refund. Seller reviews 3 options.</div>
+      <!-- Governance Pillars -->
+      <div class="arch-legend">
+        <span><strong style="color: var(--teal-accent);">■ {d4['governance_rules'][0]['label']}:</strong> {d4['governance_rules'][0]['text']}</span>
+        <span><strong style="color: #F5F3EF;">■ {d4['governance_rules'][1]['label']}:</strong> {d4['governance_rules'][1]['text']}</span>
+        <span><strong style="color: #60A5FA;">■ {d4['governance_rules'][2]['label']}:</strong> {d4['governance_rules'][2]['text']}</span>
+        <span><strong style="color: #FBBF24;">■ {d4['governance_rules'][3]['label']}:</strong> {d4['governance_rules'][3]['text']}</span>
       </div>
-
-      <div class="branch-card">
-        <div class="branch-head head-hardfail">2. HARD FAIL → ESCALATE</div>
-        <div class="branch-desc">Mandatory rule violation (e.g. expired return window). Seller makes final decision; never auto-deny.</div>
-      </div>
-
-      <div class="branch-card">
-        <div class="branch-head head-unclear">3. UNCLEAR ONLY → ASK MORE</div>
-        <div class="branch-desc">Low brightness or blurry barcode (e.g. Case C). Prompts exact re-film checklist (1 retry limit).</div>
-      </div>
-
-      <div class="branch-card">
-        <div class="branch-head head-pass">4. ALL PASS → APPROVE REVIEW</div>
-        <div class="branch-desc">All clauses pass (e.g. Case A). Prepares mock label and drafts refund in pending_return_receipt.</div>
-      </div>
-    </div>
-
-    <!-- Architecture Guarantees & Critic -->
-    <div class="arch-legend">
-      <span><strong style="color: #00D1A7;">■ Model Calls:</strong> Bounded design estimate (3 base calls: planner, vision, critic + retries)</span>
-      <span><strong style="color: #F5F3EF;">■ Policy Rules:</strong> Deterministic Python code rules P-01 to P-08, never prompts</span>
-      <span><strong style="color: #60A5FA;">■ Critic Duty:</strong> Reviews cited frames, flags unsupported observations (correlated error limits noted)</span>
-      <span><strong style="color: #FBBF24;">■ Safety Boundary:</strong> Backend authorization boundary — LLMs cannot execute financial refund tools</span>
     </div>
 
     <div class="slide-footer">
@@ -1176,151 +1170,119 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </section>
 
-  <!-- SLIDE 5: FOUR CONTROLLED PROTOTYPE BEHAVIORS -->
+  <!-- SLIDE 5: DEMO SCENARIOS -->
   <section class="slide" id="slide-5">
-    <div class="tag-label">Demo Scenarios · Grounded Verification</div>
-    <h2 class="slide-title">Four scenarios. Four predictable behaviors.</h2>
-    <p class="slide-sub">Different evidence conditions produce different controlled agent actions.</p>
+    <div class="tag-label">{d5['tag']}</div>
+    <h2 class="slide-title">{d5['headline']}</h2>
+    <p class="slide-sub">{d5['subheadline']}</p>
 
     <div class="scenarios-grid">
-      <!-- Case A -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-ready">CASE A · READY</div>
-        <div class="sc-evidence">
-          <strong>Consistent Evidence</strong> · ORD-1042 (₹1,499) · SKU matches manifest, tag visible, defect confirmed within 7d.
-        </div>
+        <div class="sc-badge badge-match">CASE {d5['cases'][0]['number']} · {d5['cases'][0]['name']}</div>
+        <div class="sc-evidence">{d5['cases'][0]['observation']}</div>
         <div class="sc-arrow">→</div>
-        <div class="sc-action">
-          Seller approval releases mock return label and refund draft in <strong>pending_return_receipt</strong>, not executed refund.
-        </div>
+        <div class="sc-action"><strong>{d5['cases'][0]['state_action']}</strong><br>{d5['cases'][0]['action_detail']}</div>
       </div>
 
-      <!-- Case B -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-mismatch">CASE B · MISMATCH</div>
-        <div class="sc-evidence">
-          <strong>Color Contradiction</strong> · HEAD-WHT-02 (White) ordered vs Frame 00:07 Black item · SKU unverified.
-        </div>
+        <div class="sc-badge badge-mismatch">CASE {d5['cases'][1]['number']} · {d5['cases'][1]['name']}</div>
+        <div class="sc-evidence">{d5['cases'][1]['observation']}</div>
         <div class="sc-arrow">→</div>
-        <div class="sc-action">
-          <strong>ESCALATE</strong> (no label, no refund, no denial). Seller options: mis-shipment / box label / physical inspection.
-        </div>
+        <div class="sc-action"><strong>{d5['cases'][1]['state_action']}</strong><br>{d5['cases'][1]['action_detail']}</div>
       </div>
 
-      <!-- Case C -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-unclear">CASE C · UNCLEAR</div>
-        <div class="sc-evidence">
-          <strong>Insufficient Visibility</strong> · 4-second dark video, brightness 28, only 2 usable frames.
-        </div>
+        <div class="sc-badge badge-unclear">CASE {d5['cases'][2]['number']} · {d5['cases'][2]['name']}</div>
+        <div class="sc-evidence">{d5['cases'][2]['observation']}</div>
         <div class="sc-arrow">→</div>
-        <div class="sc-action">
-          Agent requests targeted photo; enters <strong>WAITING_FOR_EVIDENCE</strong>; resumes case on upload (1 retry limit).
-        </div>
+        <div class="sc-action"><strong>{d5['cases'][2]['state_action']}</strong><br>{d5['cases'][2]['action_detail']}</div>
       </div>
 
-      <!-- Case D -->
       <div class="scenario-lane">
-        <div class="sc-badge badge-continuity">CASE D · CONTEXT</div>
-        <div class="sc-evidence">
-          <strong>Sequence Continuity</strong> · Staged parcel-to-product take: opening sealed parcel to product reveal.
-        </div>
+        <div class="sc-badge badge-continuity">CASE {d5['cases'][3]['number']} · {d5['cases'][3]['name']}</div>
+        <div class="sc-evidence">{d5['cases'][3]['observation']}</div>
         <div class="sc-arrow">→</div>
-        <div class="sc-action">
-          Expected behavior: inspect sequence continuity and flag missing transitions for seller review.
-        </div>
+        <div class="sc-action"><strong>{d5['cases'][3]['state_action']}</strong><br>{d5['cases'][3]['action_detail']}</div>
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining refundable amount, order paid amount)</span>
+      <span>Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining, paid)</span>
       <span>Slide 5 / 6</span>
     </div>
   </section>
 
-  <!-- SLIDE 6: 24-HOUR EXECUTION (TIMELINE GRID) -->
+  <!-- SLIDE 6: 24-HOUR BUILD PLAN -->
   <section class="slide" id="slide-6">
-    <div class="tag-label">Execution Plan · Team Rookie (3 Members)</div>
-    <h2 class="slide-title">Built for a 24-hour sprint.</h2>
-    <p class="slide-sub">Buildable in 24 hours by 3 people, if the scope stays narrow.</p>
+    <div class="tag-label">{d6['tag']}</div>
+    <h2 class="slide-title">{d6['headline']}</h2>
+    <p class="slide-sub">{d6['subheadline']}</p>
 
     <div class="timeline-container">
       <div class="timeline-table-grid">
         <div class="t-cell">
-          <div class="t-time">00h – 06h · Foundation</div>
-          <div class="t-title">Mock APIs &amp; Agent Core</div>
-          <div class="t-owner">Person A (Backend), supported by C<br>LangGraph skeleton, mock store/courier fixtures, order status route</div>
+          <div class="t-time">{d6['timeline'][0]['hours']} · {d6['timeline'][0]['phase']}</div>
+          <div class="t-title">{d6['timeline'][0]['title']}</div>
+          <div class="t-owner">{d6['timeline'][0]['owner']}</div>
+          <div class="t-desc">{d6['timeline'][0]['deliverables']}</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">06h – 12h · Evidence</div>
-          <div class="t-title">Evidence Pipeline &amp; Policy</div>
-          <div class="t-owner">Person B (Video &amp; UI)<br>FFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt</div>
+          <div class="t-time">{d6['timeline'][1]['hours']} · {d6['timeline'][1]['phase']}</div>
+          <div class="t-title">{d6['timeline'][1]['title']}</div>
+          <div class="t-owner">{d6['timeline'][1]['owner']}</div>
+          <div class="t-desc">{d6['timeline'][1]['deliverables']}</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">12h – 18h · Integration</div>
-          <div class="t-title">State Flow &amp; Scenarios</div>
-          <div class="t-owner">Person C (Integration), supported by A/B<br>End-to-end wiring, clarification/resume loop, seller console UI</div>
+          <div class="t-time">{d6['timeline'][2]['hours']} · {d6['timeline'][2]['phase']}</div>
+          <div class="t-title">{d6['timeline'][2]['title']}</div>
+          <div class="t-owner">{d6['timeline'][2]['owner']}</div>
+          <div class="t-desc">{d6['timeline'][2]['deliverables']}</div>
         </div>
 
         <div class="t-cell">
-          <div class="t-time">18h – 24h · Validation</div>
-          <div class="t-title">Testing &amp; Submission</div>
-          <div class="t-owner">All 3 Members<br>Fallback testing, authorization tests, demo video recording, README</div>
+          <div class="t-time">{d6['timeline'][3]['hours']} · {d6['timeline'][3]['phase']}</div>
+          <div class="t-title">{d6['timeline'][3]['title']}</div>
+          <div class="t-owner">{d6['timeline'][3]['owner']}</div>
+          <div class="t-desc">{d6['timeline'][3]['deliverables']}</div>
         </div>
       </div>
 
-      <div class="scope-split">
+      <div class="scope-grid">
         <div class="scope-card scope-in">
-          <div class="scope-head">NEVER CUT (CORE ENGINE)</div>
+          <div class="scope-head">MUST DELIVER (CORE PROTOTYPE)</div>
           <div class="scope-text">
-            Deterministic policy engine (P-01 to P-08) · Evidence-pack frame citation · Fail-closed seller approval gate · Structured JSON audit log · Clarification/resume loop · 4 demo cases.
+            • Deterministic policy engine (P-01 to P-08)<br>
+            • Evidence-pack keyframe citations<br>
+            • Fail-closed seller authorization gate<br>
+            • Structured JSON audit trail log<br>
+            • Stateful clarification/resume loop<br>
+            • 4 reproducible demo scenarios
           </div>
         </div>
 
         <div class="scope-card scope-out">
-          <div class="scope-head">CUT FIRST (DEFERRED EXPANSION)</div>
+          <div class="scope-head">CUT FIRST IF BEHIND (DEFERRED EXPANSION)</div>
           <div class="scope-text">
-            Video OCR barcode scanner · Auto-drafted customer email reply · Seller analytics dashboard · Production payment gateways / live WhatsApp webhooks.
+            • Live carrier webhooks (keep mock courier)<br>
+            • Multi-item return parsing (keep 1 item/return)<br>
+            • Video OCR barcode scanner (keep visual color)<br>
+            • Live payment gateways (keep draft refunds)<br>
+            • Merchant analytics dashboard
           </div>
         </div>
-      </div>
-
-      <div class="closing-quote">
-        “The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control.”
       </div>
     </div>
 
     <div class="slide-footer">
-      <span>Team Rookie (3 members) · PS-04 Autonomous Support Agent · 24-Hour Prototype Feasibility</span>
+      <span>Team Rookie (3 Members) · PS-04 Autonomous Support Agent · 24-Hour Prototype Feasibility</span>
       <span>Slide 6 / 6</span>
     </div>
   </section>
 
-</div>
-
-<script>
-  let currentSlide = 1;
-  const totalSlides = 6;
-  function showSlide(n) {{
-    const el = document.getElementById('slide-' + n);
-    if (el) {{
-      el.scrollIntoView({{ behavior: 'smooth' }});
-      currentSlide = n;
-    }}
-  }}
-  window.addEventListener('keydown', (e) => {{
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {{
-      if (currentSlide < totalSlides) showSlide(currentSlide + 1);
-    }} else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {{
-      if (currentSlide > 1) showSlide(currentSlide - 1);
-    }}
-  }});
-</script>
 </body>
-</html>
-"""
+</html>"""
 
 def find_browser():
     candidates = [
@@ -1345,7 +1307,7 @@ def find_browser():
     return None
 
 def build():
-    # 1. Write HTML outputs (NEVER write to src/generate_v4_html.py)
+    # 1. Write HTML deliverables
     deliverable_html = base_dir / "deliverables" / "ReturnLens_v4.html"
     root_html = base_dir / "ReturnLens_v4.html"
     index_html = base_dir / "index.html"

@@ -1,5 +1,6 @@
 import os
-import shutil
+import sys
+import json
 from pathlib import Path
 from pptx import Presentation
 from pptx.util import Inches, Pt
@@ -7,33 +8,54 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE
 
-def create_deck():
+def build_pptx():
+    base_dir = Path(__file__).resolve().parent.parent
+    data_path = base_dir / "content" / "deck_data.json"
+    assets_dir = base_dir / "src" / "assets"
+
+    if not data_path.exists():
+        raise FileNotFoundError(f"Canonical data file missing: {data_path}")
+
+    with open(data_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Required assets validation: Must fail build if missing!
+    img_white = assets_dir / "studio_white_headphones.jpg"
+    img_black = assets_dir / "unboxing_black_headphones.jpg"
+
+    if not img_white.exists():
+        raise FileNotFoundError(f"CRITICAL ASSET MISSING: {img_white}")
+    if not img_black.exists():
+        raise FileNotFoundError(f"CRITICAL ASSET MISSING: {img_black}")
+
     prs = Presentation()
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
-    blank_slide_layout = prs.slide_layouts[6]
+    blank_layout = prs.slide_layouts[6]
 
-    # Color Palette: ReturnLens Warm Editorial Swiss
+    # Design Tokens & Palette
     C_CREAM = RGBColor(0xF5, 0xF3, 0xEF)
     C_DARK = RGBColor(0x17, 0x26, 0x21)
+    C_DARK_BG = RGBColor(0x0F, 0x1A, 0x16)
+    C_CARD_DARK = RGBColor(0x17, 0x26, 0x21)
     C_TEAL = RGBColor(0x00, 0x6B, 0x55)
     C_TEAL_LIGHT = RGBColor(0xE1, 0xF2, 0xEC)
+    C_TEAL_ACCENT = RGBColor(0x00, 0xD1, 0xA7)
     C_CORAL = RGBColor(0xD9, 0x5D, 0x39)
     C_CORAL_LIGHT = RGBColor(0xFC, 0xEC, 0xE8)
+    C_CORAL_DARK = RGBColor(0x99, 0x1B, 0x1B)
     C_AMBER = RGBColor(0xD9, 0x77, 0x06)
     C_AMBER_LIGHT = RGBColor(0xFE, 0xF3, 0xC7)
-    C_BORDER_LIGHT = RGBColor(0xE2, 0xDE, 0xD4)
+    C_BLUE_LIGHT = RGBColor(0xEF, 0xF6, 0xFF)
+    C_BLUE_TEXT = RGBColor(0x1E, 0x40, 0xAF)
     C_MUTED = RGBColor(0x59, 0x6E, 0x64)
     C_SUBTLE = RGBColor(0x7A, 0x8E, 0x85)
-    C_DARK_BG = RGBColor(0x0F, 0x1A, 0x16)
+    C_BORDER_LIGHT = RGBColor(0xE2, 0xDE, 0xD4)
     C_BORDER_DARK = RGBColor(0x22, 0x38, 0x30)
     C_WHITE = RGBColor(0xFF, 0xFF, 0xFF)
 
     FONT_HEAD = "Inter"
     FONT_MONO = "IBM Plex Mono"
-
-    base_dir = Path(__file__).resolve().parent.parent
-    assets_dir = base_dir / "src" / "assets"
 
     def set_bg(slide, color):
         bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
@@ -43,153 +65,110 @@ def create_deck():
         return bg
 
     def add_footer(slide, left_text, right_text, is_dark=False):
-        y = Inches(6.85)
+        y = Inches(6.92)
         line = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), y, Inches(11.733), Inches(0.015))
         line.fill.solid()
         line.fill.fore_color.rgb = C_BORDER_DARK if is_dark else C_BORDER_LIGHT
         line.line.fill.background()
 
-        tb_left = slide.shapes.add_textbox(Inches(0.8), y + Inches(0.08), Inches(9.0), Inches(0.4))
-        p = tb_left.text_frame.paragraphs[0]
+        tb_l = slide.shapes.add_textbox(Inches(0.8), y + Inches(0.06), Inches(9.0), Inches(0.4))
+        p = tb_l.text_frame.paragraphs[0]
         p.text = left_text
         p.font.name = FONT_MONO
-        p.font.size = Pt(10)
+        p.font.size = Pt(9.5)
         p.font.color.rgb = RGBColor(0x5C, 0x78, 0x6E) if is_dark else C_SUBTLE
 
-        tb_right = slide.shapes.add_textbox(Inches(10.0), y + Inches(0.08), Inches(2.533), Inches(0.4))
-        p = tb_right.text_frame.paragraphs[0]
+        tb_r = slide.shapes.add_textbox(Inches(10.0), y + Inches(0.06), Inches(2.533), Inches(0.4))
+        p = tb_r.text_frame.paragraphs[0]
         p.text = right_text
         p.font.name = FONT_MONO
-        p.font.size = Pt(10)
+        p.font.size = Pt(9.5)
         p.font.color.rgb = RGBColor(0x5C, 0x78, 0x6E) if is_dark else C_SUBTLE
         p.alignment = PP_ALIGN.RIGHT
 
     def set_speaker_notes(slide, notes_text):
-        notes_slide = slide.notes_slide
-        tf = notes_slide.notes_text_frame
+        tf = slide.notes_slide.notes_text_frame
         tf.text = notes_text.strip()
 
+    slides_data = {s["slide_number"]: s for s in data["slides"]}
+
     # =========================================================================
-    # SLIDE 1: PRODUCT LAUNCH & EXECUTIVE SUMMARY
+    # SLIDE 1: PRODUCT HERO & CONSOLE (EDITORIAL SWISS)
     # =========================================================================
-    s1 = prs.slides.add_slide(blank_slide_layout)
+    d1 = slides_data[1]
+    s1 = prs.slides.add_slide(blank_layout)
     set_bg(s1, C_CREAM)
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(6.2), Inches(0.4))
+    # Left Column (38% width)
+    tb = s1.shapes.add_textbox(Inches(0.8), Inches(0.65), Inches(4.5), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "RETURNLENS · PRODUCT LAUNCH"
+    p.text = d1["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(1.05), Inches(6.2), Inches(1.1))
+    tb = s1.shapes.add_textbox(Inches(0.8), Inches(1.15), Inches(4.5), Inches(1.1))
     p = tb.text_frame.paragraphs[0]
-    p.text = "RETURNLENS"
+    p.text = d1["headline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(54)
+    p.font.size = Pt(56)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(2.2), Inches(6.2), Inches(0.8))
+    tb = s1.shapes.add_textbox(Inches(0.8), Inches(2.35), Inches(4.5), Inches(0.85))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Every return decision, backed by evidence."
+    p.text = d1["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(26)
+    p.font.size = Pt(24)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s1.shapes.add_textbox(Inches(0.8), Inches(3.1), Inches(6.2), Inches(1.2))
+    tb = s1.shapes.add_textbox(Inches(0.8), Inches(3.3), Inches(4.5), Inches(1.2))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Solo online sellers lose 15–20 minutes per return deciding from memory across disconnected tabs.\n\nReturnLens indexes unboxing video keyframes, matches store orders, applies deterministic policy rules, and presents a 1-click decision console to the merchant."
+    p.text = d1["summary"] + "\n\nWhen a buyer submits an unboxing video, ReturnLens links video keyframes to store truth and courier scans, evaluates deterministic policy rules, and presents a 1-click decision console to the solo merchant."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(12)
+    p.font.size = Pt(13)
     p.font.color.rgb = C_MUTED
 
-    badge_meta = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(4.5), Inches(6.2), Inches(0.65))
-    badge_meta.fill.solid()
-    badge_meta.fill.fore_color.rgb = C_WHITE
-    badge_meta.line.color.rgb = C_BORDER_LIGHT
-    badge_meta.line.width = Pt(1)
-    tf = badge_meta.text_frame
-    p = tf.paragraphs[0]
-    p.text = "AgentX Hackathon 2026 · PS-04 Track · Team Rookie (3 Members)"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = "Thesis: Models observe. Code verifies. Seller authorizes."
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(10)
-    p2.font.color.rgb = C_DARK
-
     # Metrics row
-    m_box1 = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(5.3), Inches(1.9), Inches(1.25))
-    m_box1.fill.solid()
-    m_box1.fill.fore_color.rgb = C_WHITE
-    m_box1.line.color.rgb = C_BORDER_LIGHT
-    m_box1.line.width = Pt(1)
-    tf = m_box1.text_frame
-    p = tf.paragraphs[0]
-    p.text = "15–20m"
-    p.font.name = FONT_HEAD
-    p.font.size = Pt(22)
-    p.font.bold = True
-    p.font.color.rgb = C_CORAL
-    p2 = tf.add_paragraph()
-    p2.text = "Current manual triage time per return ticket"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(9)
-    p2.font.color.rgb = C_MUTED
+    metrics = [
+        ("15–20m", "Manual triage eliminated"),
+        ("1-Click", "Merchant verification"),
+        ("24h", "Prototype feasibility")
+    ]
+    for i, (m_val, m_lbl) in enumerate(metrics):
+        mx = Inches(0.8) + i * Inches(1.5)
+        m_box = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, mx, Inches(5.1), Inches(1.4), Inches(1.4))
+        m_box.fill.solid()
+        m_box.fill.fore_color.rgb = C_WHITE
+        m_box.line.color.rgb = C_BORDER_LIGHT
+        m_box.line.width = Pt(1)
+        tf = m_box.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = m_val
+        p.font.name = FONT_HEAD
+        p.font.size = Pt(20)
+        p.font.bold = True
+        p.font.color.rgb = C_TEAL if i == 1 else (C_CORAL if i == 0 else C_DARK)
+        p2 = tf.add_paragraph()
+        p2.text = m_lbl
+        p2.font.name = FONT_HEAD
+        p2.font.size = Pt(9.5)
+        p2.font.color.rgb = C_MUTED
 
-    m_box2 = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(2.95), Inches(5.3), Inches(1.9), Inches(1.25))
-    m_box2.fill.solid()
-    m_box2.fill.fore_color.rgb = C_WHITE
-    m_box2.line.color.rgb = C_BORDER_LIGHT
-    m_box2.line.width = Pt(1)
-    tf = m_box2.text_frame
-    p = tf.paragraphs[0]
-    p.text = "1-Click"
-    p.font.name = FONT_HEAD
-    p.font.size = Pt(22)
-    p.font.bold = True
-    p.font.color.rgb = C_TEAL
-    p2 = tf.add_paragraph()
-    p2.text = "Merchant decision with cited keyframe evidence"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(9)
-    p2.font.color.rgb = C_MUTED
+    # Right Column: Dominant Seller Review Console (60% width)
+    c_left = Inches(5.6)
+    c_top = Inches(0.75)
+    c_w = Inches(6.933)
+    c_h = Inches(5.9)
 
-    m_box3 = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(5.1), Inches(5.3), Inches(1.9), Inches(1.25))
-    m_box3.fill.solid()
-    m_box3.fill.fore_color.rgb = C_WHITE
-    m_box3.line.color.rgb = C_BORDER_LIGHT
-    m_box3.line.width = Pt(1)
-    tf = m_box3.text_frame
-    p = tf.paragraphs[0]
-    p.text = "24h"
-    p.font.name = FONT_HEAD
-    p.font.size = Pt(22)
-    p.font.bold = True
-    p.font.color.rgb = C_DARK
-    p2 = tf.add_paragraph()
-    p2.text = "Prototype feasibility for 3-member team"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(9)
-    p2.font.color.rgb = C_MUTED
-
-    # Right Console Mockup
-    c_left = Inches(7.4)
-    c_top = Inches(0.85)
-    c_w = Inches(5.133)
-    c_h = Inches(5.7)
-
-    console_bg = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, c_h)
-    console_bg.fill.solid()
-    console_bg.fill.fore_color.rgb = C_WHITE
-    console_bg.line.color.rgb = C_BORDER_LIGHT
-    console_bg.line.width = Pt(1)
+    con_bg = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, c_h)
+    con_bg.fill.solid()
+    con_bg.fill.fore_color.rgb = C_WHITE
+    con_bg.line.color.rgb = C_BORDER_LIGHT
+    con_bg.line.width = Pt(1)
 
     c_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left, c_top, c_w, Inches(0.55))
     c_bar.fill.solid()
@@ -197,193 +176,189 @@ def create_deck():
     c_bar.line.fill.background()
     tf = c_bar.text_frame
     p = tf.paragraphs[0]
-    p.text = "RETURNLENS SELLER CONSOLE  ·  CASE #RT-1042"
+    p.text = f"{d1['console_mockup']['title']}  ·  {d1['console_mockup']['case_badge']}"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(10)
     p.font.bold = True
-    p.font.color.rgb = RGBColor(0x00, 0xD1, 0xA7)
+    p.font.color.rgb = C_TEAL_ACCENT
 
-    # Console Body
-    hero_img_path = assets_dir / "studio_white_headphones.png"
-    if hero_img_path.exists():
-        s1.shapes.add_picture(str(hero_img_path), c_left + Inches(0.2), c_top + Inches(0.7), Inches(2.2), Inches(2.2))
+    # Embedded product image inside Console!
+    s1.shapes.add_picture(str(img_white), c_left + Inches(0.3), c_top + Inches(0.8), Inches(2.7), Inches(2.3))
 
-    p_left = c_left + Inches(2.55)
-    p_w = c_w - Inches(2.75)
-    tb_c_info = s1.shapes.add_textbox(p_left, c_top + Inches(0.7), p_w, Inches(4.3))
-    tf = tb_c_info.text_frame
+    # Console Details (Right side of console)
+    det_left = c_left + Inches(3.2)
+    det_w = c_w - Inches(3.5)
+    tb_det = s1.shapes.add_textbox(det_left, c_top + Inches(0.75), det_w, Inches(2.4))
+    tf = tb_det.text_frame
     tf.word_wrap = True
 
     p = tf.paragraphs[0]
     p.text = "ORDER INFORMATION"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9)
+    p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_SUBTLE
 
     p2 = tf.add_paragraph()
-    p2.text = "Order #ORD-8821\nSKU: HEAD-WHT-02 (White)\nPrice: ₹4,999 · Delivered 4d ago"
+    p2.text = f"{d1['console_mockup']['order_info']['order_id']}  ·  {d1['console_mockup']['order_info']['sku']}\n{d1['console_mockup']['order_info']['color']}  ·  Price: {d1['console_mockup']['order_info']['price']}\n{d1['console_mockup']['order_info']['delivery']}"
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(10.5)
+    p2.font.size = Pt(11)
     p2.font.bold = True
     p2.font.color.rgb = C_DARK
 
     p3 = tf.add_paragraph()
-    p3.text = "\nVIDEO EVIDENCE CITATION"
+    p3.text = "\nEVIDENCE CITATION (STAGED)"
     p3.font.name = FONT_MONO
-    p3.font.size = Pt(9)
+    p3.font.size = Pt(9.5)
     p3.font.bold = True
     p3.font.color.rgb = C_SUBTLE
 
     p4 = tf.add_paragraph()
-    p4.text = "Inspection Frame 00:14"
+    p4.text = f"{d1['console_mockup']['evidence_citation']['timestamp']}\n{d1['console_mockup']['evidence_citation']['observation']}"
     p4.font.name = FONT_HEAD
-    p4.font.size = Pt(11)
-    p4.font.bold = True
-    p4.font.color.rgb = C_DARK
+    p4.font.size = Pt(10.5)
+    p4.font.color.rgb = C_MUTED
 
-    p5 = tf.add_paragraph()
-    p5.text = "Potential casing damage flagged · Requires manual confirmation"
-    p5.font.name = FONT_HEAD
-    p5.font.size = Pt(9.5)
-    p5.font.color.rgb = C_MUTED
-
-    p6 = tf.add_paragraph()
-    p6.text = "\nPOLICY VERIFICATION"
-    p6.font.name = FONT_MONO
-    p6.font.size = Pt(9)
-    p6.font.bold = True
-    p6.font.color.rgb = C_SUBTLE
-
-    p7 = tf.add_paragraph()
-    p7.text = "P-01 Defect Check: FLAGGED FOR REVIEW\nP-04 Return Window: PASS (Day 4 of 7)"
-    p7.font.name = FONT_HEAD
-    p7.font.size = Pt(10)
-    p7.font.bold = True
-    p7.font.color.rgb = RGBColor(0x92, 0x40, 0x0E)
-
-    # Console Badge & Button
-    badge = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), c_top + Inches(4.3), c_w - Inches(0.4), Inches(0.4))
-    badge.fill.solid()
-    badge.fill.fore_color.rgb = C_AMBER_LIGHT
-    badge.line.fill.background()
-    p = badge.text_frame.paragraphs[0]
-    p.text = "STATUS: READY FOR SELLER REVIEW (FLAGGED)"
+    # Contradiction Alert Box inside Console
+    alert_box = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(3.3), c_w - Inches(0.6), Inches(0.85))
+    alert_box.fill.solid()
+    alert_box.fill.fore_color.rgb = C_CORAL_LIGHT
+    alert_box.line.color.rgb = C_CORAL
+    alert_box.line.width = Pt(1)
+    tf = alert_box.text_frame
+    tf.word_wrap = True
+    p = tf.paragraphs[0]
+    p.text = f"POLICY GATE: {d1['console_mockup']['evidence_citation']['status_badge']}"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9)
+    p.font.size = Pt(10)
+    p.font.bold = True
+    p.font.color.rgb = C_CORAL_DARK
+    p2 = tf.add_paragraph()
+    p2.text = f"{d1['console_mockup']['policy_check']['window_check']}  |  {d1['console_mockup']['policy_check']['color_check']}"
+    p2.font.name = FONT_HEAD
+    p2.font.size = Pt(10.5)
+    p2.font.color.rgb = C_CORAL_DARK
+
+    # Status & 1-Click Action Button
+    status_bar = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(4.35), c_w - Inches(0.6), Inches(0.45))
+    status_bar.fill.solid()
+    status_bar.fill.fore_color.rgb = C_AMBER_LIGHT
+    status_bar.line.fill.background()
+    p = status_bar.text_frame.paragraphs[0]
+    p.text = d1['console_mockup']['action_prompt']
+    p.font.name = FONT_MONO
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0x92, 0x40, 0x0E)
     p.alignment = PP_ALIGN.CENTER
 
-    btn = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.2), c_top + Inches(4.85), c_w - Inches(0.4), Inches(0.55))
+    btn = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, c_left + Inches(0.3), c_top + Inches(4.95), c_w - Inches(0.6), Inches(0.65))
     btn.fill.solid()
     btn.fill.fore_color.rgb = C_TEAL
     btn.line.fill.background()
     p = btn.text_frame.paragraphs[0]
-    p.text = "Review Evidence & Authorize Draft"
+    p.text = d1['console_mockup']['button_text']
     p.font.name = FONT_HEAD
-    p.font.size = Pt(12)
+    p.font.size = Pt(14)
     p.font.bold = True
     p.font.color.rgb = C_WHITE
     p.alignment = PP_ALIGN.CENTER
 
-    add_footer(s1, "ReturnLens · Idea Pitch Deck · PS-04 · Team Rookie (3 members)", "Slide 1 / 6")
-
-    set_speaker_notes(s1, """
-Slide 1 — Product Hero & Executive Summary:
-- Track & Fit: AgentX Hackathon 2026, Track PS-04 (Autonomous Support Agent for Online Sellers), Team Rookie (3 members).
-- Target Merchant: Solo direct-to-consumer (D2C) e-commerce sellers managing orders, shipping, and returns without dedicated support staff.
-- Core Friction: Solo sellers spend 15–20 minutes per return opening fragmented tabs (buyer chat, Shopify, Shippo tracking, store return policy). Return decisions are currently made from memory without unified evidence.
-- Our Thesis: "Models observe. Code verifies. Seller authorizes."
-- Technical Honesty: In the console mockup, observe the conservative metadata: "Potential casing damage flagged · Requires manual confirmation" rather than an ungrounded claim of incontrovertible defect.
-- Fail-Closed Safety: The system never autonomously transfers money. Return labels and refund drafts remain strictly in pending status until the human merchant reviews evidence and clicks authorization.
-- 24-Hour Hackathon Scope: Focused exclusively on return triage plus one zero-vision order status fast path (reusing store and courier APIs).
-""")
+    add_footer(s1, "ReturnLens · Pitch Deck · PS-04 Track · Team Rookie (3 Members)", "Slide 1 / 6")
+    set_speaker_notes(s1, d1["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 2: THE PROBLEM (3-COLUMN ZERO-OVERLAP LAYOUT)
+    # SLIDE 2: THE PROBLEM (FOUR DISCONNECTED SOURCES & MISSING RECORD)
     # =========================================================================
-    s2 = prs.slides.add_slide(blank_slide_layout)
+    d2 = slides_data[2]
+    s2 = prs.slides.add_slide(blank_layout)
     set_bg(s2, C_CREAM)
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(6.0), Inches(0.4))
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(8.0), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "THE PROBLEM · SOLO SELLER BOTTLENECK"
+    p.text = d2["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.05), Inches(11.7), Inches(0.8))
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.0), Inches(11.7), Inches(0.75))
     p = tb.text_frame.paragraphs[0]
-    p.text = "One return decision. Four disconnected sources."
+    p.text = d2["headline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(38)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.85), Inches(11.7), Inches(0.6))
+    tb = s2.shapes.add_textbox(Inches(0.8), Inches(1.75), Inches(11.7), Inches(0.5))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Sellers decide returns from memory today. ReturnLens assembles one trace before money moves."
+    p.text = d2["subheadline"] + "  ·  " + d2["supporting_statement"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(19)
+    p.font.size = Pt(18)
     p.font.color.rgb = C_MUTED
 
-    col_w = Inches(3.6)
-    gap_w = Inches(4.133)
-    card_h = Inches(1.9)
+    # 3-Column Layout without overlap:
+    # Left: Sources 01 & 03 (Buyer Claim, Courier Tracking)
+    # Center: Giant Critical Gap Card (NO SHARED EVIDENCE RECORD)
+    # Right: Sources 02 & 04 (Store Truth, Return Policy)
+    col_w = Inches(3.5)
+    gap_w = Inches(4.333)
+    card_h = Inches(1.95)
 
-    # Left Column: Today's Friction (Sources 01 & 03)
-    c1 = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(2.6), col_w, card_h)
-    c1.fill.solid()
-    c1.fill.fore_color.rgb = C_WHITE
-    c1.line.color.rgb = C_BORDER_LIGHT
-    tf = c1.text_frame
+    # Source 01
+    s1_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(2.45), col_w, card_h)
+    s1_box.fill.solid()
+    s1_box.fill.fore_color.rgb = C_WHITE
+    s1_box.line.color.rgb = C_BORDER_LIGHT
+    s1_box.line.width = Pt(1)
+    tf = s1_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "01 BUYER VIDEO & CLAIM"
+    p.text = f"{d2['sources'][0]['number']} {d2['sources'][0]['name'].upper()}"
     p.font.name = FONT_MONO
     p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
     p2 = tf.add_paragraph()
-    p2.text = "Unverified Customer Claims"
+    p2.text = d2['sources'][0]['name']
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(13)
+    p2.font.size = Pt(14)
     p2.font.bold = True
     p2.font.color.rgb = C_DARK
     p3 = tf.add_paragraph()
-    p3.text = "Subjective descriptions in chat; videos are unindexed and skipped"
+    p3.text = d2['sources'][0]['detail']
     p3.font.name = FONT_HEAD
-    p3.font.size = Pt(10)
+    p3.font.size = Pt(11)
     p3.font.color.rgb = C_MUTED
 
-    c3 = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(4.7), col_w, card_h)
-    c3.fill.solid()
-    c3.fill.fore_color.rgb = C_WHITE
-    c3.line.color.rgb = C_BORDER_LIGHT
-    tf = c3.text_frame
+    # Source 03
+    s3_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(4.6), col_w, card_h)
+    s3_box.fill.solid()
+    s3_box.fill.fore_color.rgb = C_WHITE
+    s3_box.line.color.rgb = C_BORDER_LIGHT
+    s3_box.line.width = Pt(1)
+    tf = s3_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "03 COURIER TRACKING"
+    p.text = f"{d2['sources'][2]['number']} {d2['sources'][2]['name'].upper()}"
     p.font.name = FONT_MONO
     p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
     p2 = tf.add_paragraph()
-    p2.text = "Delivered 4 Days Ago"
+    p2.text = d2['sources'][2]['name']
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(13)
+    p2.font.size = Pt(14)
     p2.font.bold = True
     p2.font.color.rgb = C_DARK
     p3 = tf.add_paragraph()
-    p3.text = "Shippo mock tracking API scan timestamp verification"
+    p3.text = d2['sources'][2]['detail']
     p3.font.name = FONT_HEAD
-    p3.font.size = Pt(10)
+    p3.font.size = Pt(11)
     p3.font.color.rgb = C_MUTED
 
-    # Center Gap Card: Forceful Editorial Anchor (NO OVERLAP)
-    c_gap = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.6), Inches(2.6), gap_w, Inches(4.0))
+    # Center Gap Anchor
+    c_gap = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(4.5), Inches(2.45), gap_w, Inches(4.1))
     c_gap.fill.solid()
     c_gap.fill.fore_color.rgb = C_DARK
     c_gap.line.color.rgb = C_CORAL
@@ -400,208 +375,183 @@ Slide 1 — Product Hero & Executive Summary:
     p.alignment = PP_ALIGN.CENTER
 
     p2 = tf.add_paragraph()
-    p2.text = "Four systems. No traceable decision."
+    p2.text = d2["gap_card"]["title"]
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(16)
+    p2.font.size = Pt(18)
     p2.font.bold = True
     p2.font.color.rgb = C_CREAM
     p2.alignment = PP_ALIGN.CENTER
 
     p3 = tf.add_paragraph()
-    p3.text = "NO SHARED EVIDENCE RECORD"
-    p3.font.name = FONT_MONO
-    p3.font.size = Pt(11)
-    p3.font.bold = True
-    p3.font.color.rgb = RGBColor(0x00, 0xD1, 0xA7)
+    p3.text = "\n" + d2["gap_card"]["description"]
+    p3.font.name = FONT_HEAD
+    p3.font.size = Pt(11.5)
+    p3.font.color.rgb = RGBColor(0xD1, 0xD5, 0xDB)
     p3.alignment = PP_ALIGN.CENTER
 
     p4 = tf.add_paragraph()
-    p4.text = "\nToday the seller opens 4 tabs, then decides alone. A wrong refund loses inventory; an unfair denial loses a repeat customer.\n\nThe gap is not a missing returns portal, but the absence of a unified record connecting order, video frames, courier scans, and policy terms."
+    p4.text = "\n9.0% vs 15.14%"
     p4.font.name = FONT_HEAD
-    p4.font.size = Pt(10)
-    p4.font.color.rgb = RGBColor(0xD1, 0xD5, 0xDB)
+    p4.font.size = Pt(16)
+    p4.font.bold = True
+    p4.font.color.rgb = C_CORAL
     p4.alignment = PP_ALIGN.CENTER
 
     p5 = tf.add_paragraph()
-    p5.text = "\n9.0% vs 15.14%"
+    p5.text = f"{data['meta']['fraud_metrics']['nrf_2025']}  |  {data['meta']['fraud_metrics']['deloitte_2024']}\n{data['meta']['fraud_metrics']['distinction']}"
     p5.font.name = FONT_HEAD
-    p5.font.size = Pt(14)
-    p5.font.bold = True
-    p5.font.color.rgb = C_CORAL
+    p5.font.size = Pt(9)
+    p5.font.color.rgb = RGBColor(0x9C, 0xA3, 0xAF)
     p5.alignment = PP_ALIGN.CENTER
 
-    p6 = tf.add_paragraph()
-    p6.text = "9% Return Fraud (NRF 2025, fraud only)  |  15.14% (Appriss/Deloitte 2024, fraud + abuse)\nDefinitions differ: strict fraud vs fraud combined with policy abuse."
-    p6.font.name = FONT_HEAD
-    p6.font.size = Pt(8.5)
-    p6.font.color.rgb = RGBColor(0x9C, 0xA3, 0xAF)
-    p6.alignment = PP_ALIGN.CENTER
-
-    # Right Column: Order Truth & Policy (Sources 02 & 04)
-    c2 = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(8.933), Inches(2.6), col_w, card_h)
-    c2.fill.solid()
-    c2.fill.fore_color.rgb = C_WHITE
-    c2.line.color.rgb = C_BORDER_LIGHT
-    tf = c2.text_frame
+    # Right: Sources 02 & 04
+    s2_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(9.033), Inches(2.45), col_w, card_h)
+    s2_box.fill.solid()
+    s2_box.fill.fore_color.rgb = C_WHITE
+    s2_box.line.color.rgb = C_BORDER_LIGHT
+    s2_box.line.width = Pt(1)
+    tf = s2_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "02 ORDER RECORD"
+    p.text = f"{d2['sources'][1]['number']} {d2['sources'][1]['name'].upper()}"
     p.font.name = FONT_MONO
     p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
     p2 = tf.add_paragraph()
-    p2.text = "White Headphones · ₹4,999"
+    p2.text = d2['sources'][1]['name']
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(13)
+    p2.font.size = Pt(14)
     p2.font.bold = True
     p2.font.color.rgb = C_DARK
     p3 = tf.add_paragraph()
-    p3.text = "Shopify mock store API product inventory catalog"
+    p3.text = d2['sources'][1]['detail']
     p3.font.name = FONT_HEAD
-    p3.font.size = Pt(10)
+    p3.font.size = Pt(11)
     p3.font.color.rgb = C_MUTED
 
-    c4 = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(8.933), Inches(4.7), col_w, card_h)
-    c4.fill.solid()
-    c4.fill.fore_color.rgb = C_WHITE
-    c4.line.color.rgb = C_BORDER_LIGHT
-    tf = c4.text_frame
+    s4_box = s2.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(9.033), Inches(4.6), col_w, card_h)
+    s4_box.fill.solid()
+    s4_box.fill.fore_color.rgb = C_WHITE
+    s4_box.line.color.rgb = C_BORDER_LIGHT
+    s4_box.line.width = Pt(1)
+    tf = s4_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "04 RETURN POLICY"
+    p.text = f"{d2['sources'][3]['number']} {d2['sources'][3]['name'].upper()}"
     p.font.name = FONT_MONO
     p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
     p2 = tf.add_paragraph()
-    p2.text = "7-Day Window · Sealed Tag"
+    p2.text = d2['sources'][3]['name']
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(13)
+    p2.font.size = Pt(14)
     p2.font.bold = True
     p2.font.color.rgb = C_DARK
     p3 = tf.add_paragraph()
-    p3.text = "Deterministic code rules P-01 to P-08, never prompts"
+    p3.text = d2['sources'][3]['detail']
     p3.font.name = FONT_HEAD
-    p3.font.size = Pt(10)
+    p3.font.size = Pt(11)
     p3.font.color.rgb = C_MUTED
 
-    add_footer(s2, "Fraud estimates differ by definition: 9% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse).", "Slide 2 / 6")
-
-    set_speaker_notes(s2, """
-Slide 2 — Problem Space & The Four Disconnected Sources:
-- Problem: The return decision bottleneck is not an absent return policy; it is fragmented, unverified context.
-- Sources:
-  1. Customer Claim in chat (unverified claims, emotional text).
-  2. Order Truth in Shopify store (SKU HEAD-WHT-02, price ₹4,999).
-  3. Tracking Scan in Shippo courier API (delivered 4 days ago).
-  4. Store Return Policy document (7-day defect window, security tag required).
-- Central Gap: "Four systems. No traceable decision." Sellers decide returns from memory today. No single record ties video frames, store orders, and shipping status into an immutable decision trace.
-- Fraud Metrics Defense: Strict fraud is 9% (NRF 2025, fraud only), while fraud + abuse is 15.14% (Appriss/Deloitte 2024). They represent fundamentally different measurement scopes and must never be merged.
-- Asymmetric Merchant Risk: Wrong refund loses inventory and gross margin; unfair denial destroys customer lifetime value (LTV).
-""")
+    add_footer(s2, "Fraud statistics note: 9.0% (NRF 2025, fraud only) vs 15.14% (Appriss/Deloitte 2024, fraud + abuse)", "Slide 2 / 6")
+    set_speaker_notes(s2, d2["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 3: STAR DEMO SLIDE (VISUAL EVIDENCE BENCHMARK)
+    # SLIDE 3: STAR DEMO / EVIDENCE CONTRADICTION (LARGE PRODUCT PHOTOS)
     # =========================================================================
-    s3 = prs.slides.add_slide(blank_slide_layout)
+    d3 = slides_data[3]
+    s3 = prs.slides.add_slide(blank_layout)
     set_bg(s3, C_CREAM)
 
     tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "STAR DEMO · VISUAL GROUNDING & COLOR CONTRADICTION"
+    p.text = d3["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.8))
+    tb = s3.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
     p = tb.text_frame.paragraphs[0]
-    p.text = "The order says white. The video shows black."
+    p.text = d3["headline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(38)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s3.shapes.add_textbox(Inches(0.8), Inches(1.75), Inches(11.7), Inches(0.5))
+    tb = s3.shapes.add_textbox(Inches(0.8), Inches(1.7), Inches(11.7), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
-    p.text = "ReturnLens extracts keyframes, flags color discrepancies, and halts auto-payout for seller approval."
+    p.text = d3["subheadline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(19)
     p.font.color.rgb = C_MUTED
 
-    # Left: Evidence Image Comparison (White Ordered vs Black Observed)
-    panel_left = Inches(0.8)
-    panel_top = Inches(2.35)
-    panel_w = Inches(7.4)
-    panel_h = Inches(4.35)
+    # Left: Visual Evidence Arena (66% width = 7.7 inches)
+    ev_left = Inches(0.8)
+    ev_top = Inches(2.25)
+    ev_w = Inches(7.7)
+    ev_h = Inches(4.45)
 
-    ev_bg = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, panel_left, panel_top, panel_w, panel_h)
-    ev_bg.fill.solid()
-    ev_bg.fill.fore_color.rgb = C_WHITE
-    ev_bg.line.color.rgb = C_BORDER_LIGHT
-    ev_bg.line.width = Pt(1)
+    ev_box = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left, ev_top, ev_w, ev_h)
+    ev_box.fill.solid()
+    ev_box.fill.fore_color.rgb = C_WHITE
+    ev_box.line.color.rgb = C_BORDER_LIGHT
+    ev_box.line.width = Pt(1)
 
-    # Images
-    img_w = Inches(3.4)
-    img_h = Inches(2.8)
+    # Two large pictures: White vs Black
+    pic_w = Inches(3.55)
+    pic_h = Inches(2.8)
 
-    w_img_path = assets_dir / "studio_white_headphones.png"
-    if w_img_path.exists():
-        s3.shapes.add_picture(str(w_img_path), panel_left + Inches(0.2), panel_top + Inches(0.2), img_w, img_h)
+    s3.shapes.add_picture(str(img_white), ev_left + Inches(0.2), ev_top + Inches(0.2), pic_w, pic_h)
+    s3.shapes.add_picture(str(img_black), ev_left + Inches(3.95), ev_top + Inches(0.2), pic_w, pic_h)
 
-    b_img_path = assets_dir / "unboxing_black_headphones.png"
-    if b_img_path.exists():
-        s3.shapes.add_picture(str(b_img_path), panel_left + Inches(3.8), panel_top + Inches(0.2), img_w, img_h)
-
-    # Badges below images
-    b_order = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, panel_left + Inches(0.2), panel_top + Inches(3.1), img_w, Inches(0.35))
-    b_order.fill.solid()
-    b_order.fill.fore_color.rgb = C_TEAL_LIGHT
-    b_order.line.fill.background()
-    p = b_order.text_frame.paragraphs[0]
-    p.text = "ORDER MANIFEST: WHITE HEADPHONES"
+    # Badges below pictures
+    b1 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(0.2), ev_top + Inches(3.1), pic_w, Inches(0.35))
+    b1.fill.solid()
+    b1.fill.fore_color.rgb = C_TEAL_LIGHT
+    b1.line.fill.background()
+    p = b1.text_frame.paragraphs[0]
+    p.text = f"{d3['ordered_evidence']['label']}: {d3['ordered_evidence']['sku']} (WHITE)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(9)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
     p.alignment = PP_ALIGN.CENTER
 
-    b_obs = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, panel_left + Inches(3.8), panel_top + Inches(3.1), img_w, Inches(0.35))
-    b_obs.fill.solid()
-    b_obs.fill.fore_color.rgb = C_CORAL_LIGHT
-    b_obs.line.fill.background()
-    p = b_obs.text_frame.paragraphs[0]
-    p.text = "UNBOXING KEYFRAME 00:07: BLACK ITEM"
+    b2 = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, ev_left + Inches(3.95), ev_top + Inches(3.1), pic_w, Inches(0.35))
+    b2.fill.solid()
+    b2.fill.fore_color.rgb = C_CORAL_LIGHT
+    b2.line.fill.background()
+    p = b2.text_frame.paragraphs[0]
+    p.text = f"{d3['observed_evidence']['label']}: {d3['observed_evidence']['color'].upper()}"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(9)
     p.font.bold = True
-    p.font.color.rgb = C_CORAL
+    p.font.color.rgb = C_CORAL_DARK
     p.alignment = PP_ALIGN.CENTER
 
     # Caption / Footnote on Grounding
-    tb_foot = s3.shapes.add_textbox(panel_left + Inches(0.2), panel_top + Inches(3.55), panel_w - Inches(0.4), Inches(0.7))
-    tf = tb_foot.text_frame
+    tb_c = s3.shapes.add_textbox(ev_left + Inches(0.2), ev_top + Inches(3.55), ev_w - Inches(0.4), Inches(0.8))
+    tf = tb_c.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "Visual Grounding Honesty: Keyframe resolution reveals black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Black · Exact SKU: Not verified' and cites frame 00:07."
+    p.text = "Visual Grounding Honesty: Keyframe resolution reveals black casing. Exact SKU barcode is unreadable in this frame; ReturnLens factually records 'Observed Color: Midnight Black · Exact SKU: Not verified' and cites frame 00:07."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(9.5)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_MUTED
 
-    # Right: Deterministic Policy Gate & Seller Decision Console
-    con_left = Inches(8.45)
-    con_top = Inches(2.35)
-    con_w = Inches(4.083)
-    con_h = Inches(4.35)
+    # Right: Decision & Action Console (33% width = 3.8 inches)
+    dec_left = Inches(8.75)
+    dec_w = Inches(3.783)
+    dec_box = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, dec_left, ev_top, dec_w, ev_h)
+    dec_box.fill.solid()
+    dec_box.fill.fore_color.rgb = C_WHITE
+    dec_box.line.color.rgb = C_BORDER_LIGHT
+    dec_box.line.width = Pt(1)
 
-    con_bg = s3.shapes.add_shape(MSO_SHAPE.RECTANGLE, con_left, con_top, con_w, con_h)
-    con_bg.fill.solid()
-    con_bg.fill.fore_color.rgb = C_WHITE
-    con_bg.line.color.rgb = C_BORDER_LIGHT
-    con_bg.line.width = Pt(1)
-
-    tb = s3.shapes.add_textbox(con_left + Inches(0.2), con_top + Inches(0.15), con_w - Inches(0.4), Inches(4.1))
+    tb = s3.shapes.add_textbox(dec_left + Inches(0.2), ev_top + Inches(0.15), dec_w - Inches(0.4), ev_h - Inches(0.3))
     tf = tb.text_frame
     tf.word_wrap = True
 
@@ -613,102 +563,91 @@ Slide 2 — Problem Space & The Four Disconnected Sources:
     p.font.color.rgb = C_CORAL
 
     p2 = tf.add_paragraph()
-    p2.text = "P-03 Check: COLOR CONTRADICTION"
+    p2.text = "P-03: COLOR CONTRADICTION"
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(14)
+    p2.font.size = Pt(16)
     p2.font.bold = True
-    p2.font.color.rgb = RGBColor(0x99, 0x1B, 0x1B)
+    p2.font.color.rgb = C_CORAL_DARK
 
     p3 = tf.add_paragraph()
-    p3.text = "STATUS: ESCALATE (SELLER REVIEW REQUIRED)\nObserved Color: Midnight Black · Exact SKU: Not verified"
+    p3.text = f"{d3['decision_panel']['next_action']}\nObserved: {d3['decision_panel']['observed_color']} · Exact SKU: {d3['decision_panel']['exact_sku']}"
     p3.font.name = FONT_MONO
-    p3.font.size = Pt(8.5)
+    p3.font.size = Pt(9)
     p3.font.bold = True
-    p3.font.color.rgb = RGBColor(0x99, 0x1B, 0x1B)
+    p3.font.color.rgb = C_CORAL_DARK
 
     p4 = tf.add_paragraph()
-    p4.text = "Customer claim contradicts visual evidence. Automated return label and refund payout are inhibited."
+    p4.text = "\nSeller Resolution Options:"
     p4.font.name = FONT_HEAD
-    p4.font.size = Pt(9.5)
-    p4.font.color.rgb = C_MUTED
+    p4.font.size = Pt(11)
+    p4.font.bold = True
+    p4.font.color.rgb = C_DARK
+
+    for opt in d3['decision_panel']['seller_options']:
+        p_opt = tf.add_paragraph()
+        p_opt.text = opt
+        p_opt.font.name = FONT_HEAD
+        p_opt.font.size = Pt(9.5)
+        p_opt.font.color.rgb = C_MUTED
 
     p5 = tf.add_paragraph()
-    p5.text = "\nSeller Resolution Options:\n1. Request unboxing video with packaging label / serial visible\n2. Reject return under Clause 4.2 (Item does not match order)\n3. Override & approve if seller acknowledges warehouse error"
-    p5.font.name = FONT_HEAD
-    p5.font.size = Pt(9)
-    p5.font.color.rgb = C_DARK
-
-    p6 = tf.add_paragraph()
-    p6.text = "\nFinancial Safety Ceiling:\nmax_refund = min(₹4,999, remaining refundable, order paid amount)\nNo automatic customer denial · No refund released without seller click"
-    p6.font.name = FONT_MONO
-    p6.font.size = Pt(8.5)
-    p6.font.color.rgb = C_MUTED
+    p5.text = f"\nFinancial Safety Ceiling:\n{data['meta']['refund_guardrail']['formula']}\nNo auto-denial · No refund released without seller click"
+    p5.font.name = FONT_MONO
+    p5.font.size = Pt(8.5)
+    p5.font.color.rgb = C_MUTED
 
     add_footer(s3, "Illustrative staged evidence · Mock Shopify & Shippo APIs", "Slide 3 / 6")
-
-    set_speaker_notes(s3, """
-Slide 3 — The Star Demo & Technical Honesty in Vision Citation:
-- Core Benchmark Scenario (Case B): Buyer ordered white headphones (HEAD-WHT-02, ₹4,999), but unboxing frame 00:07 shows black headphones.
-- Grounding & Honesty: The agent does NOT claim to read an unreadable SKU barcode from frame 00:07. It states factually: "Observed Color: Midnight Black · Exact SKU: Not verified · Tag: Not visible in cited frame".
-- Decision Logic: Seeing a black item when white was ordered is an undeniable visual contradiction against the manifest. Instead of auto-denying the customer (which might alienate an honest buyer if the warehouse mis-shipped), the policy engine triggers ESCALATE.
-- Three Merchant Decision Options:
-  1. Request unboxing video with packaging label / serial number visible.
-  2. Reject return under Clause 4.2 (Item does not match order record).
-  3. Override & approve if seller acknowledges known warehouse fulfillment error.
-- Fail-Closed Financial Gate:
-  max_refund = min(₹4,999, remaining refundable amount, order paid amount).
-  No refund money is released without explicit seller click.
-""")
+    set_speaker_notes(s3, d3["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 4: SYSTEM ARCHITECTURE (DARK + AGENTIC GOVERNANCE)
+    # SLIDE 4: THE AGENTIC SYSTEM (DARK ARCHITECTURE & STATEFUL LOOP)
     # =========================================================================
-    s4 = prs.slides.add_slide(blank_slide_layout)
+    d4 = slides_data[4]
+    s4 = prs.slides.add_slide(blank_layout)
     set_bg(s4, C_DARK_BG)
 
     tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "SYSTEM ARCHITECTURE · DYNAMIC AGENTIC GOVERNANCE"
+    p.text = d4["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
-    p.font.color.rgb = RGBColor(0x00, 0xD1, 0xA7)
+    p.font.color.rgb = C_TEAL_ACCENT
 
-    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.9), Inches(11.7), Inches(0.7))
+    tb = s4.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Models observe. Code verifies. Seller authorizes."
+    p.text = d4["headline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(38)
     p.font.bold = True
     p.font.color.rgb = C_CREAM
 
-    tb = s4.shapes.add_textbox(Inches(0.8), Inches(1.55), Inches(11.7), Inches(0.45))
+    tb = s4.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Dynamic action selection and stateful resumption under deterministic human authorization."
+    p.text = d4["subheadline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(18)
     p.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
-    # 6-Step Horizontal Pipeline with Arrows
-    pipe_steps = [
-        ("01 PLAN", "Planner", "MODEL", RGBColor(0x00, 0x38, 0x2B), RGBColor(0x00, 0xD1, 0xA7)),
-        ("02 RETRIEVE", "Tools & Video", "CODE", RGBColor(0x26, 0x38, 0x31), C_CREAM),
-        ("03 EVALUATE", "Policy Engine", "CODE", RGBColor(0x26, 0x38, 0x31), C_CREAM),
-        ("04 AUDIT", "Critic", "MODEL", RGBColor(0x00, 0x38, 0x2B), RGBColor(0x00, 0xD1, 0xA7)),
-        ("05 AUTHORIZE", "Seller Gate", "HUMAN", RGBColor(0x45, 0x26, 0x0A), RGBColor(0xFB, 0xBF, 0x24)),
-        ("06 RECORD", "Audit Log", "CODE", RGBColor(0x26, 0x38, 0x31), C_CREAM)
-    ]
-
+    # 1. Main Horizontal Pipeline (6 Steps with Arrows) - y = 2.25", h = 1.35"
     p_w = Inches(1.75)
     p_gap = Inches(0.24)
-    p_top = Inches(2.05)
-    p_h = Inches(1.15)
+    p_top = Inches(2.25)
+    p_h = Inches(1.35)
 
-    for i, (num, title, tag, tag_bg, tag_fg) in enumerate(pipe_steps):
+    pipe_colors = {
+        "MODEL": (RGBColor(0x00, 0x38, 0x2B), C_TEAL_ACCENT),
+        "CODE": (RGBColor(0x26, 0x38, 0x31), C_CREAM),
+        "HUMAN": (RGBColor(0x45, 0x26, 0x0A), RGBColor(0xFB, 0xBF, 0x24))
+    }
+
+    for i, step in enumerate(d4["pipeline_steps"]):
         px = Inches(0.8) + i * (p_w + p_gap)
+        tag_bg, tag_fg = pipe_colors.get(step["role"], (C_DARK, C_WHITE))
+
         box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px, p_top, p_w, p_h)
         box.fill.solid()
-        box.fill.fore_color.rgb = RGBColor(0x17, 0x26, 0x21)
+        box.fill.fore_color.rgb = C_CARD_DARK
         box.line.color.rgb = C_BORDER_DARK
         box.line.width = Pt(1)
 
@@ -720,316 +659,288 @@ Slide 3 — The Star Demo & Technical Honesty in Vision Citation:
         tf = box.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = num
+        p.text = f"{step['num']} {step['name'].upper()}"
         p.font.name = FONT_MONO
-        p.font.size = Pt(8.5)
+        p.font.size = Pt(9)
         p.font.color.rgb = RGBColor(0x6C, 0x82, 0x79)
 
         p2 = tf.add_paragraph()
-        p2.text = title
+        p2.text = step['name']
         p2.font.name = FONT_HEAD
-        p2.font.size = Pt(11)
+        p2.font.size = Pt(13)
         p2.font.bold = True
         p2.font.color.rgb = C_CREAM
 
-        tb_tag = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px + Inches(0.1), p_top + Inches(0.78), p_w - Inches(0.2), Inches(0.26))
+        p3 = tf.add_paragraph()
+        p3.text = step['desc']
+        p3.font.name = FONT_HEAD
+        p3.font.size = Pt(9)
+        p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
+
+        tb_tag = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, px + Inches(0.1), p_top + Inches(0.95), p_w - Inches(0.2), Inches(0.26))
         tb_tag.fill.solid()
         tb_tag.fill.fore_color.rgb = tag_bg
         tb_tag.line.fill.background()
         p = tb_tag.text_frame.paragraphs[0]
-        p.text = tag
+        p.text = step['role']
         p.font.name = FONT_MONO
         p.font.size = Pt(8.5)
         p.font.bold = True
         p.font.color.rgb = tag_fg
         p.alignment = PP_ALIGN.CENTER
 
-        if i < len(pipe_steps) - 1:
-            arr_box = s4.shapes.add_textbox(px + p_w, p_top + Inches(0.35), p_gap, Inches(0.4))
+        if i < len(d4["pipeline_steps"]) - 1:
+            arr_box = s4.shapes.add_textbox(px + p_w, p_top + Inches(0.4), p_gap, Inches(0.4))
             p_arr = arr_box.text_frame.paragraphs[0]
             p_arr.text = "→"
             p_arr.font.name = FONT_MONO
             p_arr.font.size = Pt(14)
             p_arr.font.bold = True
-            p_arr.font.color.rgb = RGBColor(0x00, 0xD1, 0xA7)
+            p_arr.font.color.rgb = C_TEAL_ACCENT
             p_arr.alignment = PP_ALIGN.CENTER
 
-    # Dual Operational Branches (Agentic Loop vs Order Status Fast Path)
-    path_top = Inches(3.35)
-    path_h = Inches(0.85)
+    # 2. Dominant Center Section: Dual Operational Branches (y = 3.8", h = 1.7")
+    br_top = Inches(3.8)
+    br_h = Inches(1.7)
 
-    # Path 1: Case C Stateful Clarification Loop
-    p1_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), path_top, Inches(6.5), path_h)
-    p1_box.fill.solid()
-    p1_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
-    p1_box.line.color.rgb = RGBColor(0x25, 0x63, 0xEB)
-    p1_box.line.width = Pt(1)
-    tf = p1_box.text_frame
+    # Left: Case C Dynamic Stateful Clarification Loop (7.1" width)
+    c_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), br_top, Inches(7.1), br_h)
+    c_box.fill.solid()
+    c_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
+    c_box.line.color.rgb = RGBColor(0x25, 0x63, 0xEB)
+    c_box.line.width = Pt(1.5)
+    tf = c_box.text_frame
     tf.word_wrap = True
+
     p = tf.paragraphs[0]
-    p.text = "DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C) · Observe → Decide → Act → Wait → Resume"
+    p.text = d4["case_c_flow"]["title"]
     p.font.name = FONT_MONO
-    p.font.size = Pt(8.5)
+    p.font.size = Pt(10)
     p.font.bold = True
     p.font.color.rgb = RGBColor(0x93, 0xC5, 0xFD)
+
     p2 = tf.add_paragraph()
     p2.text = "Dark Frames → ask_for_evidence() → WAITING_FOR_EVIDENCE → Customer Uploads → Resume Case"
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(9.5)
+    p2.font.size = Pt(11)
     p2.font.bold = True
     p2.font.color.rgb = C_CREAM
 
-    # Path 2: Order Status Fast Path
-    p2_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(7.45), path_top, Inches(5.083), path_h)
-    p2_box.fill.solid()
-    p2_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
-    p2_box.line.color.rgb = RGBColor(0x05, 0x96, 0x69)
-    p2_box.line.width = Pt(1)
-    tf = p2_box.text_frame
+    p3 = tf.add_paragraph()
+    p3.text = "Agentic State Machine: When lighting is insufficient, the agent halts standard execution, prompts a targeted checklist, pauses state in WAITING_FOR_EVIDENCE, and seamlessly resumes context upon media receipt (1 retry limit protects customer experience)."
+    p3.font.name = FONT_HEAD
+    p3.font.size = Pt(9.5)
+    p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
+
+    # Right: Secondary Fast Path (4.4" width)
+    f_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(8.133), br_top, Inches(4.4), br_h)
+    f_box.fill.solid()
+    f_box.fill.fore_color.rgb = RGBColor(0x14, 0x22, 0x1D)
+    f_box.line.color.rgb = RGBColor(0x05, 0x96, 0x69)
+    f_box.line.width = Pt(1.5)
+    tf = f_box.text_frame
     tf.word_wrap = True
+
     p = tf.paragraphs[0]
-    p.text = "ORDER STATUS FAST PATH (PS-04 FIT) · Zero-Vision Direct Route"
+    p.text = d4["fast_path"]["title"]
     p.font.name = FONT_MONO
-    p.font.size = Pt(8.5)
+    p.font.size = Pt(10)
     p.font.bold = True
-    p.font.color.rgb = RGBColor(0x34, 0xD3, 0x99)
+    p.font.color.rgb = C_TEAL_ACCENT
+
     p2 = tf.add_paragraph()
-    p2.text = "“Where is my order?” → Query Store & Shippo APIs → Delivery Scan & Time"
+    p2.text = f"{d4['fast_path']['query']} → Direct Mock Store & Courier Scan"
     p2.font.name = FONT_HEAD
-    p2.font.size = Pt(9.5)
+    p2.font.size = Pt(11)
     p2.font.bold = True
     p2.font.color.rgb = C_CREAM
 
-    # 4 Decision Branches
-    branches = [
-        ("1. CONTRADICTION → ESCALATE", RGBColor(0xF8, 0x71, 0x71), "Discrepancy flagged (e.g. Case B). Inhibits automated label/refund. Seller reviews 3 options."),
-        ("2. HARD FAIL → ESCALATE", RGBColor(0xFB, 0xBF, 0x24), "Mandatory rule violation (e.g. expired return window). Seller makes final decision; never auto-deny."),
-        ("3. UNCLEAR ONLY → ASK MORE", RGBColor(0x60, 0xA5, 0xFA), "Low brightness or blurry barcode (e.g. Case C). Prompts exact re-film checklist (1 retry limit)."),
-        ("4. ALL PASS → APPROVE REVIEW", RGBColor(0x34, 0xD3, 0x99), "All clauses pass (e.g. Case A). Prepares mock label and drafts refund in pending_return_receipt.")
-    ]
+    p3 = tf.add_paragraph()
+    p3.text = f"{d4['fast_path']['outcome']}\nRoutine order queries take a direct tool route without calling heavy multimodal models. Escalates to human seller only if courier scan shows abnormal transit delay."
+    p3.font.name = FONT_HEAD
+    p3.font.size = Pt(9.5)
+    p3.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
-    b_w = Inches(2.8)
-    b_gap = Inches(0.17)
-    b_top = Inches(4.35)
-    b_h = Inches(1.15)
-
-    for i, (b_title, b_col, b_desc) in enumerate(branches):
-        bx = Inches(0.8) + i * (b_w + b_gap)
-        box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, bx, b_top, b_w, b_h)
-        box.fill.solid()
-        box.fill.fore_color.rgb = RGBColor(0x12, 0x1F, 0x1B)
-        box.line.color.rgb = C_BORDER_DARK
-        box.line.width = Pt(1)
-
-        tf = box.text_frame
-        tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.text = b_title
-        p.font.name = FONT_MONO
-        p.font.size = Pt(9)
-        p.font.bold = True
-        p.font.color.rgb = b_col
-
-        p2 = tf.add_paragraph()
-        p2.text = b_desc
-        p2.font.name = FONT_HEAD
-        p2.font.size = Pt(9)
-        p2.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
-
-    # Architecture Guarantees & Critic Bar
-    leg = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(5.65), Inches(11.733), Inches(0.95))
-    leg.fill.solid()
-    leg.fill.fore_color.rgb = RGBColor(0x12, 0x1F, 0x1B)
-    leg.line.color.rgb = C_BORDER_DARK
-    leg.line.width = Pt(1)
-
-    tf = leg.text_frame
+    # 3. Bottom Governance Bar: Fill Space (y = 5.7", h = 1.05")
+    gov_box = s4.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(5.7), Inches(11.733), Inches(1.05))
+    gov_box.fill.solid()
+    gov_box.fill.fore_color.rgb = RGBColor(0x12, 0x1F, 0x1B)
+    gov_box.line.color.rgb = C_BORDER_DARK
+    gov_box.line.width = Pt(1)
+    tf = gov_box.text_frame
     tf.word_wrap = True
+
     p = tf.paragraphs[0]
-    p.text = "■ Model Calls: Bounded design estimate (3 base calls: planner, vision, critic + retries)  |  ■ Policy Rules: Deterministic Python code rules P-01 to P-08, never prompts"
+    p.text = f"■ {d4['governance_rules'][0]['label']}: {d4['governance_rules'][0]['text']}   |   ■ {d4['governance_rules'][1]['label']}: {d4['governance_rules'][1]['text']}"
     p.font.name = FONT_MONO
-    p.font.size = Pt(8.5)
+    p.font.size = Pt(9)
     p.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
     p2 = tf.add_paragraph()
-    p2.text = "■ Critic Duty: Reviews cited frames, flags unsupported observations (correlated error limits noted)  |  ■ Safety Boundary: Backend authorization check — LLMs cannot execute financial refunds"
+    p2.text = f"■ {d4['governance_rules'][2]['label']}: {d4['governance_rules'][2]['text']}   |   ■ {d4['governance_rules'][3]['label']}: {d4['governance_rules'][3]['text']}"
     p2.font.name = FONT_MONO
-    p2.font.size = Pt(8.5)
+    p2.font.size = Pt(9)
     p2.font.color.rgb = RGBColor(0xA3, 0xB8, 0xB0)
 
     add_footer(s4, "Structured audit log recorded at every state transition · Decision priority: Contradiction > Hard fail > Unclear only > All pass", "Slide 4 / 6", is_dark=True)
-
-    set_speaker_notes(s4, """
-Slide 4 — System Architecture, Agentic Governance & Technical Q&A Defense:
-- Philosophy: "Models observe. Code verifies. Seller authorizes."
-
-- DEFENSE QUESTION 1: Why is this an agent rather than a hardcoded workflow?
-  ReturnLens is an autonomous state machine with dynamic action selection, multi-modal observation, and stateful lifecycle management.
-  In Case C, when a customer submits a dark/blurry video (average brightness 28), the agent does NOT simply fail or run a static linear chain. It inspects the frames, determines evidence is insufficient under Policy P-05, dynamically decides to invoke ask_for_evidence() with specific re-filming guidance, transitions the ticket to WAITING_FOR_EVIDENCE, pauses execution while retaining state and order context, and resumes the exact triage session when new media arrives.
-  Conversely, for routine "Where is my order?" requests, the agent selects the zero-vision fast path, querying mock Shopify and Shippo APIs directly without invoking heavy vision models.
-
-- DEFENSE QUESTION 2: What happens if vision or critic models hallucinate?
-  Vision models produce non-binding observation metadata, never authoritative decisions. Hard business rules (return windows from carrier delivery timestamps, SKU comparisons) are executed in deterministic Python code (P-01 to P-08), which cannot be jailbroken by customer prompts.
-  The critic provides an adversarial sanity check against cited timestamps. If both vision and critic experience correlated hallucinations, the fail-closed human seller gate guarantees that no refund or return label can ever be issued without seller review.
-
-- DEFENSE QUESTION 3: How do you prevent duplicate or incorrect refunds?
-  Refund transactions are enforced at the backend policy layer:
-  1. Idempotency keys (hash(order_id, return_id, transaction_type)) prevent double-execution.
-  2. Ledgers track cumulative refunded amounts against total order value: 0 < amount <= min(₹4,999, remaining_refundable_amount, order_paid_amount).
-  3. LLMs possess zero capability to call payment gateways directly; all actions produce draft state objects awaiting merchant authorization.
-
-- Bounded Execution: Exactly 3 base model calls per triage case (Planner, Vision, Critic) plus retries.
-""")
+    set_speaker_notes(s4, d4["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 5: FOUR DEMO BENCHMARK SCENARIOS
+    # SLIDE 5: FOUR DEMO BENCHMARK SCENARIOS (EXPANDED TO FILL CANVAS)
     # =========================================================================
-    s5 = prs.slides.add_slide(blank_slide_layout)
+    d5 = slides_data[5]
+    s5 = prs.slides.add_slide(blank_layout)
     set_bg(s5, C_CREAM)
 
     tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "DEMO SCENARIOS · CONTROLLED PROTOTYPE BEHAVIORS"
+    p.text = d5["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.8))
+    tb = s5.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Four scenarios. Four predictable behaviors."
+    p.text = d5["headline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(38)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s5.shapes.add_textbox(Inches(0.8), Inches(1.75), Inches(11.7), Inches(0.5))
+    tb = s5.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Expected prototype behaviors across staged benchmark cases. Not measured production metrics."
+    p.text = d5["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(19)
+    p.font.size = Pt(18)
     p.font.color.rgb = C_MUTED
 
-    scenarios = [
-        ("CASE A · READY", C_TEAL_LIGHT, C_TEAL, "Verified Damage · Staged cosmetic crack, timestamp 00:04 · Defect verified.", "Agent prepares mock label & draft refund in pending_return_receipt; seller one-click confirms."),
-        ("CASE B · MISMATCH", C_CORAL_LIGHT, RGBColor(0x99, 0x1B, 0x1B), "Color Contradiction · HEAD-WHT-02 (White) ordered vs Frame 00:07 Black item · SKU unverified.", "P-03 contradiction blocks automation; seller selects 1 of 3 options: mis-shipment / box label / warehouse inspection."),
-        ("CASE C · UNCLEAR", RGBColor(0xEF, 0xF6, 0xFF), RGBColor(0x1E, 0x40, 0xAF), "Insufficient Visibility · 4-second dark video, brightness 28, only 2 usable frames.", "Agent requests targeted photo; enters WAITING_FOR_EVIDENCE; resumes case on upload (1 retry limit)."),
-        ("CASE D · CONTEXT", RGBColor(0xEC, 0xFD, 0xF5), RGBColor(0x06, 0x5F, 0x46), "Sequence Continuity · Staged parcel-to-product take: opening sealed parcel to product reveal.", "Expected behavior: inspect sequence continuity and flag missing transitions for seller review.")
+    # 4 Expanded Scenario Rows: Fills from y = 2.25" to 6.8" (h = 1.05", gap = 0.12")
+    row_top = Inches(2.25)
+    row_h = Inches(1.02)
+    row_gap = Inches(0.12)
+
+    case_styles = [
+        (C_TEAL_LIGHT, C_TEAL),
+        (C_CORAL_LIGHT, C_CORAL_DARK),
+        (C_BLUE_LIGHT, C_BLUE_TEXT),
+        (RGBColor(0xEC, 0xFD, 0xF5), RGBColor(0x06, 0x5F, 0x46))
     ]
 
-    lane_top = Inches(2.35)
-    lane_h = Inches(0.95)
-    lane_gap = Inches(0.14)
+    for i, cs in enumerate(d5["cases"]):
+        ry = row_top + i * (row_h + row_gap)
+        bg_col, fg_col = case_styles[i]
 
-    for i, (badge_txt, b_bg, b_fg, ev_txt, act_txt) in enumerate(scenarios):
-        ly = lane_top + i * (lane_h + lane_gap)
-        box = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), ly, Inches(11.733), lane_h)
-        box.fill.solid()
-        box.fill.fore_color.rgb = C_WHITE
-        box.line.color.rgb = C_BORDER_LIGHT
-        box.line.width = Pt(1)
+        row_box = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), ry, Inches(11.733), row_h)
+        row_box.fill.solid()
+        row_box.fill.fore_color.rgb = C_WHITE
+        row_box.line.color.rgb = C_BORDER_LIGHT
+        row_box.line.width = Pt(1)
 
-        badge = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), ly + Inches(0.24), Inches(1.8), Inches(0.46))
+        # Badge
+        badge = s5.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(1.0), ry + Inches(0.22), Inches(2.2), Inches(0.55))
         badge.fill.solid()
-        badge.fill.fore_color.rgb = b_bg
+        badge.fill.fore_color.rgb = bg_col
         badge.line.fill.background()
-        p = badge.text_frame.paragraphs[0]
-        p.text = badge_txt
+        tf = badge.text_frame
+        p = tf.paragraphs[0]
+        p.text = f"CASE {cs['number']} · {cs['name']}"
         p.font.name = FONT_MONO
-        p.font.size = Pt(9.5)
+        p.font.size = Pt(10)
         p.font.bold = True
-        p.font.color.rgb = b_fg
+        p.font.color.rgb = fg_col
         p.alignment = PP_ALIGN.CENTER
+        p2 = tf.add_paragraph()
+        p2.text = cs['subtitle']
+        p2.font.name = FONT_HEAD
+        p2.font.size = Pt(9)
+        p2.font.color.rgb = fg_col
+        p2.alignment = PP_ALIGN.CENTER
 
-        tb_ev = s5.shapes.add_textbox(Inches(3.0), ly + Inches(0.12), Inches(4.3), Inches(0.7))
-        tf = tb_ev.text_frame
+        # Observation
+        tb_ob = s5.shapes.add_textbox(Inches(3.35), ry + Inches(0.12), Inches(3.9), Inches(0.8))
+        tf = tb_ob.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = ev_txt
+        p.text = cs['observation']
         p.font.name = FONT_HEAD
-        p.font.size = Pt(10.5)
+        p.font.size = Pt(11)
         p.font.bold = True
         p.font.color.rgb = C_DARK
 
-        tb_arr = s5.shapes.add_textbox(Inches(7.35), ly + Inches(0.16), Inches(0.3), Inches(0.5))
+        # Arrow
+        tb_arr = s5.shapes.add_textbox(Inches(7.35), ry + Inches(0.24), Inches(0.3), Inches(0.5))
         p = tb_arr.text_frame.paragraphs[0]
         p.text = "→"
         p.font.name = FONT_MONO
-        p.font.size = Pt(14)
+        p.font.size = Pt(16)
+        p.font.bold = True
         p.font.color.rgb = C_TEAL
 
-        tb_act = s5.shapes.add_textbox(Inches(7.75), ly + Inches(0.12), Inches(4.6), Inches(0.7))
+        # Action & Outcome
+        tb_act = s5.shapes.add_textbox(Inches(7.75), ry + Inches(0.12), Inches(4.6), Inches(0.8))
         tf = tb_act.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = act_txt
-        p.font.name = FONT_HEAD
+        p.text = cs['state_action']
+        p.font.name = FONT_MONO
         p.font.size = Pt(10.5)
-        p.font.color.rgb = C_MUTED
+        p.font.bold = True
+        p.font.color.rgb = fg_col
+        p2 = tf.add_paragraph()
+        p2.text = cs['action_detail']
+        p2.font.name = FONT_HEAD
+        p2.font.size = Pt(10)
+        p2.font.color.rgb = C_MUTED
 
-    add_footer(s5, "Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining refundable amount, order paid amount)", "Slide 5 / 6")
-
-    set_speaker_notes(s5, """
-Slide 5 — Four Reproducible Benchmark Scenarios:
-- Note on Grounding: These four scenarios represent staged prototype test suites and deterministic expected behaviors, NOT ungrounded production field metrics.
-- Case A (Clean Claim): All rules pass (within 7d, SKU matches manifest, tag visible, physical crack observed). System drafts return shipping label and refund draft in 'pending_return_receipt' state. No refund money is transferred until physical warehouse receipt.
-- Case B (Contradiction): Color mismatch detected (ordered white, unboxed black). System prevents auto-rejection and routes to seller review with 3 concrete resolution options.
-- Case C (Unclear / Agentic Loop): Dark video (28/255 avg brightness). Instead of auto-denying, the agent provides a clear checklist, transitions to WAITING_FOR_EVIDENCE, and resumes on upload (1 retry limit protects customers from infinite loops).
-- Case D (Continuity): Expected prototype behavior: inspect parcel-to-product sequence to flag suspicious cut-aways or missing transitions.
-- Financial Cap Formula: min(₹4,999, remaining refundable amount, order paid amount) strictly prevents over-refunding.
-""")
+    add_footer(s5, "Staged prototype scenarios · Expected agent behaviors, not measured production metrics · Cap: min(₹4,999, remaining, paid)", "Slide 5 / 6")
+    set_speaker_notes(s5, d5["speaker_notes"])
 
     # =========================================================================
-    # SLIDE 6: 24-HOUR EXECUTION (TIMELINE GRID & STRICT SCOPE)
+    # SLIDE 6: 24-HOUR BUILD PLAN & STRICT SCOPE (RECOMPOSED & EXPANDED)
     # =========================================================================
-    s6 = prs.slides.add_slide(blank_slide_layout)
+    d6 = slides_data[6]
+    s6 = prs.slides.add_slide(blank_layout)
     set_bg(s6, C_CREAM)
 
     tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.55), Inches(8.0), Inches(0.4))
     p = tb.text_frame.paragraphs[0]
-    p.text = "24-HOUR PROTOTYPE PLAN · FEASIBILITY & SCOPE GUARDRAILS"
+    p.text = d6["tag"]
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.8))
+    tb = s6.shapes.add_textbox(Inches(0.8), Inches(0.95), Inches(11.7), Inches(0.75))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Built for a 24-hour sprint."
+    p.text = d6["headline"]
     p.font.name = FONT_HEAD
     p.font.size = Pt(38)
     p.font.bold = True
     p.font.color.rgb = C_DARK
 
-    tb = s6.shapes.add_textbox(Inches(0.8), Inches(1.75), Inches(11.7), Inches(0.5))
+    tb = s6.shapes.add_textbox(Inches(0.8), Inches(1.65), Inches(11.7), Inches(0.45))
     p = tb.text_frame.paragraphs[0]
-    p.text = "Strict scope boundaries and clear division of labor make the prototype fully buildable in one day."
+    p.text = d6["subheadline"]
     p.font.name = FONT_HEAD
-    p.font.size = Pt(19)
+    p.font.size = Pt(18)
     p.font.color.rgb = C_MUTED
 
-    # 4-Phase Timeline Grid (00h-06h, 06h-12h, 12h-18h, 18h-24h)
-    phases = [
-        ("00h – 06h · Foundation", "Mock APIs & Agent Core", "Person A (Backend), supported by C\nLangGraph skeleton, mock store/courier fixtures, order status route"),
-        ("06h – 12h · Evidence", "Evidence Pipeline & Policy", "Person B (Video & UI)\nFFmpeg keyframe indexer, Python rules P-01 to P-08, critic prompt"),
-        ("12h – 18h · Integration", "State Flow & Scenarios", "Person C (Integration), supported by A/B\nEnd-to-end wiring, clarification/resume loop, seller console UI"),
-        ("18h – 24h · Validation", "Testing & Submission", "All 3 Members\nFallback testing, authorization tests, demo video recording, README")
-    ]
+    # 4-Phase Timeline Grid (y = 2.25", h = 1.8")
+    t_top = Inches(2.25)
+    t_h = Inches(1.8)
+    t_w = Inches(2.8)
+    t_gap = Inches(0.17)
 
-    p_w = Inches(2.8)
-    p_gap = Inches(0.17)
-    p_top = Inches(2.35)
-    p_h = Inches(1.35)
-
-    for i, (t_time, t_title, t_owner) in enumerate(phases):
-        px = Inches(0.8) + i * (p_w + p_gap)
-        box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, px, p_top, p_w, p_h)
+    for i, phase in enumerate(d6["timeline"]):
+        tx = Inches(0.8) + i * (t_w + t_gap)
+        box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, tx, t_top, t_w, t_h)
         box.fill.solid()
         box.fill.fore_color.rgb = C_WHITE
         box.line.color.rgb = C_BORDER_LIGHT
         box.line.width = Pt(1)
 
-        top_bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, px, p_top, p_w, Inches(0.04))
+        top_bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, tx, t_top, t_w, Inches(0.04))
         top_bar.fill.solid()
         top_bar.fill.fore_color.rgb = C_TEAL
         top_bar.line.fill.background()
@@ -1037,69 +948,79 @@ Slide 5 — Four Reproducible Benchmark Scenarios:
         tf = box.text_frame
         tf.word_wrap = True
         p = tf.paragraphs[0]
-        p.text = t_time
+        p.text = f"{phase['hours']} · {phase['phase']}"
         p.font.name = FONT_MONO
         p.font.size = Pt(10)
         p.font.bold = True
         p.font.color.rgb = C_TEAL
 
         p2 = tf.add_paragraph()
-        p2.text = t_title
+        p2.text = phase['title']
         p2.font.name = FONT_HEAD
-        p2.font.size = Pt(11.5)
+        p2.font.size = Pt(13)
         p2.font.bold = True
         p2.font.color.rgb = C_DARK
 
         p3 = tf.add_paragraph()
-        p3.text = t_owner
+        p3.text = phase['owner']
         p3.font.name = FONT_HEAD
-        p3.font.size = Pt(9)
-        p3.font.color.rgb = C_MUTED
+        p3.font.size = Pt(10)
+        p3.font.bold = True
+        p3.font.color.rgb = C_TEAL
 
-    sc_w = Inches(5.7)
-    sc_h = Inches(1.95)
+        p4 = tf.add_paragraph()
+        p4.text = phase['deliverables']
+        p4.font.name = FONT_HEAD
+        p4.font.size = Pt(9.5)
+        p4.font.color.rgb = C_MUTED
 
-    # In Scope
-    sc_in = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(3.9), sc_w, sc_h)
-    sc_in.fill.solid()
-    sc_in.fill.fore_color.rgb = C_WHITE
-    sc_in.line.color.rgb = C_BORDER_LIGHT
-    sc_in.line.width = Pt(1)
+    # Bottom Scope Grid: Generously filling y = 4.25" to 6.8" (h = 2.45")
+    sc_top = Inches(4.25)
+    sc_h = Inches(2.45)
+    sc_w = Inches(5.75)
 
-    bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(3.9), Inches(0.08), sc_h)
-    bar.fill.solid()
-    bar.fill.fore_color.rgb = C_TEAL
-    bar.line.fill.background()
+    # In Scope: MUST DELIVER
+    in_box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), sc_top, sc_w, sc_h)
+    in_box.fill.solid()
+    in_box.fill.fore_color.rgb = C_WHITE
+    in_box.line.color.rgb = C_BORDER_LIGHT
+    in_box.line.width = Pt(1)
 
-    tb = s6.shapes.add_textbox(Inches(1.05), Inches(4.0), sc_w - Inches(0.35), sc_h - Inches(0.2))
+    in_bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), sc_top, Inches(0.08), sc_h)
+    in_bar.fill.solid()
+    in_bar.fill.fore_color.rgb = C_TEAL
+    in_bar.line.fill.background()
+
+    tb = s6.shapes.add_textbox(Inches(1.05), sc_top + Inches(0.15), sc_w - Inches(0.35), sc_h - Inches(0.3))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "NEVER CUT (CORE ENGINE)"
+    p.text = "MUST DELIVER (CORE PROTOTYPE)"
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_TEAL
 
-    p2 = tf.add_paragraph()
-    p2.text = "• Deterministic policy engine (P-01 to P-08)\n• Evidence-pack frame citation\n• Fail-closed seller approval gate\n• Structured JSON audit log\n• Clarification/resume loop\n• 4 reproducible demo cases"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(10)
-    p2.font.color.rgb = C_DARK
+    for item in d6["scope_boundaries"]["must_deliver"]:
+        p_item = tf.add_paragraph()
+        p_item.text = f"• {item}"
+        p_item.font.name = FONT_HEAD
+        p_item.font.size = Pt(10.5)
+        p_item.font.color.rgb = C_DARK
 
-    # Out of Scope
-    sc_out = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.833), Inches(3.9), sc_w, sc_h)
-    sc_out.fill.solid()
-    sc_out.fill.fore_color.rgb = C_WHITE
-    sc_out.line.color.rgb = C_BORDER_LIGHT
-    sc_out.line.width = Pt(1)
+    # Out of Scope: CUT FIRST IF BEHIND
+    out_box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.783), sc_top, sc_w, sc_h)
+    out_box.fill.solid()
+    out_box.fill.fore_color.rgb = C_WHITE
+    out_box.line.color.rgb = C_BORDER_LIGHT
+    out_box.line.width = Pt(1)
 
-    bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.833), Inches(3.9), Inches(0.08), sc_h)
-    bar.fill.solid()
-    bar.fill.fore_color.rgb = C_CORAL
-    bar.line.fill.background()
+    out_bar = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(6.783), sc_top, Inches(0.08), sc_h)
+    out_bar.fill.solid()
+    out_bar.fill.fore_color.rgb = C_CORAL
+    out_bar.line.fill.background()
 
-    tb = s6.shapes.add_textbox(Inches(7.083), Inches(4.0), sc_w - Inches(0.35), sc_h - Inches(0.2))
+    tb = s6.shapes.add_textbox(Inches(7.033), sc_top + Inches(0.15), sc_w - Inches(0.35), sc_h - Inches(0.3))
     tf = tb.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
@@ -1109,49 +1030,24 @@ Slide 5 — Four Reproducible Benchmark Scenarios:
     p.font.bold = True
     p.font.color.rgb = C_CORAL
 
-    p2 = tf.add_paragraph()
-    p2.text = "• Real carrier webhook integration (keep mock courier)\n• Multi-product order parsing (keep 1 item/return)\n• Custom video encoding (keep standard 1 fps FFmpeg extraction)\n• Production payment gateways / live WhatsApp webhooks\n• Seller analytics dashboard"
-    p2.font.name = FONT_HEAD
-    p2.font.size = Pt(10)
-    p2.font.color.rgb = C_DARK
+    for item in d6["scope_boundaries"]["cut_first"]:
+        p_item = tf.add_paragraph()
+        p_item.text = f"• {item}"
+        p_item.font.name = FONT_HEAD
+        p_item.font.size = Pt(10.5)
+        p_item.font.color.rgb = C_DARK
 
-    # Closing quote banner
-    q_box = s6.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(6.0), Inches(11.733), Inches(0.65))
-    q_box.fill.solid()
-    q_box.fill.fore_color.rgb = RGBColor(0xFA, 0xF8, 0xF5)
-    q_box.line.color.rgb = C_BORDER_LIGHT
-    q_box.line.width = Pt(1)
-    p = q_box.text_frame.paragraphs[0]
-    p.text = "“The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control.”"
-    p.font.name = FONT_HEAD
-    p.font.size = Pt(11)
-    p.font.italic = True
-    p.font.color.rgb = C_DARK
-    p.alignment = PP_ALIGN.CENTER
+    add_footer(s6, "Team Rookie (3 Members) · PS-04 Autonomous Support Agent · 24-Hour Prototype Feasibility", "Slide 6 / 6")
+    set_speaker_notes(s6, d6["speaker_notes"])
 
-    add_footer(s6, "Team Rookie (3 members) · PS-04 Autonomous Support Agent · 24-Hour Prototype Feasibility", "Slide 6 / 6")
-
-    set_speaker_notes(s6, """
-Slide 6 — 24-Hour Sprint Feasibility, Ownership & Strict Scope Guardrails:
-- Feasibility Argument: Why is ReturnLens realistically buildable in 24 hours by 3 engineers?
-  1. No live external production dependencies: deterministic mock APIs for Shopify & Shippo eliminate external latency and flakiness.
-  2. Clear division of labor with single-threaded ownership across 3 teammates:
-     - Person A (Backend): LangGraph state graph, mock store/courier fixtures, order-status route, state serialization.
-     - Person B (Video & UI): FFmpeg keyframe extraction, deterministic rules P-01 to P-08, critic prompt, seller console.
-     - Person C (Integration & Validation): Clarification/resume loop, 4 staged demo cases (A-D), authorization boundary tests, demo video recording, README.
-  3. Strict Scope Discipline:
-     - NEVER CUT: Core policy engine, frame citations, seller authorization gate, structured audit log, clarification/resume loop, 4 demo cases.
-     - CUT FIRST IF BEHIND: Real carrier webhooks, multi-product order parsing, video OCR barcode scanning, production payment gateways, seller analytics dashboards.
-- Winning Philosophy: "The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control."
-""")
-
-    out_deliverables = base_dir / "deliverables" / "ReturnLens_v4.pptx"
+    # Output Saving
+    out_deliv = base_dir / "deliverables" / "ReturnLens_v4.pptx"
     out_root = base_dir / "ReturnLens_v4.pptx"
+    out_deliv.parent.mkdir(parents=True, exist_ok=True)
 
-    out_deliverables.parent.mkdir(parents=True, exist_ok=True)
-    prs.save(str(out_deliverables))
+    prs.save(str(out_deliv))
     prs.save(str(out_root))
-    print(f"Saved PPTX to: {out_deliverables} and {out_root}")
+    print(f"Generated PPTX successfully:\n  -> {out_deliv} ({out_deliv.stat().st_size} bytes)\n  -> {out_root} ({out_root.stat().st_size} bytes)")
 
 if __name__ == "__main__":
-    create_deck()
+    build_pptx()
