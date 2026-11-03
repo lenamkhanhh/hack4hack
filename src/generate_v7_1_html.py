@@ -1313,14 +1313,14 @@ def generate_v7_1():
               <img src="{img_white_b64}" class="comp-img" alt="Store Truth White Headphones">
               <div class="comp-label">STORE TRUTH · SHOPIFY</div>
               <div class="comp-title">{meta['sample_order']['sku']} ({meta['sample_order']['ordered_color']})</div>
-              <div class="comp-meta">{meta['sample_order']['price']} paid · Studio Spec · Tag present<br>Delivered: 4d ago (Shippo #SH-9012)<br>Return Window: Day 4/7 (P-04 PASS)</div>
+              <div class="comp-meta">{meta['sample_order']['price']} paid · Studio Spec · Security Tag Required<br>Delivered: 4d ago (Shippo #SH-9012)<br>Return Window: Day 4/7 (P-04 PASS)</div>
             </div>
 
             <div class="comp-card coral">
               <img src="{img_black_b64}" class="comp-img" alt="Observed Black Headphones">
               <div class="comp-label">OBSERVED · VIDEO FRAME 00:07</div>
               <div class="comp-title">Black Casing (color-consistent with HEAD-BLK-09)</div>
-              <div class="comp-meta">Barcode: Unverified · Exact SKU: Not verified<br>Lighting: Optimal (142/255) · Policy P-03 FAIL<br>Contradiction flagged → Route to human seller</div>
+              <div class="comp-meta">Barcode: Unverified · Exact SKU: Not verified<br>Lighting: Sufficient · Policy P-03 FAIL<br>Contradiction flagged → Route to human seller</div>
             </div>
           </div>
 
@@ -1374,7 +1374,7 @@ def generate_v7_1():
         <div class="gap-focal-card">
           <div class="gap-tag">THE CRITICAL INFORMATION GAP</div>
           <div class="gap-quote">“What verifiable evidence justifies moving this money?”</div>
-          <div class="gap-lead">Four disconnected systems. One solo seller making high-stakes financial decisions across browser tabs.</div>
+          <div class="gap-lead">No auditable evidence record. One solo seller making high-stakes financial decisions across browser tabs.</div>
           <div class="gap-body">Without an auditable evidence pack, the merchant either refunds blind (losing COGS and 2-way freight) or disputes unfairly (destroying customer trust and merchant ratings).</div>
         </div>
       </div>
@@ -1430,7 +1430,7 @@ def generate_v7_1():
           <img src="{img_black_b64}" class="exhibit-img" alt="Observed Black Headphones">
           <div class="exhibit-spec">
             <div class="exhibit-spec-title">Observed: Black Casing (color-consistent with HEAD-BLK-09)</div>
-            <div class="exhibit-spec-meta">Exact SKU: Not verified (Barcode unverified) · Policy P-03 FAIL<br>Lighting: Optimal (142/255) · REC 00:07 / 00:24 (Mock Keyframe)</div>
+            <div class="exhibit-spec-meta">Exact SKU: Not verified (Barcode unverified) · Policy P-03 FAIL<br>Lighting: Sufficient · REC 00:07 / 00:24 (Mock Keyframe)</div>
           </div>
         </div>
       </div>
@@ -1456,7 +1456,7 @@ def generate_v7_1():
 
   <!-- SLIDE 4: SYSTEM ARCHITECTURE -->
   <section class="slide dark" id="slide-4">
-    <div class="tag-label">SYSTEM ARCHITECTURE · FAIL-CLOSED GOVERNANCE</div>
+    <div class="tag-label">SYSTEM ARCHITECTURE · FAIL-CLOSED SAFETY GATES</div>
     <div class="headline-wrap">
       <div class="slide-title">{d4.get("headline", meta["core_thesis"])}</div>
       <div class="slide-subtitle">Exactly 3 base model calls per triage case. Weak evidence escalates. Never releases automated refunds.</div>
@@ -1702,8 +1702,8 @@ def generate_v7_1():
         </div>
 
         <div class="scope-col">
-          <div class="scope-tag teal">FINANCIAL CEILING FORMULA</div>
-          <div class="scope-text mono">0 &lt; amt &lt;= min({meta['refund_guardrail']['ceiling']}, rem_ref, paid)</div>
+          <div class="scope-tag teal">PROTOTYPE SCOPE LOCKED</div>
+          <div class="scope-text">100% reproducible offline build · Zero external network dependencies</div>
         </div>
       </div>
     </div>

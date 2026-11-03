@@ -283,7 +283,7 @@ def build_v7_1_pptx():
     p.font.bold = True
     p.font.color.rgb = C_INK
     p = tf_l.add_paragraph()
-    p.text = f"{meta['sample_order']['price']} paid · Studio Spec · Tag present\nDelivered: 4d ago (Shippo #SH-9012)\nReturn Window: Day 4/7 (P-04 PASS)"
+    p.text = f"{meta['sample_order']['price']} paid · Studio Spec · Security Tag Required\nDelivered: 4d ago (Shippo #SH-9012)\nReturn Window: Day 4/7 (P-04 PASS)"
     p.font.name = FONT_HEAD
     p.font.size = Pt(10)
     p.font.color.rgb = C_MUTED
@@ -315,7 +315,7 @@ def build_v7_1_pptx():
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
     p = tf_r.add_paragraph()
-    p.text = "Barcode: Unverified · Exact SKU: Not verified\nLighting: Optimal (142/255) · Policy P-03 FAIL\nContradiction flagged → Route to human seller"
+    p.text = "Barcode: Unverified · Exact SKU: Not verified\nLighting: Sufficient · Policy P-03 FAIL\nContradiction flagged → Route to human seller"
     p.font.name = FONT_HEAD
     p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
@@ -509,7 +509,7 @@ def build_v7_1_pptx():
     p.space_after = Pt(16)
 
     p = tf_fc.add_paragraph()
-    p.text = "Four disconnected systems. One solo seller making high-stakes financial decisions across browser tabs."
+    p.text = "No auditable evidence record. One solo seller making high-stakes financial decisions across browser tabs."
     p.font.name = FONT_HEAD
     p.font.size = Pt(15)
     p.font.color.rgb = RGBColor(0xDF, 0xEA, 0xE5)
@@ -687,7 +687,7 @@ def build_v7_1_pptx():
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
     p = tf.add_paragraph()
-    p.text = "Exact SKU: Not verified (Barcode unverified) · Policy P-03 FAIL\nLighting: Optimal (142/255) · REC 00:07 / 00:24 (Mock Keyframe)"
+    p.text = "Exact SKU: Not verified (Barcode unverified) · Policy P-03 FAIL\nLighting: Sufficient · REC 00:07 / 00:24 (Mock Keyframe)"
     p.font.name = FONT_MONO
     p.font.size = Pt(10)
     p.font.color.rgb = C_CORAL_DARK
@@ -755,7 +755,7 @@ def build_v7_1_pptx():
 
     tb = s4.shapes.add_textbox(Inches(0.46), Inches(0.36), Inches(12.0), Inches(0.25))
     p = tb.text_frame.paragraphs[0]
-    p.text = d4.get("tag", "SYSTEM ARCHITECTURE · FAIL-CLOSED GOVERNANCE")
+    p.text = d4.get("tag", "SYSTEM ARCHITECTURE · FAIL-CLOSED SAFETY GATES")
     p.font.name = FONT_MONO
     p.font.size = Pt(11)
     p.font.bold = True
@@ -1350,16 +1350,16 @@ def build_v7_1_pptx():
     tf3.word_wrap = True
     tf3.margin_left = tf3.margin_top = tf3.margin_right = tf3.margin_bottom = 0
     p = tf3.paragraphs[0]
-    p.text = "FINANCIAL CEILING FORMULA"
+    p.text = "PROTOTYPE SCOPE LOCKED"
     p.font.name = FONT_MONO
     p.font.size = Pt(10.5)
     p.font.bold = True
     p.font.color.rgb = C_TEAL_ACCENT
     p = tf3.add_paragraph()
-    p.text = f"0 < amt <= min({meta['refund_guardrail']['ceiling']}, rem_ref, paid)"
-    p.font.name = FONT_MONO
-    p.font.size = Pt(11.5)
-    p.font.color.rgb = C_WHITE
+    p.text = "100% reproducible offline build · Zero external network dependencies"
+    p.font.name = FONT_HEAD
+    p.font.size = Pt(11)
+    p.font.color.rgb = RGBColor(0xDF, 0xEA, 0xE5)
 
     add_footer(s6, 6)
     add_notes(s6, d6["speaker_notes"])

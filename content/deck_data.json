@@ -78,7 +78,7 @@
         {
           "number": "01",
           "name": "Buyer Message",
-          "detail": "Subjective text & unindexed video claim in chat"
+          "detail": "Unstructured text & unverified unboxing video in chat"
         },
         {
           "number": "02",
@@ -124,7 +124,7 @@
         "color": "Black casing (color-consistent with HEAD-BLK-09, SKU not verified)",
         "status": "Contradiction Flagged",
         "image_file": "unboxing_black_headphones.jpg",
-        "lighting": "Optimal (142/255)",
+        "lighting": "Sufficient (Clear frame)",
         "duration": "00:24",
         "courier_tracking": "Shippo #SH-9012"
       },
@@ -150,7 +150,7 @@
     {
       "slide_number": 4,
       "id": "architecture",
-      "tag": "SYSTEM ARCHITECTURE · DYNAMIC AGENTIC GOVERNANCE",
+      "tag": "SYSTEM ARCHITECTURE · FAIL-CLOSED SAFETY GATES",
       "headline": "Models observe. Code verifies. Seller authorizes.",
       "subheadline": "Dynamic action selection and stateful resumption under deterministic human authorization.",
       "authority_zones": [

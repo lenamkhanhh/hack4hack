@@ -49,24 +49,31 @@ This patch does **not** alter the core visual identity or 6-slide narrative stru
    - Slide 5: Balanced right-column evaluation cards (13.5pt title, 11pt evidence, 9.5pt outcome) with zero edge crowding.
    - Slide 6: Increased person card heights to 2.48" and tuned deliverables list font to 9.5pt with 1.5pt paragraph spacing; adjusted scope discipline band to y=5.58", height 1.22", maintaining >1.20" clearance to footer.
 
+8. **Fix H — Wording, Jargon Elimination & Cognitive Friction Scrubbing:**
+   - Slide 1: Resolved logical classification flaw by updating Store Truth to `"Security Tag Required (P-02)"` (recognizing Shopify specifies requirement, video proves presence). Simplified lighting to `"Lighting: Sufficient"`.
+   - Slide 2: Replaced robotic phrase `"unindexed video claim"` with merchant-natural `"Unstructured text & unverified unboxing video in chat"`. Eliminated verbatim repetition of `"Four disconnected systems"` in the central gap focal card (`"No auditable evidence record"`).
+   - Slide 3: Simplified Case B lighting to `"Lighting: Sufficient"`, reserving raw score `28/255` exclusively for Case C where it triggers Policy P-06.
+   - Slide 4: Replaced buzzword tag `"DYNAMIC AGENTIC GOVERNANCE"` with robust engineering label `"SYSTEM ARCHITECTURE · FAIL-CLOSED SAFETY GATES"`.
+   - Slide 6: Removed redundant financial ceiling formula from the 24-hour sprint roadmap band, replacing it with execution feasibility commitment: `"PROTOTYPE SCOPE LOCKED: 100% reproducible offline build · Zero external network dependencies"`.
+
 ---
 
 ## 2. Deliverables Inventory & SHA256 Verification
 
 | Deliverable | Location | Size | SHA256 Hash | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Native Editable PPTX** | `ReturnLens_v7_1.pptx` | 1,419,255 B | `224da19de4d50e77ec05d92992d61b6f0854da37b9df4c177b963a405a87154e` | Synchronized |
-| **Deliverables PPTX** | `deliverables/ReturnLens_v7_1.pptx` | 1,419,255 B | `224da19de4d50e77ec05d92992d61b6f0854da37b9df4c177b963a405a87154e` | Synchronized |
-| **Vector PDF (6 Pages)** | `ReturnLens_v7_1.pdf` | 1,918,366 B | `997c69c3c662bc31cafca5488c7309a5827fb71f62f765c73ef1a24fd6cddd48` | Synchronized |
-| **Deliverables PDF** | `deliverables/ReturnLens_v7_1.pdf` | 1,918,366 B | `997c69c3c662bc31cafca5488c7309a5827fb71f62f765c73ef1a24fd6cddd48` | Synchronized |
-| **Interactive HTML** | `ReturnLens_v7_1.html` | 4,123,557 B | `4b8733a6e051bca89cd19fb8ff463ab71d768a4b5caf4ecfa5e30e1f7bd7e1d4` | Synchronized |
-| **Deliverables HTML** | `deliverables/ReturnLens_v7_1.html` | 4,123,557 B | `4b8733a6e051bca89cd19fb8ff463ab71d768a4b5caf4ecfa5e30e1f7bd7e1d4` | Synchronized |
-| **Preview Sheet (2352×882)** | `ReturnLens_v7_1_preview.png` | 1,040,330 B | `357bac0fbfc2ca553980c3aae1711cf3d8762a3634d627fa81c31edf8be11f14` | Synchronized |
-| **Deliverables Preview** | `deliverables/ReturnLens_v7_1_preview.png` | 1,040,330 B | `357bac0fbfc2ca553980c3aae1711cf3d8762a3634d627fa81c31edf8be11f14` | Synchronized |
-| **GitHub Pages Entry** | `index.html` | 4,123,557 B | `4b8733a6e051bca89cd19fb8ff463ab71d768a4b5caf4ecfa5e30e1f7bd7e1d4` | Matches v7.1 HTML |
-| **Authoritative PPTX Builder** | `src/build_v7_1_pptx.py` | 56,733 B | `eb5aa5abb22de528d199c724e26e74b14a7297527313da6de188e6f350bfcb0d` | Verified |
-| **Authoritative HTML/PDF Gen** | `src/generate_v7_1_html.py` | 58,356 B | `c6aad2e64e62f620e68dc2de6e18c4b213081bca5bf211736572f621a36d00eb` | Verified |
-| **Render Manifest** | `src/assets/v7_1_pptx_renders/render_manifest.json` | 844 B | `c0c11d17b276e717533bc0428db9d06c678d0359cd190db87cfab0bf9df7fc11` | Verified Fresh |
+| **Native Editable PPTX** | `ReturnLens_v7_1.pptx` | 1,419,278 B | `341b47be7aebc31480446cbfa0ae84d0d62eea337cc2e48356e664209bd3b21c` | Synchronized |
+| **Deliverables PPTX** | `deliverables/ReturnLens_v7_1.pptx` | 1,419,278 B | `341b47be7aebc31480446cbfa0ae84d0d62eea337cc2e48356e664209bd3b21c` | Synchronized |
+| **Vector PDF (6 Pages)** | `ReturnLens_v7_1.pdf` | 1,919,254 B | `1266c6c2f101857dae106d434006e6a2779fd5a74bf862464e9215bc04927b1d` | Synchronized |
+| **Deliverables PDF** | `deliverables/ReturnLens_v7_1.pdf` | 1,919,254 B | `1266c6c2f101857dae106d434006e6a2779fd5a74bf862464e9215bc04927b1d` | Synchronized |
+| **Interactive HTML** | `ReturnLens_v7_1.html` | 4,123,580 B | `83492cc0685611523cfe9d93504474719bc88d4099494094445072c3463daa3e` | Synchronized |
+| **Deliverables HTML** | `deliverables/ReturnLens_v7_1.html` | 4,123,580 B | `83492cc0685611523cfe9d93504474719bc88d4099494094445072c3463daa3e` | Synchronized |
+| **Preview Sheet (2352×882)** | `ReturnLens_v7_1_preview.png` | 1,042,016 B | `c737b796cfc351e5e0853e8d32a1f6e1d29db76bad86889d2770dc00d4034029` | Synchronized |
+| **Deliverables Preview** | `deliverables/ReturnLens_v7_1_preview.png` | 1,042,016 B | `c737b796cfc351e5e0853e8d32a1f6e1d29db76bad86889d2770dc00d4034029` | Synchronized |
+| **GitHub Pages Entry** | `index.html` | 4,123,580 B | `83492cc0685611523cfe9d93504474719bc88d4099494094445072c3463daa3e` | Matches v7.1 HTML |
+| **Authoritative PPTX Builder** | `src/build_v7_1_pptx.py` | 56,748 B | `90586b8bb5a3fb6ef29a679a1cfba582d680fcd63255f266db2ddc49c1058f9e` | Verified |
+| **Authoritative HTML/PDF Gen** | `src/generate_v7_1_html.py` | 58,344 B | `a223b3e627aa4abd3dbddf01898b0810db52371c01ec6cab1ac216f2a3273306` | Verified |
+| **Render Manifest** | `src/assets/v7_1_pptx_renders/render_manifest.json` | 844 B | `a93658cc59918b25d3eae4a3fa410527d1d82e7fdea17ed914f0c066b50d9274` | Verified Fresh |
 | **Automated QA Runner** | `scripts/smoke_test.py` | 21,479 B | `f6245123b7ae60934be9c6e6121433172d6bc8ec949a0d98d904537be9a05778` | 10/10 Tests Passed |
 
 ---
@@ -100,10 +107,10 @@ PASSED: generate_v7_1_html.py executed successfully.
 PASSED: build_v7_1_pptx.py executed successfully.
 
 [TEST 3] Validating V7.1 deliverables existence & synchronization (root vs deliverables/)...
-PASSED: ReturnLens_v7_1.html synced with deliverables/ReturnLens_v7_1.html (4123557 bytes).
-PASSED: ReturnLens_v7_1.pdf synced with deliverables/ReturnLens_v7_1.pdf (1919023 bytes).
-PASSED: ReturnLens_v7_1.pptx synced with deliverables/ReturnLens_v7_1.pptx (1419255 bytes).
-PASSED: ReturnLens_v7_1_preview.png synced with deliverables/ReturnLens_v7_1_preview.png (1040320 bytes).
+PASSED: ReturnLens_v7_1.html synced with deliverables/ReturnLens_v7_1.html (4123580 bytes).
+PASSED: ReturnLens_v7_1.pdf synced with deliverables/ReturnLens_v7_1.pdf (1919254 bytes).
+PASSED: ReturnLens_v7_1.pptx synced with deliverables/ReturnLens_v7_1.pptx (1419278 bytes).
+PASSED: ReturnLens_v7_1_preview.png synced with deliverables/ReturnLens_v7_1_preview.png (1042016 bytes).
 
 [TEST 4] Validating V7.1 PDF properties...
 PASSED: V7.1 PDF has exactly 6 pages.
@@ -145,7 +152,7 @@ PASSED: All V7.1 slides passed geometry, safe margins, and collision checks.
 
 [TEST 9] Validating Media Embeds and PPTX Render Freshness...
 PASSED: All 6 PPTX-rendered slide PNGs present in D:\Code\Code\AIO\Code\hack4hack\src\assets\v7_1_pptx_renders.
-PASSED: render_manifest.json is fresh and matches current PPTX SHA256: 224da19de4d5...
+PASSED: render_manifest.json is fresh and matches current PPTX SHA256: 341b47be7aeb...
 
 [TEST 10] Validating Historical V5, V6 & V7 Preservation (Zero Regression)...
 PASSED: All 12 historical V5, V6, and V7 files are 100% byte-identical to baseline.
