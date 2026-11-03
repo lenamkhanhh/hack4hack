@@ -1,8 +1,8 @@
 {
   "source_pptx": "ReturnLens_v7_1.pptx",
-  "source_sha256": "a314d87cd270a8c474c92a0a4f5ba574116828cdb18663858870546595f52692",
+  "source_sha256": "224da19de4d50e77ec05d92992d61b6f0854da37b9df4c177b963a405a87154e",
   "tool": "Microsoft PowerPoint COM (win32com.client)",
-  "timestamp": "2026-10-31T17:11:23.908001+00:00",
+  "timestamp": "2026-11-03T07:11:47.338631+00:00",
   "dimensions": {
     "width": 1920,
     "height": 1080
@@ -11,32 +11,32 @@
     {
       "slide": 1,
       "file": "slide_1.png",
-      "size": 456813
+      "size": 454673
     },
     {
       "slide": 2,
       "file": "slide_2.png",
-      "size": 143385
+      "size": 139010
     },
     {
       "slide": 3,
       "file": "slide_3.png",
-      "size": 1053734
+      "size": 1051497
     },
     {
       "slide": 4,
       "file": "slide_4.png",
-      "size": 119191
+      "size": 114507
     },
     {
       "slide": 5,
       "file": "slide_5.png",
-      "size": 267910
+      "size": 264359
     },
     {
       "slide": 6,
       "file": "slide_6.png",
-      "size": 130917
+      "size": 125946
     }
   ]
 }

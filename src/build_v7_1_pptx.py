@@ -269,6 +269,7 @@ def build_v7_1_pptx():
     tb_l = s1.shapes.add_textbox(c_x + Inches(0.30), b_y + Inches(1.32), bx_w - Inches(0.20), Inches(1.15))
     tf_l = tb_l.text_frame
     tf_l.word_wrap = True
+    tf_l.margin_left = tf_l.margin_top = tf_l.margin_right = tf_l.margin_bottom = 0
     p = tf_l.paragraphs[0]
     p.text = "STORE TRUTH · SHOPIFY"
     p.font.name = FONT_MONO
@@ -278,13 +279,13 @@ def build_v7_1_pptx():
     p = tf_l.add_paragraph()
     p.text = f"{meta['sample_order']['sku']} ({meta['sample_order']['ordered_color']})"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(13.5)
+    p.font.size = Pt(12)
     p.font.bold = True
     p.font.color.rgb = C_INK
     p = tf_l.add_paragraph()
     p.text = f"{meta['sample_order']['price']} paid · Studio Spec · Tag present\nDelivered: 4d ago (Shippo #SH-9012)\nReturn Window: Day 4/7 (P-04 PASS)"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_MUTED
 
     # Right Box - Grounded Observation: Black casing, color-consistent with HEAD-BLK-09, SKU not verified
@@ -300,6 +301,7 @@ def build_v7_1_pptx():
     tb_r = s1.shapes.add_textbox(c_x + Inches(4.00), b_y + Inches(1.32), bx_w - Inches(0.20), Inches(1.15))
     tf_r = tb_r.text_frame
     tf_r.word_wrap = True
+    tf_r.margin_left = tf_r.margin_top = tf_r.margin_right = tf_r.margin_bottom = 0
     p = tf_r.paragraphs[0]
     p.text = "OBSERVED · VIDEO FRAME 00:07"
     p.font.name = FONT_MONO
@@ -309,13 +311,13 @@ def build_v7_1_pptx():
     p = tf_r.add_paragraph()
     p.text = "Black Casing (color-consistent with HEAD-BLK-09)"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(13)
+    p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
     p = tf_r.add_paragraph()
     p.text = "Barcode: Unverified · Exact SKU: Not verified\nLighting: Optimal (142/255) · Policy P-03 FAIL\nContradiction flagged → Route to human seller"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(10.5)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
 
     # 4. FIX A: Precise P-03 Color Contradiction Notice Strip (Eliminate exact SKU overclaim)
@@ -351,10 +353,11 @@ def build_v7_1_pptx():
 
     tb_aud = s1.shapes.add_textbox(c_x + Inches(0.32), aud_y + Inches(0.05), c_w - Inches(0.64), aud_h - Inches(0.08))
     tf_aud = tb_aud.text_frame
+    tf_aud.margin_left = tf_aud.margin_top = tf_aud.margin_right = tf_aud.margin_bottom = 0
     p = tf_aud.paragraphs[0]
     p.text = f"AUDIT LEDGER: Logged to SQLite · SHA256 evidence hash · Server refund cap: ≤ min({meta['refund_guardrail']['ceiling']}, rem, paid)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(9)
+    p.font.size = Pt(8.5)
     p.font.color.rgb = C_MUTED
 
     # 6. Bottom Decision & Action Bar (FIX A: "Review Evidence & Decide")
@@ -467,7 +470,8 @@ def build_v7_1_pptx():
         p.font.size = Pt(12)
         p.font.color.rgb = C_MUTED
 
-        arr = s2.shapes.add_textbox(dia_x + src_w + Inches(0.10), sy + Inches(0.22), Inches(0.45), Inches(0.40))
+        arr = s2.shapes.add_textbox(dia_x + src_w + Inches(0.10), sy + Inches(0.20), Inches(0.45), Inches(0.44))
+        arr.text_frame.margin_left = arr.text_frame.margin_top = arr.text_frame.margin_right = arr.text_frame.margin_bottom = 0
         p = arr.text_frame.paragraphs[0]
         p.text = "→"
         p.font.name = FONT_HEAD
@@ -520,47 +524,52 @@ def build_v7_1_pptx():
     # Bottom Row: FIX C — Fraud Metric Clarity (Explicitly Defined & Non-Equated)
     b_y = dia_y + dia_h + Inches(0.18)
     b_w = Inches(6.08)
+    b_h = Inches(1.08)
 
-    bs_l = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.46), b_y, b_w, Inches(1.02))
+    bs_l = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.46), b_y, b_w, b_h)
     bs_l.fill.solid()
     bs_l.fill.fore_color.rgb = C_PAPER_TINT
     bs_l.line.color.rgb = C_BORDER
     bs_l.line.width = Pt(1)
 
-    tb_bsl = s2.shapes.add_textbox(Inches(0.62), b_y + Inches(0.10), b_w - Inches(0.32), Inches(0.82))
+    tb_bsl = s2.shapes.add_textbox(Inches(0.62), b_y + Inches(0.08), b_w - Inches(0.32), b_h - Inches(0.12))
     tf = tb_bsl.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "INDUSTRY FRAUD BASELINE (DEFINITIONS DIFFER · NOT DIRECTLY COMPARABLE)"
     p.font.name = FONT_MONO
     p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_TEAL_DARK
+    p.space_after = Pt(2)
     p = tf.add_paragraph()
     p.text = "• 9.0% — Return Fraud (NRF 2025: criminal only): Strict criminal fraud (unboxing swaps, empty boxes).\n• 15.14% — Fraud + Policy Abuse (Appriss/Deloitte 2024: criminal + abuse): Criminal fraud combined with policy abuse (wardrobing)."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
 
-    bs_r = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.79), b_y, b_w, Inches(1.02))
+    bs_r = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.79), b_y, b_w, b_h)
     bs_r.fill.solid()
     bs_r.fill.fore_color.rgb = C_PAPER_TINT
     bs_r.line.color.rgb = C_BORDER
     bs_r.line.width = Pt(1)
 
-    tb_bsr = s2.shapes.add_textbox(Inches(6.95), b_y + Inches(0.10), b_w - Inches(0.32), Inches(0.82))
+    tb_bsr = s2.shapes.add_textbox(Inches(6.95), b_y + Inches(0.08), b_w - Inches(0.32), b_h - Inches(0.12))
     tf = tb_bsr.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "SOLO MERCHANT ASYMMETRIC RISK"
     p.font.name = FONT_MONO
     p.font.size = Pt(9.5)
     p.font.bold = True
     p.font.color.rgb = C_TEAL_DARK
+    p.space_after = Pt(2)
     p = tf.add_paragraph()
     p.text = "• Wrong refund = Lost product COGS + 2-way shipping costs (unrecoverable margin loss).\n• Unfair denial = Ruined customer trust, chargeback penalties & degraded seller account health."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
 
     add_footer(s2, 2)
@@ -621,16 +630,18 @@ def build_v7_1_pptx():
 
     tb_spec_l = s3.shapes.add_textbox(Inches(0.70), stg_y + Inches(2.90), stg_w - Inches(0.48), Inches(0.98))
     tf = tb_spec_l.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = f"SKU: {meta['sample_order']['sku']} · Spec: {meta['sample_order']['ordered_color']} Casing"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(14)
+    p.font.size = Pt(13.5)
     p.font.bold = True
     p.font.color.rgb = C_INK
     p = tf.add_paragraph()
     p.text = f"Price: {meta['sample_order']['price']} paid · Delivered: 4d ago (Shippo #SH-9012)\nReturn Window P-04 (7-Day Policy): PASS (Day 4 of 7)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_INK_LIGHT
 
     # Center Prominent Coral Mismatch Pill
@@ -667,16 +678,18 @@ def build_v7_1_pptx():
 
     tb_spec_r = s3.shapes.add_textbox(Inches(7.48), stg_y + Inches(2.90), stg_w - Inches(0.48), Inches(0.98))
     tf = tb_spec_r.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "Observed: Black Casing (color-consistent with HEAD-BLK-09)"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(14)
+    p.font.size = Pt(13.5)
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
     p = tf.add_paragraph()
     p.text = "Exact SKU: Not verified (Barcode unverified) · Policy P-03 FAIL\nLighting: Optimal (142/255) · REC 00:07 / 00:24 (Mock Keyframe)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(11)
+    p.font.size = Pt(10)
     p.font.color.rgb = C_CORAL_DARK
 
     # Bottom Decision Strip: Prominent Result Banner with 3 Clean Action Pills
@@ -688,20 +701,24 @@ def build_v7_1_pptx():
     dec.line.color.rgb = C_BORDER_STRONG
     dec.line.width = Pt(1)
 
-    tb_ot = s3.shapes.add_textbox(Inches(0.65), dec_y + Inches(0.08), Inches(6.5), Inches(0.30))
-    p = tb_ot.text_frame.paragraphs[0]
+    tb_ot = s3.shapes.add_textbox(Inches(0.65), dec_y + Inches(0.08), Inches(5.40), Inches(0.30))
+    tf_ot = tb_ot.text_frame
+    tf_ot.margin_left = tf_ot.margin_top = tf_ot.margin_right = tf_ot.margin_bottom = 0
+    p = tf_ot.paragraphs[0]
     p.text = "POLICY P-03 RESULT: ESCALATE TO SELLER GATE (FAIL-CLOSED)"
     p.font.name = FONT_MONO
-    p.font.size = Pt(11.5)
+    p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = C_CORAL_DARK
 
-    tb_fg = s3.shapes.add_textbox(Inches(6.80), dec_y + Inches(0.08), Inches(5.8), Inches(0.30))
-    p = tb_fg.text_frame.paragraphs[0]
+    tb_fg = s3.shapes.add_textbox(Inches(6.15), dec_y + Inches(0.08), Inches(6.50), Inches(0.30))
+    tf_fg = tb_fg.text_frame
+    tf_fg.margin_left = tf_fg.margin_top = tf_fg.margin_right = tf_fg.margin_bottom = 0
+    p = tf_fg.paragraphs[0]
     p.alignment = PP_ALIGN.RIGHT
     p.text = f"Guardrail: 0 < amt ≤ min({meta['refund_guardrail']['ceiling']}, rem_ref, paid) · Never auto-refunds"
     p.font.name = FONT_MONO
-    p.font.size = Pt(10)
+    p.font.size = Pt(9.5)
     p.font.color.rgb = C_MUTED
 
     # 3 Preserved Action Interactive Buttons
@@ -813,6 +830,7 @@ def build_v7_1_pptx():
     tb = s4.shapes.add_textbox(Inches(0.65), g_y + Inches(0.18), g_w - Inches(0.40), g_h - Inches(0.36))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "CALL BUDGET & MODEL RESTRICTION"
     p.font.name = FONT_MONO
@@ -829,7 +847,7 @@ def build_v7_1_pptx():
     p = tf.add_paragraph()
     p.text = "1. Planner proposes typed tool actions.\n2. Vision model inspects server-extracted keyframes.\n3. Critic evaluates citations against policy.\n\nMODELS NEVER ACCESS PAYMENT APIS DIRECTLY."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(12)
+    p.font.size = Pt(11.5)
     p.font.color.rgb = C_DARK_MUTED
 
     # Pillar 2: FIX B — Case C Stateful Resumption Diagram & P-06 Failure
@@ -842,6 +860,7 @@ def build_v7_1_pptx():
     tb = s4.shapes.add_textbox(Inches(4.88), g_y + Inches(0.18), g_w - Inches(0.40), g_h - Inches(0.36))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "STATEFUL RESUMPTION (CASE C)"
     p.font.name = FONT_MONO
@@ -851,14 +870,14 @@ def build_v7_1_pptx():
     p = tf.add_paragraph()
     p.text = "Clarification & Re-Film Loop"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(17)
+    p.font.size = Pt(16.5)
     p.font.bold = True
     p.font.color.rgb = C_DARK_INK
-    p.space_after = Pt(8)
+    p.space_after = Pt(6)
     p = tf.add_paragraph()
     p.text = "Low-light video (Policy P-06 FAIL, brightness score: 28/255) triggers ask_for_evidence().\n\nState saves to WAITING_FOR_EVIDENCE → Resumes on upload.\n\nTERMINATION RULE: After 1 retry, escalates to seller with both attempts logged (never auto-denies)."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11.5)
+    p.font.size = Pt(10.5)
     p.font.color.rgb = RGBColor(0xD2, 0xE5, 0xDC)
 
     # Pillar 3: Secondary Fast Path (Tiny PS-04 Order Route)
@@ -871,6 +890,7 @@ def build_v7_1_pptx():
     tb = s4.shapes.add_textbox(Inches(9.11), g_y + Inches(0.18), g_w - Inches(0.40), g_h - Inches(0.36))
     tf = tb.text_frame
     tf.word_wrap = True
+    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
     p = tf.paragraphs[0]
     p.text = "SECONDARY PS-04 ROUTE"
     p.font.name = FONT_MONO
@@ -887,7 +907,7 @@ def build_v7_1_pptx():
     p = tf.add_paragraph()
     p.text = "For routine \"Where is my order?\" inquiries, the agent bypasses vision models entirely:\n\nStore API → Courier API → Status Reply\n\nZero vision token waste · Instant response."
     p.font.name = FONT_HEAD
-    p.font.size = Pt(12)
+    p.font.size = Pt(11.5)
     p.font.color.rgb = C_DARK_MUTED
 
     # Bottom Technical Banner
@@ -1111,21 +1131,22 @@ def build_v7_1_pptx():
         tb = s5.shapes.add_textbox(rw_x + Inches(0.25), cy + Inches(0.12), rw_w - Inches(0.50), rw_h - Inches(0.20))
         tf = tb.text_frame
         tf.word_wrap = True
+        tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
         p = tf.paragraphs[0]
         p.text = f"{title}   [{badge}]"
         p.font.name = FONT_HEAD
-        p.font.size = Pt(14)
+        p.font.size = Pt(13.5)
         p.font.bold = True
         p.font.color.rgb = b_col
         p = tf.add_paragraph()
         p.text = ev
         p.font.name = FONT_HEAD
-        p.font.size = Pt(12)
+        p.font.size = Pt(11)
         p.font.color.rgb = C_MUTED
         p = tf.add_paragraph()
         p.text = out
         p.font.name = FONT_MONO
-        p.font.size = Pt(10)
+        p.font.size = Pt(9.5)
         p.font.bold = True
         p.font.color.rgb = C_TEAL_DARK
 
@@ -1192,7 +1213,7 @@ def build_v7_1_pptx():
         p.font.bold = True
         p.font.color.rgb = C_TEAL_DARK
 
-        tb = s6.shapes.add_textbox(tx, t_y + Inches(0.38), Inches(2.90), Inches(0.76))
+        tb = s6.shapes.add_textbox(tx, t_y + Inches(0.38), Inches(2.95), Inches(0.76))
         tf = tb.text_frame
         tf.word_wrap = True
         tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
@@ -1217,7 +1238,7 @@ def build_v7_1_pptx():
     # 3 Enriched Person Cards: Exactly 4 Concrete Deliverables Each & Clear Tech Stacks
     p_y = Inches(3.05)
     p_w = Inches(3.95)
-    p_h = Inches(2.45)
+    p_h = Inches(2.48)
 
     people = [
         ("PERSON A · BACKEND, POLICY & AUDIT", "State Machine & Policy Engine",
@@ -1254,47 +1275,48 @@ def build_v7_1_pptx():
         pc.line.color.rgb = C_BORDER
         pc.line.width = Pt(1)
 
-        tb = s6.shapes.add_textbox(px + Inches(0.18), p_y + Inches(0.14), p_w - Inches(0.36), p_h - Inches(0.24))
+        tb = s6.shapes.add_textbox(px + Inches(0.18), p_y + Inches(0.12), p_w - Inches(0.36), p_h - Inches(0.20))
         tf = tb.text_frame
         tf.word_wrap = True
         tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
         p = tf.paragraphs[0]
         p.text = role
         p.font.name = FONT_MONO
-        p.font.size = Pt(9.5)
+        p.font.size = Pt(9)
         p.font.bold = True
         p.font.color.rgb = C_TEAL
         p = tf.add_paragraph()
         p.text = name
         p.font.name = FONT_HEAD
-        p.font.size = Pt(14)
+        p.font.size = Pt(13.5)
         p.font.bold = True
         p.font.color.rgb = C_INK
         p = tf.add_paragraph()
         p.text = stack
         p.font.name = FONT_MONO
-        p.font.size = Pt(9)
+        p.font.size = Pt(8.5)
         p.font.color.rgb = C_MUTED
-        p.space_after = Pt(4)
+        p.space_after = Pt(2)
         for item in deliverables:
             p = tf.add_paragraph()
             p.text = item
             p.font.name = FONT_HEAD
-            p.font.size = Pt(10.5)
+            p.font.size = Pt(9.5)
             p.font.color.rgb = C_INK_LIGHT
-            p.space_after = Pt(2)
+            p.space_after = Pt(1.5)
 
     # Bottom Scope Discipline Band
-    sc_y = Inches(5.55)
-    sc_h = Inches(1.25)
+    sc_y = Inches(5.58)
+    sc_h = Inches(1.22)
     sc = s6.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.46), sc_y, Inches(12.41), sc_h)
     sc.fill.solid()
     sc.fill.fore_color.rgb = C_INK
     sc.line.width = 0
 
-    tb_sc1 = s6.shapes.add_textbox(Inches(0.65), sc_y + Inches(0.12), Inches(4.50), Inches(1.00))
+    tb_sc1 = s6.shapes.add_textbox(Inches(0.65), sc_y + Inches(0.10), Inches(4.50), Inches(1.02))
     tf1 = tb_sc1.text_frame
     tf1.word_wrap = True
+    tf1.margin_left = tf1.margin_top = tf1.margin_right = tf1.margin_bottom = 0
     p = tf1.paragraphs[0]
     p.text = "MUST DELIVER (CORE PROTOTYPE)"
     p.font.name = FONT_MONO
@@ -1304,12 +1326,13 @@ def build_v7_1_pptx():
     p = tf1.add_paragraph()
     p.text = "Mock APIs · Policy engine · Cases A–C + Case D sequence test · Approval binding · Seller gate · Tiny order route"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(12)
+    p.font.size = Pt(11.5)
     p.font.color.rgb = RGBColor(0xDF, 0xEA, 0xE5)
 
-    tb_sc2 = s6.shapes.add_textbox(Inches(5.40), sc_y + Inches(0.12), Inches(4.20), Inches(1.00))
+    tb_sc2 = s6.shapes.add_textbox(Inches(5.40), sc_y + Inches(0.10), Inches(4.20), Inches(1.02))
     tf2 = tb_sc2.text_frame
     tf2.word_wrap = True
+    tf2.margin_left = tf2.margin_top = tf2.margin_right = tf2.margin_bottom = 0
     p = tf2.paragraphs[0]
     p.text = "CUT FIRST IF BEHIND"
     p.font.name = FONT_MONO
@@ -1319,12 +1342,13 @@ def build_v7_1_pptx():
     p = tf2.add_paragraph()
     p.text = "Advanced video forensics (Case D stretch) · WhatsApp bot · Exchanges · Multi-seller auth · Audio analysis · Public cloud deployment"
     p.font.name = FONT_HEAD
-    p.font.size = Pt(11.5)
+    p.font.size = Pt(11)
     p.font.color.rgb = RGBColor(0xDF, 0xEA, 0xE5)
 
-    tb_sc3 = s6.shapes.add_textbox(Inches(9.80), sc_y + Inches(0.12), Inches(2.90), Inches(1.00))
+    tb_sc3 = s6.shapes.add_textbox(Inches(9.80), sc_y + Inches(0.10), Inches(2.90), Inches(1.02))
     tf3 = tb_sc3.text_frame
     tf3.word_wrap = True
+    tf3.margin_left = tf3.margin_top = tf3.margin_right = tf3.margin_bottom = 0
     p = tf3.paragraphs[0]
     p.text = "FINANCIAL CEILING FORMULA"
     p.font.name = FONT_MONO
