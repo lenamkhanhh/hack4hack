@@ -1348,11 +1348,11 @@ def build_v7_1_pptx():
     # Write deterministic archive with normalized timestamps
     fixed_time = (2026, 10, 31, 12, 0, 0)
     with zipfile.ZipFile(temp_raw, 'r') as zin:
-        with zipfile.ZipFile(pptx_deliv, 'w', compression=zipfile.ZIP_DEFLATED) as zout:
+        with zipfile.ZipFile(pptx_deliv, 'w', compression=zipfile.ZIP_STORED) as zout:
             for item in zin.infolist():
                 data = zin.read(item.filename)
                 new_info = zipfile.ZipInfo(item.filename, date_time=fixed_time)
-                new_info.compress_type = item.compress_type
+                new_info.compress_type = zipfile.ZIP_STORED
                 new_info.external_attr = 0o644 << 16
                 new_info.create_system = 0
                 zout.writestr(new_info, data)
