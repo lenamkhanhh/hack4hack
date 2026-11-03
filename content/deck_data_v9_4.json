@@ -1,0 +1,244 @@
+{
+  "meta": {
+    "project_name": "ReturnLens",
+    "edition": "ReturnLens v9.4",
+    "tagline": "Every return decision, backed by evidence.",
+    "one_liner": "A support agent for solo sellers that handles order status, returns and refunds—using video evidence to triage disputed claims.",
+    "track": "AgentX Hackathon 2026 · Track PS-04",
+    "team": "Team Rookie (4 Members)",
+    "core_thesis": "Models observe. Code verifies. Seller authorizes.",
+    "authority_boundary": "Seller approves returns, labels and refunds · No automated refund or rejection",
+    "sample_case": {
+      "case_id": "RT-8821",
+      "order_id": "ORD-7729",
+      "product_name": "Studio Wireless Headphones",
+      "sku": "HEAD-WHT-02",
+      "ordered_color": "Matte White",
+      "price": "₹1,499",
+      "courier_tracking": "Shippo #SH-9012",
+      "delivery_date": "Delivered 4 days ago",
+      "policy_status": "Within the 7-day return window (0 <= current_date - delivery_date <= 7 days)"
+    },
+    "customer_claim_text": "I ordered white headphones, but received black. Please refund me.",
+    "draft_reply_case_b": "Please share the outer-box label so we can check your shipment.",
+    "sample_refund_policy": {
+      "remaining_refundable_amount": "₹1,499",
+      "store_max_refund_cap": "₹3,000",
+      "note": "Team sample policy for prototype evaluation, not a BTC hackathon limit"
+    }
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "id": "hero",
+      "kicker": "AgentX Hackathon 2026 · Track PS-04",
+      "title": "ReturnLens",
+      "tagline": "Every return decision, backed by evidence.",
+      "summary": "A support agent for solo sellers that handles order status, returns and refunds—using video evidence to triage disputed claims.",
+      "principle": "Models observe. Code verifies. Seller authorizes.",
+      "mockup": {
+        "case_header": "CASE #RT-8821 · NEEDS SELLER DECISION",
+        "order_summary": "Order #ORD-7729 · Studio Wireless · ₹1,499 paid · Delivered 4d ago",
+        "discrepancy_note": "Color mismatch: Ordered White vs Observed Black · Barcode unverified",
+        "next_step": "Recommended Next Step: Request outer-box label photo",
+        "authority_note": "Seller approves returns, labels and refunds.",
+        "safety_note": "No automated refund or rejection",
+        "cta_button": "Review Evidence & Decide →"
+      },
+      "speaker_notes": "[0:00 - 0:25 | Slide 1: Introduction]\nJudges, this is ReturnLens. For solo merchants, handling customer chat about order status, returns, and refunds is time-consuming and error-prone. ReturnLens handles routine inquiries while using video evidence to triage disputed claims. Models observe, deterministic code verifies, and the merchant authorizes every consequential financial decision."
+    },
+    {
+      "slide_number": 2,
+      "id": "problem",
+      "kicker": "The Merchant's Reality",
+      "title": "One claim. Four disconnected sources.",
+      "customer_claim": {
+        "quote": "“I ordered white headphones, but received black. Please refund me.”",
+        "attachment": "Customer video · 18s"
+      },
+      "sources": [
+        {
+          "num": "01",
+          "name": "Customer Chat",
+          "detail": "Claim text and unboxing video upload"
+        },
+        {
+          "num": "02",
+          "name": "Shopify Order",
+          "detail": "Matte White (SKU HEAD-WHT-02), ₹1,499 paid"
+        },
+        {
+          "num": "03",
+          "name": "Courier Scan",
+          "detail": "Shippo confirms delivery 4 days ago"
+        },
+        {
+          "num": "04",
+          "name": "Store Policy",
+          "detail": "7-day return window for wrong or damaged items"
+        }
+      ],
+      "seller_question": "Should I request more evidence, approve a return, or inspect the parcel?",
+      "speaker_notes": "[0:25 - 0:50 | Slide 2: The Problem]\nA customer chats in: 'I ordered white headphones, but received black. Please refund me,' attaching an 18-second unboxing video. The seller currently checks four separate sources: chat, Shopify, courier tracking, and store policies. The seller needs verified facts before deciding whether to request more evidence, approve a return, or inspect the parcel."
+    },
+    {
+      "slide_number": 3,
+      "id": "demonstration",
+      "kicker": "Core Evidence Comparison",
+      "title": "White ordered. Black shown.",
+      "subtitle": "Order details, video evidence and the next step—in one view.",
+      "left_evidence": {
+        "label": "STORE SPECIFICATION · SHOPIFY",
+        "headline": "Ordered: White",
+        "meta": "HEAD-WHT-02 · ₹1,499 paid · Delivered 4d ago"
+      },
+      "right_evidence": {
+        "label": "OBSERVED EVIDENCE · VIDEO FRAME 00:07",
+        "headline": "Observed: Black",
+        "meta": "Barcode unverified · Exact model unverified"
+      },
+      "options": [
+        {
+          "num": "1",
+          "title": "1. Approve return",
+          "action": "Create return and prepare label."
+        },
+        {
+          "num": "2",
+          "title": "2. Request label photo",
+          "action": "“Please share the outer-box label so we can check your shipment.”"
+        },
+        {
+          "num": "3",
+          "title": "3. Hold for inspection",
+          "action": "Inspect returned parcel before refund"
+        }
+      ],
+      "disclaimer": "* Staged example.",
+      "speaker_notes": "[0:50 - 1:30 | Slide 3: The Core Demonstration]\nHere is our core demonstration. The Shopify order specifies white headphones, but the video shows black casing. ReturnLens flags this visible difference clearly. The barcode and exact model remain unverified. Instead of guessing, ReturnLens prepares clear next steps. Option two drafts a polite clarification asking for the outer-box label, ready for one-click seller approval."
+    },
+    {
+      "slide_number": 4,
+      "id": "workflow",
+      "kicker": "Agent Architecture (Planned Prototype)",
+      "title": "Tool-assisted triage and safety guardrails.",
+      "subtitle": "A structured pipeline where models observe, tools fetch, code verifies, and the seller approves.",
+      "steps": [
+        {
+          "step": "1. Fetch & Observe",
+          "desc": "Routine chats get tracking updates; disputed claims fetch mock order and video frames."
+        },
+        {
+          "step": "2. Verify Rules",
+          "desc": "Deterministic code checks return window (0 ≤ days ≤ 7) and store policies."
+        },
+        {
+          "step": "3. Propose & Clarify",
+          "desc": "Suggests next action; asks customer for 1 close-up photo if evidence is unclear."
+        },
+        {
+          "step": "4. Seller Approves",
+          "desc": "Seller authorizes; tool creates return; escalates with summary if unresolved."
+        }
+      ],
+      "guardrails": {
+        "refund_cap": "Refunds require seller approval · Limited by store cap and remaining refundable amount",
+        "audit_logging": "Every tool call, seller approval, blocked action and outcome is recorded in audit trail"
+      },
+      "speaker_notes": "[1:30 - 2:10 | Slide 4: Agent Behavior]\nIn our planned prototype, routine order-status chats receive a tracking update; disputed claims enter evidence review. Tools fetch mock order data, and code verifies the return window. If footage is unclear, the agent asks for one close-up. Refunds require seller approval, bounded by the ₹1,499 balance and our team's sample cap of ₹3,000. All actions and blocked amounts are logged."
+    },
+    {
+      "slide_number": 5,
+      "id": "matrix",
+      "kicker": "Planned scenarios",
+      "title": "Three situations. Clear next steps.",
+      "matrix_rows": [
+        {
+          "case_id": "Case A",
+          "label": "Damage on arrival",
+          "situation": "Cracked headband; delivery 4d ago (within 7d window).",
+          "agent_response": "Checks the delivery date; drafts return shipping label.",
+          "seller_outcome": "Approve return. Refund waits for parcel receipt."
+        },
+        {
+          "case_id": "Case B",
+          "label": "Evidence clarification",
+          "situation": "White ordered; black shown in unboxing video.",
+          "agent_response": "Flags mismatch; drafts label request (max 1 clarification).",
+          "seller_outcome": "Choose resolution or request outer-box photo."
+        },
+        {
+          "case_id": "Case C",
+          "label": "Refund guardrail",
+          "situation": "Unclear video; requested refund exceeds ₹1,499 remaining.",
+          "agent_response": "Blocks excess amount; requests one close-up; logs both actions.",
+          "seller_outcome": "Review evidence; approve only within refund limits."
+        }
+      ],
+      "speaker_notes": "[2:10 - 2:35 | Slide 5: Three Scenarios]\nOur prototype focuses on three planned situations: Case A validates delivery dates for damaged goods. Case B flags color mismatches and requests outer packaging. In Case C, the requested amount exceeds the remaining refundable balance, so the tool blocks that amount. Unclear evidence prompts one close-up request; if still unresolved, the case goes to the seller with a summary."
+    },
+    {
+      "slide_number": 6,
+      "id": "roadmap",
+      "kicker": "24-Hour Prototype Sprint",
+      "title": "A focused 24-hour prototype.",
+      "phases": [
+        {
+          "time": "00–06h",
+          "title": "Ingestion & Schema",
+          "output": "Mock backend data & shared JSON state schema."
+        },
+        {
+          "time": "06–12h",
+          "title": "Tools & Vision",
+          "output": "Real tool execution on mock data & frame extraction."
+        },
+        {
+          "time": "12–18h",
+          "title": "Console & Guardrails",
+          "output": "Seller console, refund cap checks & drafted replies."
+        },
+        {
+          "time": "18–24h",
+          "title": "Integration & QA",
+          "output": "Final integration and scenario walkthroughs."
+        }
+      ],
+      "team_label": "Team (Parallel Execution to Shared Schema)",
+      "roles_simple": [
+        "A — Tool execution, policy engine and refund caps.",
+        "B — Video frame extraction and visual observations.",
+        "C — Seller console, drafted replies and audit view.",
+        "D — Mock data fixtures, scenario walkthroughs and QA."
+      ],
+      "build_first_label": "Build first",
+      "build_first_items": "Real tool calls on mock data · 3 scenario branches · Refund caps & audit log · Seller approval gate",
+      "later_label": "Later",
+      "later_items": "Live store and courier integrations.",
+      "closing_takeaway": "One clear evidence pack. The seller makes the call.",
+      "speaker_notes": "[2:35 - 3:00 | Slide 6: Execution Roadmap & Closing]\nFor our 24-hour sprint, all four members lock a shared schema and test one integrated thread early. Then we build in parallel: tools, vision extraction, seller UI, and testing. Build first focuses on real tool calls over mock data, leaving live integrations for later. ReturnLens: one clear evidence pack. The seller makes the call."
+    }
+  ],
+  "qa_defense": [
+    {
+      "question": "How does the vision model handle blurry or low-quality video?",
+      "answer": "Fail-closed architecture: The model only asserts what is clear. If unboxing footage is too dark or blurry (Case C), ReturnLens flags low confidence and requests a single close-up photo of the product or outer label, appending it to the existing case file without auto-rejecting. If still unclear after one request, the case escalates directly to the seller with a summary."
+    },
+    {
+      "question": "Why not automate refunds entirely to save time for solo sellers?",
+      "answer": "Automating financial transactions from customer-submitted video is a severe fraud vector (friendly fraud and refund abuse). ReturnLens adheres to strict authority boundaries: models observe and code verifies, but the seller always authorizes returns, shipping labels, and refunds. Additionally, refunds are strictly bounded by the remaining refundable amount (₹1,499) and the store's max refund cap (sample team policy of ₹3,000)."
+    },
+    {
+      "question": "How will a 4-person team deliver this prototype in 24 hours?",
+      "answer": "Disciplined scoping: All 4 members lock a shared JSON state schema and test one integrated thread early, then execute in parallel across tools, vision extraction, seller UI, and test fixtures. The team focuses on Sprint Core deliverables—real tool calls against mock fixtures, keyframe extraction, deterministic policy rules with refund caps, and a seller console covering the 3 planned scenarios (damage on arrival, evidence clarification, refund guardrail). Live production store and courier integrations are deferred."
+    },
+    {
+      "question": "How is ReturnLens differentiated from existing customer support solutions?",
+      "answer": "ReturnLens specializes in physical merchandise return and refund disputes by cross-referencing customer unboxing video keyframes against mock order specs and store return policies. It synthesizes visual discrepancies and policy checks into a single structured decision dossier for the solo merchant, including drafted replies and prepared next steps."
+    },
+    {
+      "question": "How do you prevent hallucinations in the claim assessment?",
+      "answer": "Separation of concerns: The vision model only describes physical observations (e.g., color=Black). Deterministic code compares strings (Black != White) and checks dates against policy (0 <= current_date - delivery_date <= 7 days). Every tool call, seller approval, and blocked action is logged. The system never speculates on intent or fraud, presenting raw facts for merchant review."
+    }
+  ]
+}
