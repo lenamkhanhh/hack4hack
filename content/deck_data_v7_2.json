@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "project_name": "ReturnLens",
+    "edition": "ReturnLens v7.2 — Precision & Honest Grounding Edition",
+    "tagline": "Every return decision, backed by evidence.",
+    "one_liner": "Evidence-backed returns triage for independent online sellers.",
+    "track": "AgentX Hackathon 2026 · Track PS-04",
+    "team": "Team Rookie (3 Members)",
+    "core_thesis": "Models observe. Code verifies. Seller authorizes.",
+    "sample_order": {
+      "case_id": "RT-8821",
+      "order_id": "ORD-7729",
+      "sku": "HEAD-WHT-02",
+      "product_name": "Studio Wireless Headphones",
+      "ordered_color": "Matte White",
+      "price": "₹1,499",
+      "price_num": 1499,
+      "delivery_status": "Delivered 4 days ago",
+      "return_window": "7-day policy window (Day 4 of 7, P-04 PASS)"
+    },
+    "model_budget": {
+      "calls_per_triage_pass": 3,
+      "pass_roles": ["Planner (action proposal)", "Vision Extractor (cited frame observation)", "Critic (adversarial cross-check)"],
+      "routine_case_calls": 3,
+      "case_c_max_calls": 6,
+      "clarification": "3 model calls per triage pass. Case C re-upload triggers Pass 2 (up to 3 calls), capping total lifecycle at 6 calls for a 1-retry case."
+    },
+    "refund_guardrail": {
+      "ceiling": "₹4,999",
+      "formula": "0 < amount <= min(₹4,999, remaining_refundable, order_paid)",
+      "draft_state": "pending_return_receipt",
+      "authorization": "Requires 1-click human seller confirmation",
+      "idempotency_design": "hash(order_id, return_id, action_nonce) enforced at ledger level",
+      "prototype_note": "Architectural design & prototype mock simulation (not live banking integration)"
+    },
+    "fraud_metrics": {
+      "nrf_2024": "9.0% Return Fraud (NRF/Appriss 2024: strict criminal fraud: unboxing swaps, empty boxes)",
+      "deloitte_2024": "15.14% Fraud + Policy Abuse (Appriss/Deloitte 2024: criminal fraud combined with policy abuse)",
+      "citations": "NRF & Appriss Retail (2024), 'Consumer Returns in the Retail Industry' ($101B US retail criminal fraud); Appriss Retail & Deloitte (2024) Retail Returns Benchmark. Measured scopes are distinct."
+    }
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "id": "hero",
+      "tag": "AGENTX HACKATHON 2026 · TRACK PS-04",
+      "headline": "ReturnLens",
+      "subheadline": "Every return decision, backed by evidence.",
+      "summary": "Connect customer evidence, order facts and policy — then let the seller decide.",
+      "supporting": "ReturnLens unifies unboxing video evidence, store truth, and policy checks into an evidence-backed triage console for solo D2C merchants.",
+      "team_meta": "Team Rookie · AgentX PS-04 · 24h Prototype Plan",
+      "console_mockup": {
+        "title": "RETURNLENS SELLER CONSOLE",
+        "case_badge": "CASE #RT-8821",
+        "order_info": {
+          "order_id": "Order #ORD-7729",
+          "sku": "HEAD-WHT-02",
+          "color": "Matte White",
+          "price": "₹1,499",
+          "delivery": "Delivered 4 days ago",
+          "buyer": "Buyer #BY-4412",
+          "courier_tracking": "Shippo #SH-9012"
+        },
+        "evidence_citation": {
+          "source": "Unboxing Video Keyframe",
+          "timestamp": "Frame 00:07 (Staged Mock)",
+          "observation": "Observed: Black casing (color-consistent with HEAD-BLK-09) · Barcode unverified",
+          "status_badge": "P-03: COLOR CONTRADICTION DETECTED",
+          "casing": "Black casing (color-consistent with HEAD-BLK-09)"
+        },
+        "policy_check": {
+          "window_check": "P-04 Return Window: PASS (Day 4 of 7)",
+          "color_check": "P-03 Manifest: CONTRADICTION FLAGGED"
+        },
+        "action_prompt": "SELLER REVIEW REQUIRED (FAIL-CLOSED GATE)",
+        "button_text": "Review Evidence & Decide"
+      },
+      "speaker_notes": "Slide 1 — Product Hero & Executive Summary:\n- Problem Statement Fit: PS-04 (Autonomous Support Agent for Online Sellers).\n- Target User: Solo direct-to-consumer (D2C) online merchants managing customer support, shipping, and returns alone.\n- Automation Scope: ReturnLens automates evidentiary triage, frame extraction, and deterministic policy verification. It coordinates support, but does NOT claim to resolve every customer inquiry autonomously. All consequential actions (refund disbursements and return shipping labels) are held behind a fail-closed human seller gate.\n- Core Thesis: 'Models observe. Code verifies. Seller authorizes.'\n- Console Focus: Side-by-side comparison between ordered White Headphones (HEAD-WHT-02, ₹1,499) and unboxed Black Headphones (Frame 00:07). The agent flags the contradiction, leaves exact SKU unverified, and surfaces actionable resolution choices to the seller.\n- Safety Boundary: The system never autonomously issues a refund or denies a customer. Financial release strictly requires 1-click merchant authorization."
+    },
+    {
+      "slide_number": 2,
+      "id": "problem",
+      "tag": "THE PROBLEM · SOLO SELLER BOTTLENECK",
+      "headline": "One return. Four disconnected sources.",
+      "subheadline": "Four systems. No traceable decision.",
+      "supporting_statement": "Solo merchants cross-reference tabs, video footage, and policy rules manually before moving money.",
+      "sources": [
+        {
+          "number": "01",
+          "name": "Buyer Message",
+          "detail": "Unstructured text & unverified unboxing video in chat"
+        },
+        {
+          "number": "02",
+          "name": "Order Record",
+          "detail": "Shopify manifest: HEAD-WHT-02, Matte White, ₹1,499"
+        },
+        {
+          "number": "03",
+          "name": "Courier Status",
+          "detail": "Shippo scan: delivered 4 days ago (P-01 verified, Day 4 of 7)"
+        },
+        {
+          "number": "04",
+          "name": "Return Policy",
+          "detail": "Store rules: 7-day window (P-04), packaging tag required (P-02)"
+        }
+      ],
+      "gap_card": {
+        "tag": "THE MISSING LINK",
+        "title": "NO AUDITABLE EVIDENCE RECORD",
+        "question": "What evidence supports this return decision?",
+        "statement": "No auditable evidence record. One solo seller making high-stakes financial decisions across browser tabs.",
+        "note": "The gap is the absence of an auditable artifact linking order truth, video keyframes, and policy before money moves."
+      },
+      "speaker_notes": "Slide 2 — Problem Space & The Four Disconnected Sources:\n- The returns bottleneck for solo sellers is not an absent returns portal; it is fragmented, unverified context across four disconnected systems:\n  1. Buyer claim in chat (unstructured text, unverified video footage).\n  2. Store truth in Shopify (SKU HEAD-WHT-02, ₹1,499).\n  3. Courier tracking in Shippo (P-01 validates delivery timestamp: delivered 4 days ago).\n  4. Store return policy document (P-04 7-day window check, P-02 security tag rule).\n- Central Gap: Four systems, but no auditable decision record. The solo merchant makes memory-based decisions across browser tabs.\n- Sourced Fraud Context (Rigorous Distinction):\n  - 9.0% Return Fraud: National Retail Federation (NRF) & Appriss Retail (2024), 'Consumer Returns in the Retail Industry'. Measures strictly criminal return fraud (staged unboxing swaps, empty boxes, counterfeit returns, accounting for ~$101B in retail losses).\n  - 15.14% Fraud + Policy Abuse: Appriss Retail & Deloitte (2024) Retail Returns Benchmark. Combines criminal fraud with broader consumer policy abuse (wardrobing, returning worn/used goods). These measure distinct scopes and must never be conflated.\n- Asymmetric Merchant Risk: An unverified refund loses inventory and gross margin; an unfair automated denial destroys customer lifetime value (LTV)."
+    },
+    {
+      "slide_number": 3,
+      "id": "star_demo",
+      "tag": "STAR DEMO · CORE BENCHMARK SCENARIO",
+      "headline": "The order says white. The video shows black.",
+      "subheadline": "ReturnLens flags the contradiction — the seller decides.",
+      "ordered_evidence": {
+        "label": "STORE CATALOG TRUTH",
+        "sku": "HEAD-WHT-02",
+        "color": "Matte White",
+        "price": "₹1,499",
+        "image_file": "studio_white_headphones.jpg"
+      },
+      "observed_evidence": {
+        "label": "UNBOXING KEYFRAME (STAGED MOCK)",
+        "timestamp": "Frame 00:07",
+        "color": "Black casing (color-consistent with HEAD-BLK-09, SKU not verified)",
+        "status": "Contradiction Flagged",
+        "image_file": "unboxing_black_headphones.jpg",
+        "lighting": "Sufficient (Clear frame)",
+        "duration": "00:24",
+        "courier_tracking": "Shippo #SH-9012"
+      },
+      "grounding_caption": "Visual Grounding: Frame 00:07 confirms black casing. Barcode is unverified; citation does not prove video authenticity.",
+      "decision_panel": {
+        "tag": "POLICY GATE EVALUATION",
+        "title": "COLOR CONTRADICTION",
+        "items": [
+          "ORDERED — Matte White",
+          "OBSERVED — Black Casing",
+          "EXACT SKU — Not verified"
+        ],
+        "action_badge": "SELLER REVIEW REQUIRED",
+        "supporting": "No automatic denial or refund without seller authorization.",
+        "preserved_actions": [
+          "Accept as warehouse mis-shipment",
+          "Request photo of outside-box shipping label",
+          "Hold return for physical parcel inspection"
+        ]
+      },
+      "speaker_notes": "Slide 3 — The Star Demo & Technical Honesty in Vision Citation:\n- Core Benchmark Scenario (Case B): Buyer ordered White Headphones (HEAD-WHT-02, ₹1,499), but unboxing frame 00:07 shows black casing.\n- Visual Grounding Honesty: The agent does NOT claim to read the barcode or verify the exact SKU. It observes: 'Black casing (color-consistent with HEAD-BLK-09) · Barcode unverified · SKU not verified'. Frame citations provide a traceable timestamp reference for human review, not cryptographic proof that the footage is authentic.\n- Defensive Case B Framing: Observed color conflicts with the order specification, requiring seller review. It is NOT presented as definitive proof of buyer fraud or proof of warehouse error; it is a contradiction that halts automation.\n- Policy P-03 Role: Policy P-03 halts automated workflows and routes to seller review. It does not present model vision output as objective ground truth.\n- Three Preserved Seller Options (matching slide face):\n  1. Accept as warehouse mis-shipment.\n  2. Request photo of outside-box shipping label.\n  3. Hold return for physical parcel inspection.\n- Note on Exchanges: Exchanges are excluded from this triage screen because replacements require inventory checks and post-inspection handling, cut from prototype scope.\n- Financial Guardrail: 0 < amt <= min(₹4,999, remaining refundable amount, order paid amount). Modeled in prototype simulation."
+    },
+    {
+      "slide_number": 4,
+      "id": "architecture",
+      "tag": "SYSTEM ARCHITECTURE · FAIL-CLOSED SAFETY GATES",
+      "headline": "Models observe. Code verifies. Seller authorizes.",
+      "subheadline": "Exactly 3 model calls per triage pass. Weak evidence triggers stateful clarification. Zero automated refunds.",
+      "authority_zones": [
+        {
+          "name": "MODEL",
+          "role": "Plan and observe (Fallible signal)",
+          "desc": "Planner proposes typed actions · Vision model extracts timestamped observations · Critic cross-checks citations. (3 calls/pass)."
+        },
+        {
+          "name": "CODE",
+          "role": "Verify schemas, timing and policies",
+          "desc": "Code validates JSON schemas · Evaluates deterministic policies P-01 to P-08 · Enforces financial caps and idempotency keys."
+        },
+        {
+          "name": "SELLER",
+          "role": "Authorize consequential actions",
+          "desc": "Fail-closed human gate · 1-click merchant confirmation required before shipping label or refund release."
+        }
+      ],
+      "case_c_flow": {
+        "title": "DYNAMIC STATEFUL CLARIFICATION LOOP (CASE C)",
+        "steps": [
+          "DARK EVIDENCE (28/255)",
+          "ASK FOR EVIDENCE",
+          "WAITING_FOR_EVIDENCE",
+          "BUYER UPLOAD",
+          "RESUME CASE",
+          "SELLER REVIEW"
+        ],
+        "sublabel": "Policy P-06 FAIL (brightness score: 28/255 < threshold 50/255). Agent calls ask_for_evidence(), serializes state to WAITING_FOR_EVIDENCE, and resumes on upload. Max 1 retry; 2nd failure escalates directly to seller (never auto-denies)."
+      },
+      "secondary_route": {
+        "title": "ZERO-LLM ORDER STATUS FAST PATH",
+        "text": "SECONDARY PS-04 ROUTE (\"Where is my order?\"): Deterministic code regex → Store API → Courier API → Status Reply (Zero LLM & Zero vision overhead, <500ms response)."
+      },
+      "audit_output": {
+        "title": "STRUCTURED AUDIT LOG",
+        "text": "Structured JSON Audit Log recorded at every state transition."
+      },
+      "approval_binding": "Approval binds case ID + evidence hash + policy version + nonce · Revalidation check before draft release",
+      "speaker_notes": "Slide 4 — System Architecture, Agentic Governance & Technical Q&A Defense:\n- Philosophy: 'Models observe. Code verifies. Seller authorizes.'\n- Responsibilities Breakdown:\n  - MODEL ZONE: Planner proposes tool actions; vision model generates cited observations (probabilistic observation, NOT ground truth); critic performs adversarial checks against timestamps. Budget: exactly 3 model calls per triage pass.\n  - CODE ZONE: Validates schemas; FFmpeg extracts frames; deterministic code verifies Policy P-01 (carrier delivery scan) and P-04 (7-day window); evaluates Policy P-06 (brightness score: 28/255 < threshold 50/255); enforces financial ceiling and idempotency.\n  - SELLER ZONE: Fail-closed human gate. Consequential actions (return label issuance and refund drafting) require explicit 1-click merchant confirmation.\n\n- THE 5 HARD HACKATHON DEFENSE QUESTIONS (~30-Second Honest Answers):\n  1. Q: Why is this an agent rather than a hardcoded DAG/workflow?\n     A: A hardcoded workflow halts or errors out when given defective inputs. ReturnLens is an autonomous state machine with dynamic tool selection and stateful lifecycle management. In Case C (dark video, 28/255), instead of failing, the agent evaluates frame quality, dynamically calls ask_for_evidence() with re-filming guidance, serializes state into WAITING_FOR_EVIDENCE, and seamlessly resumes the session upon re-upload. Conversely, routine order status queries dynamically route through a zero-LLM fast path.\n  2. Q: What happens if vision or critic models hallucinate?\n     A: Vision models produce fallible observations, never binding authority. Code does not verify image semantics, but it strictly enforces business rules (carrier timestamps, return window math, financial caps) in deterministic Python (P-01 to P-08). The critic provides an adversarial cross-check against cited timestamps. If both hallucinate, the fail-closed human seller gate guarantees zero funds or return labels can ever be released without merchant authorization.\n  3. Q: How do you prevent duplicate refunds, double-spending, and race conditions?\n     A: A financial formula alone cannot prevent race conditions. In our architectural design, we enforce: (1) Deterministic idempotency keys hash(order_id, return_id, nonce) at the ledger level with atomic status transitions (pending_return_receipt -> authorized), (2) Ledger ceiling checks: 0 < amt <= min(ceiling, rem_ref, paid), (3) Phased execution: approval drafts a refund, but actual disbursement requires a physical warehouse receipt scan. In this hackathon prototype, this flow is modeled with deterministic fixtures and verified mock states.\n  4. Q: How are model calls budgeted, especially when Case C re-uploads?\n     A: We budget exactly 3 model calls per analysis pass: 1 Planner, 1 Vision Extractor, 1 Critic. Routine cases (A, B, D) take exactly 1 pass (3 calls). For Case C, the initial triage uses 3 calls, pauses in WAITING_FOR_EVIDENCE, and upon customer re-upload triggers a second pass (up to 3 calls), capping total lifecycle consumption at 6 calls for a 1-retry case. If the second attempt fails, it escalates to the seller without calling additional models.\n  5. Q: Where do the 9% and 15.14% fraud figures come from, and do they measure the same thing?\n     A: They measure fundamentally different scopes from industry reports and must never be conflated. The 9.0% figure comes from the NRF/Appriss Retail 2024 Consumer Returns Survey, measuring strictly criminal return fraud (staged swaps, unboxing fraud, empty box schemes, accounting for ~$101B in retail losses). The 15.14% figure comes from the Appriss Retail / Deloitte 2024 Return Benchmark, measuring the broader combination of criminal fraud plus policy abuse (such as wardrobing and returning used goods)."
+    },
+    {
+      "slide_number": 5,
+      "id": "scenarios",
+      "tag": "DEMO SCENARIOS · BEHAVIORAL MATRIX",
+      "headline": "Different evidence. Different action.",
+      "subheadline": "Four distinct triage behaviors across reproducible test fixtures. Zero automated policy approvals.",
+      "cases": [
+        {
+          "number": "01",
+          "name": "CONSISTENT CLAIM",
+          "observation": "Manifest matches, packaging tag verified, defect observed · P-01/P-02/P-04 PASS",
+          "action": "PREPARE SELLER REVIEW",
+          "detail": "Drafts return label and refund draft in pending_return_receipt. Funds release only upon physical warehouse receipt."
+        },
+        {
+          "number": "02",
+          "name": "CONTRADICTION",
+          "observation": "Ordered White, Observed Black · Black casing (color-consistent with HEAD-BLK-09, SKU not verified)",
+          "action": "ESCALATE TO SELLER",
+          "detail": "Policy P-03 FAIL blocks automation. Inhibits label and refund. Preserved options: mis-shipment / box label / physical inspection."
+        },
+        {
+          "number": "03",
+          "name": "INSUFFICIENT LIGHTING",
+          "observation": "4s low-light video (brightness score: 28/255 < 50/255) · Policy P-06 FAIL",
+          "action": "DYNAMIC CLARIFY LOOP",
+          "detail": "Calls ask_for_evidence(); transitions to WAITING_FOR_EVIDENCE; resumes on upload. Max 1 retry; 2nd failure escalates to seller."
+        },
+        {
+          "number": "04",
+          "name": "CONTINUOUS SEQUENCE",
+          "observation": "Single continuous take from opening sealed parcel to displaying product in one take",
+          "action": "INSPECT CONTINUITY",
+          "detail": "Inspects sequence continuity and flags abrupt jump cuts. Basic continuity in prototype; advanced forensics is cut first."
+        }
+      ],
+      "speaker_notes": "Slide 5 — Four Reproducible Benchmark Scenarios:\n- Behavioral Matrix Focus: Slide 5 presents the 4 scenarios as distinct behavioral outcomes of the policy engine, avoiding duplicate narrative with Slide 3.\n- Grounding Note: These four scenarios represent staged prototype test suites and deterministic expected behaviors, NOT ungrounded production field metrics.\n- Case 01 (Consistent Claim): All rules pass (P-01 delivery verified, P-04 within 7d, SKU matches manifest, P-02 tag visible, cosmetic crack observed). System drafts return shipping label and refund draft in 'pending_return_receipt' state. No refund money is transferred until physical warehouse receipt.\n- Case 02 (Contradiction): Color mismatch detected (ordered white, unboxed black). System prevents auto-rejection and routes to seller review with 3 concrete resolution options.\n- Case 03 (Unclear / Agentic Loop): Dark video (brightness score: 28/255 < threshold 50/255). Instead of auto-denying, the agent provides a clear checklist, transitions to WAITING_FOR_EVIDENCE, and resumes on upload (1 retry limit protects customers from infinite loops, max 6 model calls total).\n- Case 04 (Continuity): Expected prototype behavior: inspect parcel-to-product sequence to flag suspicious cut-aways or missing transitions. Basic continuity check in prototype; advanced splice forensics is explicitly an optional stretch.\n- Financial Cap Formula: min(₹4,999, remaining refundable amount, order paid amount) strictly prevents over-refunding."
+    },
+    {
+      "slide_number": 6,
+      "id": "execution",
+      "tag": "24-HOUR PROTOTYPE PLAN · FEASIBILITY & SCOPE",
+      "headline": "A credible prototype in 24 hours.",
+      "subheadline": "Strict scope boundaries and single-threaded ownership make the prototype buildable in one day.",
+      "timeline": [
+        {
+          "hours": "00–06h",
+          "phase": "FOUNDATION",
+          "title": "Mock APIs & State Machine",
+          "owner": "Person A (Agent / Backend / Policy)",
+          "desc": "LangGraph state machine, mock Shopify & Shippo fixtures, zero-LLM fast path."
+        },
+        {
+          "hours": "06–12h",
+          "phase": "EVIDENCE",
+          "title": "Evidence Pipeline & UI",
+          "owner": "Person B (Vision / Evidence / UI)",
+          "desc": "FFmpeg keyframe indexer, vision prompt schema, critic prompt, seller console UI."
+        },
+        {
+          "hours": "12–18h",
+          "phase": "INTEGRATION",
+          "title": "State Flow & Scenarios",
+          "owner": "Person C (Fixtures / Integration / QA)",
+          "desc": "Case C pause/resume loop · 4 test fixtures (A–D) · Adversarial critic review."
+        },
+        {
+          "hours": "18–24h",
+          "phase": "VALIDATION",
+          "title": "Testing & Submission",
+          "owner": "All 3 Members",
+          "desc": "Fail-closed safety verification, 10-test smoke suite, edge cases, demo recording."
+        }
+      ],
+      "person_cards": [
+        {
+          "role": "PERSON A",
+          "title": "Backend, Policy & Auth",
+          "deliverables": [
+            "LangGraph state machine & mock APIs",
+            "Deterministic policy engine (P-01 to P-08)",
+            "Fail-closed seller authorization gate",
+            "Approval binding (hash + nonce + version)"
+          ]
+        },
+        {
+          "role": "PERSON B",
+          "title": "Vision, Evidence & UI",
+          "deliverables": [
+            "FFmpeg 1fps keyframe extraction",
+            "Structured vision observation schema",
+            "Adversarial critic timestamp cross-check",
+            "1-click seller console UI with evidence pack"
+          ]
+        },
+        {
+          "role": "PERSON C",
+          "title": "Fixtures, Scenarios & QA",
+          "deliverables": [
+            "4 benchmark test fixtures (Cases A–D)",
+            "Case C clarification & resume flow",
+            "10-test automated smoke suite",
+            "Demo video recording & documentation"
+          ]
+        }
+      ],
+      "scope_boundaries": {
+        "must_deliver": [
+          "Mock store & courier APIs",
+          "Deterministic policy engine & seller gate",
+          "Case B color flag & Case C re-film loop",
+          "4 benchmark test fixtures (A–D)",
+          "Approval binding (case + evidence hash + policy version)",
+          "Structured JSON audit trail & zero-LLM fast path"
+        ],
+        "cut_first": [
+          "Advanced video forensic splice analysis (Case D stretch)",
+          "WhatsApp bot",
+          "Exchanges",
+          "Multi-seller auth",
+          "Audio analysis",
+          "Public cloud deployment"
+        ]
+      },
+      "speaker_notes": "Slide 6 — 24-Hour Sprint Feasibility, Ownership & Strict Scope Guardrails:\n- Feasibility Argument: Why is ReturnLens realistically buildable in 24 hours by 3 engineers?\n  1. No live external production dependencies: deterministic mock APIs for Shopify & Shippo eliminate external latency and flakiness.\n  2. Clear division of labor with single-threaded component ownership across 3 teammates:\n     - Person A (Backend / Policy / Authorization): LangGraph orchestrator, mock store & courier APIs, zero-LLM order status fast path, deterministic rules P-01 to P-08, fail-closed authorization gate, approval binding (case ID + evidence hash + policy version + nonce).\n     - Person B (Vision / Evidence / UI): FFmpeg keyframe pipeline (~1fps sampling), vision schema, critic prompt, interactive 1-click seller console UI with mock evidence pack.\n     - Person C (Integration / Scenarios / QA): Test fixtures for 4 benchmark cases (A–D), Case C clarification/resume lifecycle, fail-closed human gate testing, 10-test smoke suite, demo video recording, README.\n  3. Strict Scope Discipline (matching slide face):\n     - MUST DELIVER: Mock store & courier APIs, deterministic policy engine & seller gate, Case B color contradiction & Case C re-film loop, 4 benchmark test fixtures (A–D), approval binding (case + evidence hash + policy version), structured JSON audit trail & zero-LLM order-status fast path.\n     - CUT FIRST IF BEHIND: Advanced video forensic splice analysis (Case D stretch), WhatsApp bot, exchanges, multi-seller auth, audio analysis, public cloud deployment.\n- Winning Philosophy: 'The winning hackathon agent is not the one with the most tool definitions. It is the one where every action is held to evidence, and the seller stays in control.'"
+    }
+  ]
+}

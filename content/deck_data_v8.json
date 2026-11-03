@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "project_name": "ReturnLens",
+    "edition": "ReturnLens v8 — Idea Round Competition Edition",
+    "tagline": "Every return decision, backed by evidence.",
+    "one_liner": "An evidence-backed triage assistant that unifies customer claims, video footage, and store records for solo online sellers.",
+    "track": "AgentX Hackathon 2026 · Track PS-04",
+    "team": "Team Rookie (3 Members)",
+    "core_thesis": "Models observe. Code verifies. Seller authorizes.",
+    "safety_commitments": [
+      "Zero automated refunds to prevent financial loss",
+      "Zero automated customer rejections to preserve customer trust",
+      "Solo merchant retains ultimate decision authority on every case"
+    ],
+    "sample_case": {
+      "case_id": "RT-8821",
+      "order_id": "ORD-7729",
+      "product_name": "Studio Wireless Headphones",
+      "sku": "HEAD-WHT-02",
+      "ordered_color": "Matte White",
+      "price": "₹1,499",
+      "courier_tracking": "Shippo #SH-9012",
+      "delivery_date": "Delivered 4 days ago",
+      "policy_status": "Day 4 of 7-day return window (Compliant)"
+    },
+    "seller_options_case_b": [
+      "Accept as warehouse mis-pack",
+      "Request outside-box label photo",
+      "Hold parcel for inspection"
+    ]
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "id": "hero",
+      "kicker": "AGENTX HACKATHON 2026 · TRACK PS-04",
+      "title": "ReturnLens",
+      "subtitle": "Every return decision, backed by evidence.",
+      "summary": "An evidence-backed triage assistant that unifies customer claims, unboxing video footage, and store records for solo online sellers.",
+      "console_title": "RETURNLENS SELLER CONSOLE · CASE #RT-8821",
+      "store_truth": {
+        "title": "STORE CATALOG TRUTH",
+        "product": "Studio Wireless Headphones",
+        "sku": "HEAD-WHT-02 (Matte White)",
+        "meta": "₹1,499 paid · Delivered 4d ago (Shippo #SH-9012) · Return Window: Day 4/7"
+      },
+      "observed_evidence": {
+        "title": "OBSERVED VIDEO EVIDENCE (00:07)",
+        "observation": "Black Casing (Color Discrepancy)",
+        "meta": "Barcode unverified · Exact model unverified · Lighting sufficient"
+      },
+      "discrepancy_notice": "COLOR DISCREPANCY: Ordered Matte White, but footage shows Black casing. Exact SKU unverified.",
+      "seller_choices_label": "PREPARED SELLER RESOLUTION CHOICES:",
+      "primary_button": "Review Evidence & Decide →",
+      "speaker_notes": "[0:00 - 0:15 | Slide 1: Introduction]\nJudges, this is ReturnLens. For independent online sellers, returns are exhausting. When a customer claims they received the wrong product, the solo merchant is stuck cross-referencing customer chat, Shopify orders, and courier tracking just to figure out what happened. ReturnLens unifies customer claims, video evidence, and store rules into one simple decision pack. Notice our core button: 'Review Evidence & Decide'. We never automate refunds or rejections. The model observes, our code verifies, but the seller always authorizes the decision."
+    },
+    {
+      "slide_number": 2,
+      "id": "problem",
+      "kicker": "THE SELLER'S DILEMMA · SOLO D2C BOTTLENECK",
+      "title": "One customer claim. Four disconnected sources.",
+      "subtitle": "A solo merchant must piece together fragmented records before deciding how to respond.",
+      "incoming_claim": {
+        "title": "INCOMING CUSTOMER CLAIM",
+        "message": "“I opened the delivery box today and the headphones inside are black, not the white ones I ordered. I want an immediate refund.”",
+        "attachment": "Attached unboxing video (18s MP4)"
+      },
+      "sources": [
+        {
+          "name": "1. Customer Message",
+          "detail": "Unstructured chat text and unverified unboxing video footage."
+        },
+        {
+          "name": "2. Shopify Order",
+          "detail": "Catalog specs: SKU HEAD-WHT-02, Matte White, ₹1,499 paid."
+        },
+        {
+          "name": "3. Courier Tracking",
+          "detail": "Shippo scan confirms physical parcel delivery 4 days ago."
+        },
+        {
+          "name": "4. Store Policy",
+          "detail": "7-day return policy for unopened or mis-shipped goods."
+        }
+      ],
+      "decision_dilemma": "THE CORE DILEMMA: Is this a warehouse packing error, an honest customer mix-up, or an unboxing swap? Automatic refunds destroy profit margins; automatic rejections destroy customer trust. The merchant needs verified facts to choose the next step.",
+      "speaker_notes": "[0:15 - 0:40 | Slide 2: The Problem]\nA customer chats in: 'You sent the wrong color, refund me immediately' and attaches an unboxing clip. Right now, the merchant has to jump across four separate tabs: checking the chat claim, looking up the SKU in Shopify, verifying courier delivery on Shippo, and re-reading their store return policy. Was this a warehouse mix-up, an honest confusion, or an item swap? Blindly refunding burns scarce margin, but blindly rejecting the customer destroys brand loyalty. Solo merchants don't have a fraud department—they need a unified view of the facts."
+    },
+    {
+      "slide_number": 3,
+      "id": "demonstration",
+      "kicker": "CORE DEMONSTRATION · STAGED MOCK SCENARIO",
+      "title": "The order says white. The video shows black.",
+      "subtitle": "ReturnLens pinpoints the visible discrepancy without jumping to unverified conclusions.",
+      "left_card": {
+        "header": "STORE SPECIFICATION · SHOPIFY",
+        "product": "Studio Wireless Headphones",
+        "color": "Matte White (SKU HEAD-WHT-02)",
+        "details": "Order #ORD-7729 · ₹1,499 paid · Delivered 4d ago"
+      },
+      "right_card": {
+        "header": "OBSERVED EVIDENCE · VIDEO FRAME 00:07",
+        "observation": "Black Casing Observed",
+        "grounding": "Color mismatch flagged · Barcode unverified · Exact model unverified"
+      },
+      "discrepancy_badge": "≠ COLOR DISCREPANCY",
+      "prepared_pack_title": "WHAT RETURNLENS PREPARES FOR THE MERCHANT:",
+      "options": [
+        {
+          "num": "1",
+          "title": "Accept warehouse mis-pack",
+          "desc": "Warehouse staff likely grabbed black inventory by mistake. Issue replacement return label."
+        },
+        {
+          "num": "2",
+          "title": "Request box label photo",
+          "desc": "Ask customer for a quick photo of the barcode on the outer shipping box to trace parcel origin."
+        },
+        {
+          "num": "3",
+          "title": "Hold for inspection",
+          "desc": "Approve physical return, but hold refund release until parcel is inspected at warehouse."
+        }
+      ],
+      "disclaimer": "* Illustrative concept scenario with staged mock evidence. Not live production video footage.",
+      "speaker_notes": "[0:40 - 1:25 | Slide 3: The Core Demonstration]\nHere is our core demonstration. The Shopify order clearly specifies Matte White headphones. But in the unboxing clip at frame seven seconds, the customer unboxes black headphones. ReturnLens instantly flags this visible color mismatch. Crucially, we practice honest AI grounding: our agent acknowledges that the barcode and exact SKU are unverified from the video frame. We do not jump to calling the customer a fraudster—this could easily be a warehouse packing error. Instead, ReturnLens presents three clear, practical options with drafted customer replies ready for the seller to approve."
+    },
+    {
+      "slide_number": 4,
+      "id": "agent_architecture",
+      "kicker": "AGENT BEHAVIOR · WORKFLOW & RESPONSIBILITIES",
+      "title": "Models observe. Code verifies. Seller authorizes.",
+      "subtitle": "A structured agent pipeline that investigates, checks policies, and drafts the next step.",
+      "pipeline_steps": [
+        {
+          "step": "1. Collect",
+          "agent": "Vision & Ingestion",
+          "desc": "Ingests customer chat, order records, carrier tracking, and extracts cited keyframes."
+        },
+        {
+          "step": "2. Compare",
+          "agent": "Rule Engine",
+          "desc": "Cross-checks observed visual traits against catalog truth, delivery date, and 7-day policy."
+        },
+        {
+          "step": "3. Recommend",
+          "agent": "Planning & Drafting",
+          "desc": "Synthesizes matches, conflicts, or missing evidence into 3 actionable resolution paths."
+        },
+        {
+          "step": "4. Authorize",
+          "agent": "Solo Merchant",
+          "desc": "Seller reviews the evidence pack and clicks one button to confirm the action."
+        }
+      ],
+      "clarification_loop": {
+        "title": "DYNAMIC CLARIFICATION (CASE C):",
+        "desc": "If video is dark or blurry (<50/255 luminance), agent asks customer for 1 guided re-upload, pauses case in WAITING_FOR_EVIDENCE, and automatically resumes when new footage arrives. Max 1 retry before escalating to seller."
+      },
+      "roles_breakdown": [
+        {
+          "tier": "MODELS OBSERVE",
+          "detail": "Vision and language models transcribe claims, cite keyframe timestamps, and draft replies."
+        },
+        {
+          "tier": "CODE VERIFIES",
+          "detail": "Deterministic Python code calculates return windows, delivery validity, and refund limits."
+        },
+        {
+          "tier": "SELLER AUTHORIZES",
+          "detail": "Human seller retains full authority. Zero automated refunds; zero automated customer denials."
+        }
+      ],
+      "speaker_notes": "[1:25 - 2:05 | Slide 4: How the Agent Moves the Case Forward]\nHow does the agent actually work? It follows four clear stages: First, Collect—ingesting the chat, tracking data, and video keyframes. Second, Compare—deterministic code verifies the 7-day window and checks color alignment. Third, Recommend—the agent drafts clear resolution choices. And fourth, Authorize—the merchant makes the call. If evidence is dark or blurry, like in our Case C, the agent guides the customer to turn on a light, pauses the case, and resumes when the new clip arrives. Notice the clean separation: models observe, code verifies rules, and the human seller authorizes."
+    },
+    {
+      "slide_number": 5,
+      "id": "scenarios",
+      "kicker": "PROTOTYPE SCENARIOS · EXPECTED BEHAVIOR",
+      "title": "Three situations. Three useful next steps.",
+      "subtitle": "ReturnLens handles clean claims, flags discrepancies, and guides unclear evidence.",
+      "columns": [
+        {
+          "tag": "CASE A",
+          "title": "Consistent Claim",
+          "situation": "Unboxing footage clearly shows cracked headphone headband upon box opening. Within 4-day delivery window.",
+          "agent_action": "Validates delivery date and visible physical damage; drafts return shipping label for merchant review.",
+          "seller_outcome": "1-click approval to issue return label. Refund remains pending until parcel is scanned at warehouse."
+        },
+        {
+          "tag": "CASE B",
+          "title": "Color Discrepancy",
+          "situation": "Customer claims defective white headphones, but unboxing video shows black casing.",
+          "agent_action": "Halts auto-routing; highlights color mismatch; notes barcode is unverified; prepares 3 resolution options.",
+          "seller_outcome": "Seller decides: accept warehouse packing error, ask for outer box photo, or hold return for inspection."
+        },
+        {
+          "tag": "CASE C",
+          "title": "Unclear Evidence",
+          "situation": "4-second dark, shaky unboxing video (<50/255 brightness score). Product condition cannot be verified.",
+          "agent_action": "Guides customer with tips to re-film in good light; pauses case; resumes seamlessly on new upload.",
+          "seller_outcome": "Customer gets a fair chance to clarify. If 2nd attempt fails, escalates directly to seller with full history."
+        }
+      ],
+      "footer_note": "* Expected prototype behavior across core test scenarios. Advanced video forensics (Case D) reserved as stretch goal.",
+      "speaker_notes": "[2:05 - 2:30 | Slide 5: Three Scenarios]\nIn our prototype, we focus on three core situations that represent 95% of returns: In Case A, the evidence is consistent—a visible crack on arrival. The agent drafts a return label ready for one-click approval. In Case B, there is a color discrepancy—the agent surfaces the conflict and offers options without accusing the customer. In Case C, the footage is too dark—instead of rejecting the customer, the agent politely asks for a clearer clip with helpful tips. Each scenario leads to an actionable, low-stress outcome for the solo merchant."
+    },
+    {
+      "slide_number": 6,
+      "id": "roadmap",
+      "kicker": "24-HOUR PROTOTYPE SPRINT · EXECUTION PLAN",
+      "title": "A focused 24-hour prototype. Clear scope boundaries.",
+      "subtitle": "Delivering an interactive, verifiable triage experience within hackathon sprint limits.",
+      "phases": [
+        {
+          "time": "00–06h",
+          "title": "Phase 1: Ingestion & Schema",
+          "output": "Mock order/tracking fixtures & case state schema."
+        },
+        {
+          "time": "06–12h",
+          "title": "Phase 2: Vision & Rules",
+          "output": "Keyframe extraction & deterministic rule comparisons."
+        },
+        {
+          "time": "12–18h",
+          "title": "Phase 3: Seller Console UI",
+          "output": "Interactive side-by-side evidence review console."
+        },
+        {
+          "time": "18–24h",
+          "title": "Phase 4: Walkthrough & QA",
+          "output": "End-to-end walkthrough across Cases A, B, and C."
+        }
+      ],
+      "roles": [
+        {
+          "role": "Person A · Workflow & Rules",
+          "deliverables": "State machine logic · Case C re-upload loop · Rule checks"
+        },
+        {
+          "role": "Person B · Vision & Interface",
+          "deliverables": "Keyframe extractor · Discrepancy viewer · Decision cards"
+        },
+        {
+          "role": "Person C · Fixtures & Testing",
+          "deliverables": "Realistic order/courier mock data · 10-test scenario runner"
+        }
+      ],
+      "scope_discipline": {
+        "must_deliver": "Mock order/courier data · Keyframe evidence viewer · 3 core scenarios (A, B, C) · Fail-closed seller console",
+        "stretch_goals": "Live Shopify/courier API webhooks · Automated payment gateways · Advanced video forensics"
+      },
+      "closing_takeaway": "ReturnLens gives solo sellers the clarity of an enterprise returns team, while keeping every final decision in human hands.",
+      "speaker_notes": "[2:30 - 3:00 | Slide 6: Execution Roadmap & Closing]\nFor this 24-hour hackathon, our scope is strictly disciplined: Person A builds the state machine and policy checks; Person B builds the keyframe viewer and merchant console; Person C prepares realistic mock fixtures and tests all three scenarios. We are not building live Shopify webhooks or banking integrations during the sprint—our focus is proving the end-to-end evidence triage workflow. ReturnLens gives solo online sellers the clarity of a full-scale returns department, while keeping every decision firmly in human hands. Thank you!"
+    }
+  ],
+  "qa_defense": [
+    {
+      "question": "Why do you need an agent instead of a simple form or rules engine?",
+      "answer": "A standard rules engine can only check structured database fields like dates. It cannot inspect unboxing video keyframes, identify product colors, handle customer clarification dialogues, or synthesize contradictory evidence into a coherent decision pack. The agent bridges messy multimodal customer input with strict merchant policies."
+    },
+    {
+      "question": "Why doesn't a color discrepancy prove customer fraud?",
+      "answer": "A color discrepancy only indicates that the product in the video differs from the Shopify order. It could easily be a warehouse shipping mistake, an order fulfillment mix-up, or the customer opening a family member's parcel by mistake. Accusing the customer of fraud destroys goodwill; presenting choices lets the merchant decide based on their knowledge of their warehouse accuracy."
+    },
+    {
+      "question": "What happens when unboxing video footage is dark, blurry, or inconclusive?",
+      "answer": "In our Case C flow, ReturnLens activates Policy P-06. Rather than auto-rejecting the customer, the agent sends helpful guidance (e.g. 'Please film under good lighting so we can see the product serial number and seal'), pauses the ticket, and resumes when the customer uploads new footage. If the second attempt fails, it escalates to the merchant with the full video history."
+    },
+    {
+      "question": "What authority does the merchant retain in this system?",
+      "answer": "The merchant retains 100% decision authority. ReturnLens is strictly fail-closed: it has zero authority to issue payments, trigger chargebacks, or send rejection notices on its own. It prepares drafted return options and drafted messages, but every consequential action requires a one-click merchant confirmation."
+    },
+    {
+      "question": "What does your 24-hour prototype actually prove?",
+      "answer": "Our 24-hour prototype proves the end-to-end feasibility of multimodal return triage: extracting keyframes, running deterministic rule checks, handling a dynamic clarification loop, and generating an actionable decision console for the seller across three realistic benchmark scenarios."
+    }
+  ]
+}
+

@@ -1,0 +1,240 @@
+{
+  "meta": {
+    "project_name": "ReturnLens",
+    "edition": "ReturnLens v9.2",
+    "tagline": "Every return decision, backed by evidence.",
+    "one_liner": "A returns assistant for solo sellers that brings messages, video, order records and store policy into one case.",
+    "track": "AgentX Hackathon 2026 · Track PS-04",
+    "team": "Team Rookie (4 Members)",
+    "core_thesis": "Models observe. Code verifies. Seller authorizes.",
+    "authority_boundary": "Seller approves returns, labels and refunds · No automated refund or rejection",
+    "sample_case": {
+      "case_id": "RT-8821",
+      "order_id": "ORD-7729",
+      "product_name": "Studio Wireless Headphones",
+      "sku": "HEAD-WHT-02",
+      "ordered_color": "Matte White",
+      "price": "₹1,499",
+      "courier_tracking": "Shippo #SH-9012",
+      "delivery_date": "Delivered 4 days ago",
+      "policy_status": "Within the 7-day return window"
+    },
+    "customer_claim_text": "I ordered white headphones, but received black. Please refund me.",
+    "draft_reply_case_b": "Please share the outer-box label so we can check your shipment."
+  },
+  "slides": [
+    {
+      "slide_number": 1,
+      "id": "hero",
+      "kicker": "AgentX Hackathon 2026 · Track PS-04",
+      "title": "ReturnLens",
+      "tagline": "Every return decision, backed by evidence.",
+      "summary": "A returns assistant for solo sellers that brings messages, video, order records and store policy into one case.",
+      "principle": "Models observe. Code verifies. Seller authorizes.",
+      "mockup": {
+        "case_header": "CASE #RT-8821 · NEEDS SELLER DECISION",
+        "order_summary": "Order #ORD-7729 · Studio Wireless · ₹1,499 paid · Delivered 4d ago",
+        "discrepancy_note": "Color mismatch: Ordered White vs Observed Black · Barcode unverified",
+        "next_step": "Recommended Next Step: Request outer-box label photo",
+        "authority_note": "Seller approves returns, labels and refunds.",
+        "safety_note": "No automated refund or rejection",
+        "cta_button": "Review Evidence & Decide →"
+      },
+      "speaker_notes": "[0:00 - 0:15 | Slide 1: Introduction]\nJudges, this is ReturnLens. For solo online merchants, customer returns are a constant headache: messy claims, unboxing videos, and disconnected order records. ReturnLens unifies buyer claims, video evidence, and store rules into one clear decision pack. Models observe, code verifies, and the seller always authorizes consequential decisions."
+    },
+    {
+      "slide_number": 2,
+      "id": "problem",
+      "kicker": "The Merchant's Reality",
+      "title": "One claim. Four disconnected sources.",
+      "customer_claim": {
+        "quote": "“I ordered white headphones, but received black. Please refund me.”",
+        "attachment": "Customer video · 18s"
+      },
+      "sources": [
+        {
+          "num": "01",
+          "name": "Customer Chat",
+          "detail": "Claim text and unboxing video upload"
+        },
+        {
+          "num": "02",
+          "name": "Shopify Order",
+          "detail": "Matte White (SKU HEAD-WHT-02), ₹1,499 paid"
+        },
+        {
+          "num": "03",
+          "name": "Courier Scan",
+          "detail": "Shippo confirms delivery 4 days ago"
+        },
+        {
+          "num": "04",
+          "name": "Store Policy",
+          "detail": "7-day return window for wrong or damaged items"
+        }
+      ],
+      "seller_question": "Should I request more evidence, approve a return, or inspect the parcel?",
+      "speaker_notes": "[0:15 - 0:40 | Slide 2: The Problem]\nA customer chats in: 'I ordered white headphones, but received black. Please refund me,' attaching an 18-second unboxing clip. The merchant has to check four tabs: chat, Shopify, tracking, and store policy. Was this a packing error, a courier mistake, or a swap? The seller needs verified facts to decide whether to request more evidence, approve a return, or inspect the parcel."
+    },
+    {
+      "slide_number": 3,
+      "id": "demonstration",
+      "kicker": "Core Evidence Comparison",
+      "title": "White ordered. Black received.",
+      "subtitle": "Order details, video evidence and the next step—in one view.",
+      "left_evidence": {
+        "label": "STORE SPECIFICATION · SHOPIFY",
+        "headline": "Ordered: White",
+        "meta": "HEAD-WHT-02 · ₹1,499 paid · Delivered 4d ago"
+      },
+      "right_evidence": {
+        "label": "OBSERVED EVIDENCE · VIDEO FRAME 00:07",
+        "headline": "Observed: Black",
+        "meta": "Barcode unverified · Exact model unverified"
+      },
+      "options": [
+        {
+          "num": "1",
+          "title": "1. Accept packing error",
+          "action": "Approve return and draft label."
+        },
+        {
+          "num": "2",
+          "title": "2. Request label photo",
+          "action": "“Please share the outer-box label so we can check your shipment.”"
+        },
+        {
+          "num": "3",
+          "title": "3. Hold for inspection",
+          "action": "Inspect returned parcel before refund"
+        }
+      ],
+      "disclaimer": "* Staged example.",
+      "speaker_notes": "[0:40 - 1:25 | Slide 3: The Core Demonstration]\nHere is our core demonstration. The Shopify order specifies white headphones, but the video shows black casing. ReturnLens flags this visible difference clearly. Notice our honest AI grounding: barcode and exact model remain unverified from this frame. Instead of guessing fraud or packing errors, ReturnLens surfaces verified facts and prepares next steps. Option two drafts a polite reply asking for the box label, ready for one-click seller approval."
+    },
+    {
+      "slide_number": 4,
+      "id": "workflow",
+      "kicker": "Agent Architecture",
+      "title": "From evidence to next step.",
+      "subtitle": "A structured pipeline where models observe, code verifies, and the seller approves.",
+      "steps": [
+        {
+          "step": "1. Collect",
+          "desc": "Bring together messages, order data, tracking and video frames."
+        },
+        {
+          "step": "2. Compare",
+          "desc": "Compare observed details with the order and return policy."
+        },
+        {
+          "step": "3. Recommend",
+          "desc": "Suggest the next step and draft a customer reply."
+        },
+        {
+          "step": "4. Seller decides",
+          "desc": "Review the evidence and approve returns, labels or refunds."
+        }
+      ],
+      "clarification_flow": {
+        "label": "When evidence is unclear",
+        "summary": "Unclear evidence → Request a close-up photo → Add to case file → Continue review",
+        "detail": "If still unclear after one request, send the case to the seller."
+      },
+      "speaker_notes": "[1:25 - 2:05 | Slide 4: Agent Behavior]\nBehind the scenes, ReturnLens follows four direct stages: Collect, Compare, Recommend, and Seller Decides. When evidence is unclear—such as dark or blurry unboxing footage—the agent requests a single close-up photo and adds it to the existing case file. If still unclear after that request, it escalates directly to the seller. The seller approves all returns, shipping labels, and refunds."
+    },
+    {
+      "slide_number": 5,
+      "id": "matrix",
+      "kicker": "Planned scenarios",
+      "title": "Three situations. Clear next steps.",
+      "matrix_rows": [
+        {
+          "case_id": "Case A",
+          "label": "Damage on arrival",
+          "situation": "Cracked headband; within the 7-day window.",
+          "agent_response": "Checks the order date and drafts a return label.",
+          "seller_outcome": "Approve return. Refund waits for parcel receipt."
+        },
+        {
+          "case_id": "Case B",
+          "label": "Color discrepancy",
+          "situation": "White ordered; black shown in the video.",
+          "agent_response": "Flags the mismatch and drafts resolution options.",
+          "seller_outcome": "Choose a resolution or request the box label."
+        },
+        {
+          "case_id": "Case C",
+          "label": "Unclear evidence",
+          "situation": "Video is too dark to inspect.",
+          "agent_response": "Requests a close-up and adds it to the case.",
+          "seller_outcome": "Review new evidence or handle manually."
+        }
+      ],
+      "speaker_notes": "[2:05 - 2:30 | Slide 5: Three Scenarios]\nOur prototype focuses on three everyday situations: In Case A, damage on arrival within the seven-day return window produces a draft return label. In Case B, a color discrepancy surfaces three clear resolution paths. In Case C, unclear footage prompts a single close-up request. Each scenario delivers a clear next step for the merchant without automated rejections."
+    },
+    {
+      "slide_number": 6,
+      "id": "roadmap",
+      "kicker": "24-Hour Prototype Sprint",
+      "title": "A focused 24-hour prototype.",
+      "phases": [
+        {
+          "time": "00–06h",
+          "title": "Ingestion & Schema",
+          "output": "Mock order and courier fixtures; case state schema."
+        },
+        {
+          "time": "06–12h",
+          "title": "Vision & Rules",
+          "output": "Keyframe extraction and deterministic policy checks."
+        },
+        {
+          "time": "12–18h",
+          "title": "Seller Console UI",
+          "output": "Side-by-side evidence review console with drafted replies."
+        },
+        {
+          "time": "18–24h",
+          "title": "Walkthrough & QA",
+          "output": "Scenario walkthroughs and checks across Cases A, B, and C."
+        }
+      ],
+      "team_label": "Team",
+      "roles_simple": [
+        "A — Workflow and policy rules.",
+        "B — Video frames and visual observations.",
+        "C — Seller console and drafted replies.",
+        "D — Integration, scenario data and walkthrough checks."
+      ],
+      "build_first_label": "Build first",
+      "build_first_items": "Mock order and courier data · Keyframe evidence viewer · 3 core scenarios · Seller approval for return decisions",
+      "later_label": "Later",
+      "later_items": "Live store and courier integrations.",
+      "closing_takeaway": "One clear evidence pack. The seller makes the call.",
+      "speaker_notes": "[2:30 - 3:00 | Slide 6: Execution Roadmap & Closing]\nFor this 24-hour hackathon, our four-person team has a strictly focused scope: Person A builds workflow and policy rules; Person B handles video frames and visual observations; Person C builds the seller console and drafted replies; Person D manages integration, scenario data, and walkthrough checks. We build core verification first, saving live store and courier integrations for later. One clear evidence pack. The seller makes the call."
+    }
+  ],
+  "qa_defense": [
+    {
+      "question": "How does the vision model handle blurry or low-quality video?",
+      "answer": "Fail-closed architecture: The model only asserts what is clear. If unboxing footage is too dark or blurry (Case C), ReturnLens flags low confidence and requests a single close-up photo of the product or outer label, appending it to the existing case file without auto-rejecting. If still unclear after one request, the case escalates directly to the seller."
+    },
+    {
+      "question": "Why not automate refunds entirely to save time for solo sellers?",
+      "answer": "Automating financial transactions from customer-submitted video is a severe fraud vector (friendly fraud and refund abuse). ReturnLens adheres to strict authority boundaries: models observe and code verifies, but the seller always authorizes returns, shipping labels, and refunds."
+    },
+    {
+      "question": "How will a 4-person team deliver this prototype in 24 hours?",
+      "answer": "Disciplined scoping: The team focuses on Sprint Core deliverables—mock Shopify and courier fixtures, keyframe extraction, deterministic policy rules, and a side-by-side seller console covering Cases A, B, and C. Live store and courier integrations are deferred."
+    },
+    {
+      "question": "How is ReturnLens different from general CS chat agents like Zendesk or Intercom?",
+      "answer": "General CS bots handle text chat and FAQ resolution. ReturnLens is a multimodal evidence triage assistant specifically designed for physical merchandise claims. It links physical unboxing video keyframes with catalog specifications and store policies to build a structured decision dossier for the merchant."
+    },
+    {
+      "question": "How do you prevent hallucinations in the claim assessment?",
+      "answer": "Separation of concerns: The vision model only describes physical observations (e.g., color=Black). Deterministic code compares strings (Black != White) and checks dates against policy. The system never speculates on intent or fraud, presenting raw facts for merchant review."
+    }
+  ]
+}
